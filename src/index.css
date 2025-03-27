@@ -46,10 +46,10 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
     
-    --nurse: 174 50% 51%; /* HSL for #4DB6AC */
+    --nurse: 270 50% 60%; /* Purple color for Nurse branding */
     --nurse-foreground: 210 20% 98%;
-    --nurse-muted: 174 50% 91%; /* Lighter version for muted states */
-    --nurse-muted-foreground: 174 50% 41%; /* Darker version for text */
+    --nurse-muted: 270 50% 95%; /* Lighter version for muted states */
+    --nurse-muted-foreground: 270 50% 40%; /* Darker version for text */
     
     --client: 152 58% 52%;
     --client-foreground: 0 0% 100%;
@@ -95,10 +95,10 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
     
-    --nurse: 174 50% 61%; /* Slightly lighter for dark mode */
+    --nurse: 270 50% 70%; /* Slightly lighter purple for dark mode */
     --nurse-foreground: 210 20% 98%;
-    --nurse-muted: 174 50% 21%; /* Darker muted for dark mode */
-    --nurse-muted-foreground: 174 50% 81%; /* Lighter muted foreground */
+    --nurse-muted: 270 50% 25%; /* Darker muted for dark mode */
+    --nurse-muted-foreground: 270 50% 85%; /* Lighter muted foreground */
     
     --client: 152 58% 52%;
     --client-foreground: 0 0% 100%;
