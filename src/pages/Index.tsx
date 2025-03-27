@@ -17,12 +17,20 @@ const Index: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow bg-gray-50">
         <Hero />
-        <Features />
-        <HowItWorks />
-        <Testimonials />
-        <CallToAction />
+        <div className="bg-white">
+          <Features />
+        </div>
+        <div className="bg-gradient-to-b from-gray-50 to-white">
+          <HowItWorks />
+        </div>
+        <div className="bg-gray-50">
+          <Testimonials />
+        </div>
+        <div className="bg-white">
+          <CallToAction />
+        </div>
       </main>
       <Footer />
     </div>

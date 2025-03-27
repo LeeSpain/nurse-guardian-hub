@@ -6,12 +6,13 @@ import Button from '../ui-components/Button';
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative pt-20 pb-16 md:pt-32 md:pb-24 overflow-hidden">
-      <div className="container px-4 mx-auto">
+    <section className="relative pt-20 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnptMCAyYTQgNCAwIDExMCA4IDQgNCAwIDAxMC04eiIgZmlsbD0icmdiYSgxMDAsMTAwLDEwMCwwLjEpIi8+PC9nPjwvc3ZnPg==')] opacity-30"></div>
+      <div className="container px-4 mx-auto relative">
         <div className="flex flex-col lg:flex-row items-center">
           <div className="w-full lg:w-1/2 mb-12 lg:mb-0">
             <Transition animation="fade-up">
-              <span className="inline-block py-1 px-3 mb-4 text-xs font-semibold bg-blue-50 text-blue-600 rounded-full">
+              <span className="inline-block py-1 px-3 mb-4 text-xs font-semibold bg-purple-100 text-purple-600 rounded-full">
                 Remote Healthcare Platform
               </span>
             </Transition>
@@ -21,16 +22,16 @@ const Hero: React.FC = () => {
               </h1>
             </Transition>
             <Transition animation="fade-up" delay="delay-200">
-              <p className="text-lg text-gray-600 mb-8 max-w-xl">
+              <p className="text-lg text-gray-700 mb-8 max-w-xl">
                 NurseSync bridges professional care providers with those who need them through an intelligent AI assistant, removing the need for in-person visits.
               </p>
             </Transition>
             <Transition animation="fade-up" delay="delay-300">
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="nurse" size="lg" icon={<ArrowRight size={18} />} iconPosition="right">
+                <Button variant="nurse" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="shadow-lg">
                   For Healthcare Pros
                 </Button>
-                <Button variant="client" size="lg" icon={<ArrowRight size={18} />} iconPosition="right">
+                <Button variant="client" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="shadow-lg">
                   For Care Seekers
                 </Button>
               </div>
@@ -39,16 +40,16 @@ const Hero: React.FC = () => {
           <div className="w-full lg:w-1/2 lg:pl-16">
             <Transition animation="fade-in" delay="delay-400">
               <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-nurse to-client opacity-20 blur-xl rounded-2xl"></div>
-                <div className="relative glass-panel rounded-2xl overflow-hidden shadow-elevated">
+                <div className="absolute -inset-8 bg-gradient-to-r from-purple-600/20 to-client/20 opacity-70 blur-xl rounded-2xl"></div>
+                <div className="relative glass-panel rounded-2xl overflow-hidden shadow-elevated border border-white/30">
                   <img 
                     src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80" 
                     alt="NurseSync in action" 
                     className="w-full h-auto rounded-t-2xl"
                   />
-                  <div className="p-6">
+                  <div className="p-8 bg-white/80 backdrop-blur-sm">
                     <h3 className="text-xl font-semibold mb-2">NurseSync AI Brain</h3>
-                    <p className="text-gray-600">Seamlessly adapts to both healthcare providers and care recipients for an intelligent, supportive experience.</p>
+                    <p className="text-gray-700">Seamlessly adapts to both healthcare providers and care recipients for an intelligent, supportive experience.</p>
                   </div>
                 </div>
               </div>
