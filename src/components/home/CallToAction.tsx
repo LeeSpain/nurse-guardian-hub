@@ -25,10 +25,10 @@ const CallToAction: React.FC = () => {
             
             <Transition animation="fade-up" delay="delay-200">
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="default" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="bg-white text-purple-700 hover:bg-gray-100 shadow-lg">
+                <Button variant="primary" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="bg-white text-purple-700 hover:bg-gray-100 shadow-lg">
                   Join as Healthcare Pro
                 </Button>
-                <Button variant="default" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="bg-white text-client hover:bg-gray-100 shadow-lg">
+                <Button variant="primary" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="bg-white text-client hover:bg-gray-100 shadow-lg">
                   Join as Care Seeker
                 </Button>
               </div>
