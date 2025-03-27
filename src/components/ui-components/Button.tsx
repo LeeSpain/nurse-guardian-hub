@@ -34,7 +34,7 @@ const Button: React.FC<ButtonProps> = ({
     secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-secondary/50',
     outline: 'bg-transparent border border-gray-200 hover:bg-gray-50 focus:ring-gray-200/50',
     ghost: 'bg-transparent hover:bg-gray-100 focus:ring-gray-200/50',
-    nurse: 'bg-nurse text-white hover:bg-nurse/90 focus:ring-nurse/50',
+    nurse: 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500/50',
     client: 'bg-client text-client-foreground hover:bg-client/90 focus:ring-client/50',
   };
   

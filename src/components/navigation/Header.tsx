@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, User, Bell, Search } from 'lucide-react';
+import { Menu, X, User, Bell, Search, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
 import Button from '../ui-components/Button';
@@ -33,12 +33,12 @@ const Header: React.FC = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center">
             <NavigationMenu>
-              <NavigationMenuList>
+              <NavigationMenuList className="space-x-1">
                 {navItems.map((item) => (
                   <NavigationMenuItem key={item.name}>
                     <Link 
                       to={item.path}
-                      className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                      className="text-gray-600 hover:text-gray-900 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md hover:bg-gray-50"
                     >
                       {item.name}
                     </Link>
@@ -49,15 +49,17 @@ const Header: React.FC = () => {
           </nav>
           
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-gray-500 hover:text-gray-700 transition-colors">
-              <Search size={20} />
-            </button>
+            <div className="relative">
+              <button className="text-gray-500 hover:text-gray-700 transition-colors bg-gray-100 p-2 rounded-full">
+                <Search size={18} />
+              </button>
+            </div>
             
             <div className="flex items-center space-x-4">
               <Button 
-                variant="nurse" 
+                variant="primary" 
                 size="sm"
-                className="rounded-lg shadow-md hover:shadow-lg transition-all"
+                className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
                 icon={<User size={16} />}
               >
                 Nurse Portal
@@ -112,11 +114,11 @@ const Header: React.FC = () => {
             ))}
             <div className="pt-6 space-y-4">
               <Button 
-                variant="nurse" 
+                variant="primary" 
                 size="md"
                 fullWidth
                 icon={<User size={18} />}
-                className="shadow-md"
+                className="bg-purple-600 hover:bg-purple-700 text-white shadow-md"
               >
                 Nurse Portal
               </Button>
