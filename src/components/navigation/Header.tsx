@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, Bell, Search, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
@@ -9,6 +9,7 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
   
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   
@@ -19,6 +20,12 @@ const Header: React.FC = () => {
     { name: 'Testimonials', path: '/testimonials' },
     { name: 'Contact', path: '/contact' },
   ];
+  
+  const isActivePath = (path: string) => {
+    if (path === '/' && location.pathname === '/') return true;
+    if (path !== '/' && location.pathname.startsWith(path)) return true;
+    return false;
+  };
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
@@ -38,7 +45,10 @@ const Header: React.FC = () => {
                   <NavigationMenuItem key={item.name}>
                     <Link 
                       to={item.path}
-                      className="text-gray-600 hover:text-gray-900 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md hover:bg-gray-50"
+                      className={cn(
+                        "text-gray-600 hover:text-gray-900 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md hover:bg-gray-50",
+                        isActivePath(item.path) && "text-purple-700 bg-purple-50"
+                      )}
                     >
                       {item.name}
                     </Link>
@@ -106,7 +116,10 @@ const Header: React.FC = () => {
               <Link
                 key={item.name}
                 to={item.path}
-                className="block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100"
+                className={cn(
+                  "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                  isActivePath(item.path) && "text-purple-700"
+                )}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
