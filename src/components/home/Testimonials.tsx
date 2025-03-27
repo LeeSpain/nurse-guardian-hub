@@ -16,7 +16,7 @@ const Testimonials: React.FC = () => {
       quote: "NurseSync changed how I run my practice. I can now support more clients remotely while maintaining the same quality of care.",
       author: "Sarah Johnson, RN",
       role: "Healthcare Professional",
-      type: "nurse",
+      type: "nurse" as const,
       avatar: "https://randomuser.me/api/portraits/women/44.jpg",
       stars: 5
     },
@@ -24,7 +24,7 @@ const Testimonials: React.FC = () => {
       quote: "Having a nurse available through video calls gives me peace of mind about my father's care, even though I live across the country.",
       author: "Michael Torres",
       role: "Family Member",
-      type: "client",
+      type: "client" as const,
       avatar: "https://randomuser.me/api/portraits/men/32.jpg",
       stars: 5
     },
@@ -32,7 +32,7 @@ const Testimonials: React.FC = () => {
       quote: "The AI assistant feels like it truly understands my needs as a healthcare provider. Documentation has never been this streamlined.",
       author: "Rebecca Chen, NP",
       role: "Nurse Practitioner",
-      type: "nurse",
+      type: "nurse" as const,
       avatar: "https://randomuser.me/api/portraits/women/66.jpg",
       stars: 4
     },
@@ -40,7 +40,7 @@ const Testimonials: React.FC = () => {
       quote: "I love how easy it is to share updates with my daughter through the family dashboard. The interface is so intuitive.",
       author: "Eleanor Davis",
       role: "Care Recipient",
-      type: "client",
+      type: "client" as const,
       avatar: "https://randomuser.me/api/portraits/women/78.jpg",
       stars: 5
     }
