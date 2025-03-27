@@ -19,7 +19,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
   
   const variantClasses = {
     default: 'bg-white/50 border-gray-100',
-    nurse: 'bg-white/50 border-nurse/10 nurse-panel',
+    nurse: 'bg-white/50 border-nurse/10 nurse-panel', // Keep the panel style, but with new color
     client: 'bg-white/50 border-client/10 client-panel',
   };
   

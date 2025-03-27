@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -64,7 +63,7 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				nurse: {
-					DEFAULT: 'hsl(var(--nurse))',
+					DEFAULT: '206 66% 54%', // Converted Soft Teal #4DB6AC to HSL
 					foreground: 'hsl(var(--nurse-foreground))',
 					muted: 'hsl(var(--nurse-muted))',
 					'muted-foreground': 'hsl(var(--nurse-muted-foreground))',
