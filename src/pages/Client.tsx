@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -141,7 +140,7 @@ const Client: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section - Updated to side-by-side layout */}
+      {/* Hero Section - Updated with more compact dashboard */}
       <section className="pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-gradient-to-br from-gray-50 via-client-muted/20 to-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center gap-12">
@@ -183,156 +182,132 @@ const Client: React.FC = () => {
               </Transition>
             </div>
 
-            {/* Right side - Dashboard mockup */}
+            {/* Right side - Dashboard mockup (Revised to be more compact) */}
             <div className="w-full lg:w-1/2">
               <Transition animation="fade-in" delay="delay-400">
                 <div className="relative">
                   <div className="relative glass-panel rounded-2xl overflow-visible shadow-elevated border border-white/30">
                     <div className="absolute -inset-8 bg-gradient-to-r from-purple-600/20 to-client/20 opacity-70 blur-xl rounded-2xl"></div>
                     
-                    {/* Dashboard Mockup */}
-                    <div className="relative z-10 rounded-2xl overflow-hidden bg-white p-3">
+                    {/* Compact Dashboard Mockup */}
+                    <div className="relative z-10 rounded-2xl overflow-hidden bg-white p-2">
                       {/* Dashboard Header */}
-                      <div className="bg-client rounded-t-lg p-3 flex items-center justify-between text-white">
+                      <div className="bg-client rounded-t-lg p-2 flex items-center justify-between text-white">
                         <div className="flex items-center space-x-2">
-                          <div className="h-3 w-3 rounded-full bg-white/30"></div>
-                          <span className="font-medium">CareSync Dashboard</span>
+                          <div className="h-2 w-2 rounded-full bg-white/30"></div>
+                          <span className="font-medium text-sm">CareSync Dashboard</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Bell size={16} />
-                          <div className="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center text-xs">JS</div>
+                          <Bell size={14} />
+                          <div className="h-5 w-5 rounded-full bg-white/20 flex items-center justify-center text-xs">JS</div>
                         </div>
                       </div>
                       
                       {/* Dashboard Content */}
-                      <div className="p-4">
+                      <div className="p-3">
                         {/* Welcome Section */}
-                        <div className="mb-4 bg-client/10 rounded-lg p-4">
-                          <h3 className="text-lg font-semibold text-gray-800">Welcome back, Jessica!</h3>
-                          <p className="text-sm text-gray-600">Your next appointment is in 2 days</p>
+                        <div className="mb-3 bg-client/10 rounded-lg p-3">
+                          <h3 className="text-sm font-semibold text-gray-800">Welcome back, Jessica!</h3>
+                          <p className="text-xs text-gray-600">Your next appointment is in 2 days</p>
                         </div>
                         
-                        {/* Stats Cards */}
-                        <div className="grid grid-cols-2 gap-3 mb-4">
-                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                            <div className="flex justify-between items-center mb-2">
+                        {/* Stats Cards - Simplified */}
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                            <div className="flex justify-between items-center mb-1">
                               <span className="text-xs text-gray-500">Blood Pressure</span>
-                              <Activity size={16} className="text-client" />
+                              <Activity size={12} className="text-client" />
                             </div>
-                            <div className="font-bold text-xl">120/80</div>
+                            <div className="font-bold">120/80</div>
                             <div className="text-xs text-green-600 flex items-center">
-                              <ArrowRight size={12} className="transform rotate-45" />
+                              <ArrowRight size={10} className="transform rotate-45" />
                               Normal
                             </div>
                           </div>
-                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                            <div className="flex justify-between items-center mb-2">
+                          <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                            <div className="flex justify-between items-center mb-1">
                               <span className="text-xs text-gray-500">Heart Rate</span>
-                              <Heart size={16} className="text-client" />
+                              <Heart size={12} className="text-client" />
                             </div>
-                            <div className="font-bold text-xl">72 bpm</div>
+                            <div className="font-bold">72 bpm</div>
                             <div className="text-xs text-green-600 flex items-center">
-                              <ArrowRight size={12} className="transform rotate-45" />
+                              <ArrowRight size={10} className="transform rotate-45" />
                               Normal
                             </div>
                           </div>
                         </div>
                         
-                        {/* Upcoming Appointments */}
-                        <div className="mb-4">
-                          <h4 className="font-medium text-sm mb-2 text-gray-700">Upcoming Appointments</h4>
-                          <div className="bg-white border border-gray-100 rounded-lg p-3 mb-2 flex items-center">
-                            <div className="h-10 w-10 rounded-full bg-client/20 flex items-center justify-center mr-3">
-                              <Video size={16} className="text-client" />
+                        {/* Upcoming Appointments - Simplified */}
+                        <div className="mb-3">
+                          <h4 className="font-medium text-xs mb-1 text-gray-700">Upcoming Appointments</h4>
+                          <div className="bg-white border border-gray-100 rounded-lg p-2 mb-2 flex items-center">
+                            <div className="h-8 w-8 rounded-full bg-client/20 flex items-center justify-center mr-2">
+                              <Video size={12} className="text-client" />
                             </div>
                             <div className="flex-1">
-                              <div className="text-sm font-medium">Dr. Sarah Johnson</div>
+                              <div className="text-xs font-medium">Dr. Sarah Johnson</div>
                               <div className="text-xs text-gray-500">Wed, Jun 15 • 10:00 AM</div>
                             </div>
-                            <Button variant="outline" size="sm" className="text-xs h-8 border-client text-client">
-                              Join
-                            </Button>
-                          </div>
-                          <div className="bg-white border border-gray-100 rounded-lg p-3 flex items-center">
-                            <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
-                              <Users size={16} className="text-blue-500" />
-                            </div>
-                            <div className="flex-1">
-                              <div className="text-sm font-medium">Family Check-in</div>
-                              <div className="text-xs text-gray-500">Fri, Jun 17 • 2:00 PM</div>
-                            </div>
-                            <Button variant="outline" size="sm" className="text-xs h-8 border-blue-500 text-blue-500">
+                            <Button variant="outline" size="sm" className="text-xs h-6 px-2 border-client text-client">
                               Join
                             </Button>
                           </div>
                         </div>
                         
-                        {/* Medication Reminder */}
-                        <div className="bg-client/5 rounded-lg p-3">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-medium text-sm text-gray-700">Today's Medications</h4>
+                        {/* Medication Reminder - Simplified */}
+                        <div className="bg-client/5 rounded-lg p-2">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="font-medium text-xs text-gray-700">Today's Medications</h4>
                             <span className="text-xs text-client">View all</span>
                           </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-md mb-2 border border-gray-100">
+                          <div className="flex items-center justify-between p-2 bg-white rounded-md mb-1 border border-gray-100">
                             <div className="flex items-center">
-                              <div className="h-8 w-8 rounded-full bg-amber-500/20 flex items-center justify-center mr-2">
-                                <div className="h-4 w-4 rounded-full bg-amber-500"></div>
+                              <div className="h-6 w-6 rounded-full bg-amber-500/20 flex items-center justify-center mr-2">
+                                <div className="h-3 w-3 rounded-full bg-amber-500"></div>
                               </div>
                               <div>
-                                <div className="text-sm font-medium">Vitamin D</div>
-                                <div className="text-xs text-gray-500">1 pill • Morning</div>
+                                <div className="text-xs font-medium">Vitamin D</div>
+                                <div className="text-xs text-gray-500">Morning</div>
                               </div>
                             </div>
-                            <div className="h-5 w-5 rounded border border-client flex items-center justify-center">
-                              <Check size={12} className="text-client" />
+                            <div className="h-4 w-4 rounded border border-client flex items-center justify-center">
+                              <Check size={10} className="text-client" />
                             </div>
-                          </div>
-                          <div className="flex items-center justify-between p-2 bg-white rounded-md border border-gray-100">
-                            <div className="flex items-center">
-                              <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center mr-2">
-                                <div className="h-4 w-4 rounded-full bg-blue-500"></div>
-                              </div>
-                              <div>
-                                <div className="text-sm font-medium">Atorvastatin</div>
-                                <div className="text-xs text-gray-500">1 pill • Evening</div>
-                              </div>
-                            </div>
-                            <div className="h-5 w-5 rounded border border-gray-400"></div>
                           </div>
                         </div>
                       </div>
                     </div>
                     
-                    {/* Time saved card - kept from original design */}
-                    <div className="absolute -bottom-8 -right-8 z-30 bg-white rounded-lg shadow-lg p-4 max-w-[200px] border border-purple-100">
-                      <div className="flex items-center mb-2">
-                        <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    {/* Time saved card - kept from original design but made smaller */}
+                    <div className="absolute -bottom-6 -right-6 z-30 bg-white rounded-lg shadow-lg p-3 max-w-[180px] border border-purple-100">
+                      <div className="flex items-center mb-1">
+                        <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                           </svg>
                         </div>
-                        <div className="font-semibold text-gray-800">Time Saved</div>
+                        <div className="font-semibold text-sm text-gray-800">Time Saved</div>
                       </div>
                       <div className="flex items-baseline">
-                        <span className="text-2xl font-bold text-gray-900">70%</span>
-                        <span className="ml-1 text-sm text-gray-500">on documentation</span>
+                        <span className="text-xl font-bold text-gray-900">70%</span>
+                        <span className="ml-1 text-xs text-gray-500">on documentation</span>
                       </div>
                     </div>
                     
-                    {/* Smart Matching card - kept from original design */}
-                    <div className="absolute -top-8 -left-8 z-30 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-lg p-3 max-w-[180px]">
+                    {/* Smart Matching card - kept from original design but made smaller */}
+                    <div className="absolute -top-6 -left-6 z-30 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-lg p-2 max-w-[160px]">
                       <div className="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                           <circle cx="9" cy="7" r="4"></circle>
                           <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                           <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        <div className="font-semibold">Smart Matching</div>
+                        <div className="font-semibold text-sm">Smart Matching</div>
                       </div>
-                      <div className="text-xs opacity-90 mt-1">
-                        Find the perfect care provider match
+                      <div className="text-xs opacity-90 mt-0.5">
+                        Find your perfect provider
                       </div>
                     </div>
                   </div>
