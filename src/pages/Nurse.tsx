@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -486,4 +487,241 @@ const Nurse: React.FC = () => {
                         <Check className="h-4 w-4 text-green-600" />
                       </div>
                       <div>
-                        <h4 className="font
+                        <h4 className="font-semibold text-gray-800">Brand Development</h4>
+                        <p className="text-gray-600 text-sm">Build your own healthcare brand and reputation</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="md" 
+                    className="text-purple-700 border-purple-200 hover:bg-purple-50 w-full"
+                    to="/nurse/pricing"
+                  >
+                    Learn More
+                    <ArrowRight size={16} className="ml-2" />
+                  </Button>
+                </div>
+              </div>
+            </Transition>
+            
+            {/* Path 2: Contracted Work */}
+            <Transition animation="slide-in-right" delay="delay-200">
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-purple-100">
+                <div className="h-8 bg-gradient-to-r from-blue-500 to-blue-700"></div>
+                <div className="p-8">
+                  <div className="flex items-center mb-6">
+                    <div className="h-14 w-14 rounded-xl bg-blue-100 flex items-center justify-center mr-4">
+                      <Clock className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900">Contracted Work</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6">
+                    Join our network of on-demand healthcare professionals providing care through our platform to clients seeking immediate assistance.
+                  </p>
+                  
+                  <div className="space-y-4 mb-8">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Ready-Made Clientele</h4>
+                        <p className="text-gray-600 text-sm">Access our existing client base with no marketing needed</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Predictable Income</h4>
+                        <p className="text-gray-600 text-sm">Stable pay rates and regular work opportunities</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Simplified Operations</h4>
+                        <p className="text-gray-600 text-sm">No need to handle billing or administrative tasks</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="md" 
+                    className="text-blue-700 border-blue-200 hover:bg-blue-50 w-full"
+                    to="/nurse/pricing"
+                  >
+                    Learn More
+                    <ArrowRight size={16} className="ml-2" />
+                  </Button>
+                </div>
+              </div>
+            </Transition>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIGZpbGw9InJnYmEoMTI4LDkwLDIxMywwLjA1KSIvPjwvZz48L3N2Zz4=')] opacity-50"></div>
+        
+        <div className="container mx-auto px-4 relative">
+          <div className="text-center mb-16">
+            <Transition animation="fade-up">
+              <div className="inline-flex items-center bg-purple-100 rounded-full px-3 py-1 mb-4">
+                <Star className="h-4 w-4 text-purple-600 mr-2" />
+                <span className="text-purple-700 font-medium text-sm">Success Stories</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Hear From Healthcare Professionals</h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Discover how Nurse-Sync has transformed careers and improved patient outcomes for healthcare professionals around the world.
+              </p>
+            </Transition>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+            {/* Testimonial 1 */}
+            <Transition animation="fade-up" delay="delay-100">
+              <div className="bg-white rounded-xl shadow-md p-6 border border-purple-100 hover:shadow-xl transition-shadow">
+                <div className="flex items-center mb-4">
+                  <div className="flex-shrink-0 mr-3">
+                    <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-xl">J</div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Jessica R.</h4>
+                    <p className="text-sm text-gray-500">Nurse Practitioner</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 italic mb-4">
+                  "Since using Nurse-Sync, I've doubled my client base while cutting my administrative work in half. The AI documentation feature is a game-changer for my practice."
+                </p>
+                <div className="flex text-yellow-400">
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                </div>
+              </div>
+            </Transition>
+            
+            {/* Testimonial 2 */}
+            <Transition animation="fade-up" delay="delay-200">
+              <div className="bg-white rounded-xl shadow-md p-6 border border-purple-100 hover:shadow-xl transition-shadow">
+                <div className="flex items-center mb-4">
+                  <div className="flex-shrink-0 mr-3">
+                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xl">M</div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Michael T.</h4>
+                    <p className="text-sm text-gray-500">Registered Nurse</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 italic mb-4">
+                  "Working as a contracted nurse on Nurse-Sync gives me consistent income while maintaining flexibility. The scheduling tools help me manage my time efficiently."
+                </p>
+                <div className="flex text-yellow-400">
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                </div>
+              </div>
+            </Transition>
+            
+            {/* Testimonial 3 */}
+            <Transition animation="fade-up" delay="delay-300">
+              <div className="bg-white rounded-xl shadow-md p-6 border border-purple-100 hover:shadow-xl transition-shadow">
+                <div className="flex items-center mb-4">
+                  <div className="flex-shrink-0 mr-3">
+                    <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xl">S</div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Sarah K.</h4>
+                    <p className="text-sm text-gray-500">Healthcare Consultant</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 italic mb-4">
+                  "The platform's HIPAA compliance and security features give me peace of mind, and my clients appreciate the professional telehealth experience."
+                </p>
+                <div className="flex text-yellow-400">
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-5 w-5 fill-current" />
+                </div>
+              </div>
+            </Transition>
+          </div>
+        </div>
+      </section>
+      
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-purple-600 to-purple-800 text-white relative overflow-hidden">
+        <div className="absolute inset-0 mix-blend-soft-light opacity-10">
+          <svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+        </div>
+        
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-3xl mx-auto text-center">
+            <Transition animation="fade-up">
+              <div className="inline-flex items-center bg-white/20 rounded-full px-3 py-1 mb-4 backdrop-blur-sm">
+                <Lightbulb className="h-4 w-4 text-yellow-300 mr-2" />
+                <span className="text-white font-medium text-sm">Start Your Journey Today</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Healthcare Career?</h2>
+              <p className="text-lg text-white/90 mb-8">
+                Join thousands of healthcare professionals who have elevated their practice and increased their income using Nurse-Sync's powerful platform.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  variant="secondary" 
+                  size="lg" 
+                  className="bg-white text-purple-700 hover:bg-gray-100 shadow-xl"
+                  to="/login"
+                >
+                  Start Free Trial
+                  <ArrowRight size={18} className="ml-2" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-white text-white hover:bg-white/10"
+                  to="/nurse/pricing"
+                >
+                  View Pricing
+                  <CreditCard size={18} className="ml-2" />
+                </Button>
+              </div>
+              
+              <p className="mt-6 text-white/80 text-sm">
+                No credit card required. 14-day free trial with full access to all features.
+              </p>
+            </Transition>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default Nurse;
