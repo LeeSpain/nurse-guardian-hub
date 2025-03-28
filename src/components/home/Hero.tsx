@@ -8,6 +8,7 @@ const Hero: React.FC = () => {
   return (
     <section className="relative pt-20 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIGZpbGw9InJnYmEoMTAwLDEwMCwxMDAsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-30"></div>
+      
       <div className="container px-4 mx-auto relative">
         <div className="flex flex-col lg:flex-row items-center">
           <div className="w-full lg:w-1/2 mb-12 lg:mb-0">
@@ -53,14 +54,13 @@ const Hero: React.FC = () => {
               </div>
             </Transition>
           </div>
+          
           <div className="w-full lg:w-1/2 lg:pl-16">
             <Transition animation="fade-in" delay="delay-400">
               <div className="relative">
-                {/* Main image container with overflow visible to allow boxes to extend beyond */}
                 <div className="relative glass-panel rounded-2xl overflow-visible shadow-elevated border border-white/30">
                   <div className="absolute -inset-8 bg-gradient-to-r from-purple-600/20 to-client/20 opacity-70 blur-xl rounded-2xl"></div>
                   
-                  {/* Main image with overflow hidden to keep the image properly contained */}
                   <div className="relative z-10 rounded-2xl overflow-hidden">
                     <img 
                       src="/lovable-uploads/d215d01f-93d6-423a-994e-1cb106f5b3ae.png" 
@@ -69,12 +69,7 @@ const Hero: React.FC = () => {
                     />
                   </div>
                   
-                  <div className="relative z-20 p-8 bg-white/80 backdrop-blur-sm">
-                    <h3 className="text-xl font-semibold mb-2">Seamless Virtual Care</h3>
-                    <p className="text-gray-700">Connect with healthcare professionals from the comfort of your home, bridging distances with technology.</p>
-                  </div>
-                  
-                  {/* Time saved card fully outside the main container */}
+                  {/* Time saved card */}
                   <div className="absolute -bottom-8 -right-8 z-30 bg-white rounded-lg shadow-lg p-4 max-w-[200px] border border-purple-100">
                     <div className="flex items-center mb-2">
                       <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
@@ -91,17 +86,19 @@ const Hero: React.FC = () => {
                     </div>
                   </div>
                   
-                  {/* AI-powered card fully outside the main container */}
+                  {/* Updated Smart Matching card */}
                   <div className="absolute -top-8 -left-8 z-30 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-lg p-3 max-w-[180px]">
                     <div className="flex items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2a8 8 0 0 0-8 8c0 .9.25 1.75.7 2.5L12 22l7.3-9.5c.45-.75.7-1.6.7-2.5a8 8 0 0 0-8-8Z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                       </svg>
-                      <div className="font-semibold">AI-Powered</div>
+                      <div className="font-semibold">Smart Matching</div>
                     </div>
                     <div className="text-xs opacity-90 mt-1">
-                      Streamline your workflow with intelligent assistance
+                      Find the perfect care provider match
                     </div>
                   </div>
                 </div>
