@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ClientHeader from '../components/navigation/ClientHeader';
@@ -184,7 +185,7 @@ const ClientDetailedOverview: React.FC = () => {
                   <Transition 
                     key={step.number} 
                     animation="fade-up" 
-                    delay={index === 0 ? "delay-100" : index === 1 ? "delay-200" : index === 2 ? "delay-300" : "delay-400"}
+                    delay={`delay-${(index + 1) * 100}`}
                   >
                     <div className="relative group">
                       <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10">

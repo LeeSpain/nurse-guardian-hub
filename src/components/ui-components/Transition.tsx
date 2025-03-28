@@ -2,18 +2,13 @@
 import React, { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-// Define the allowed string values explicitly
-type DelayValue = 'delay-100' | 'delay-200' | 'delay-300' | 'delay-400' | 'delay-500';
-type DurationValue = 'duration-300' | 'duration-500' | 'duration-700' | 'duration-1000';
-type AnimationValue = 'fade-in' | 'fade-up' | 'fade-down' | 'slide-in-left' | 'slide-in-right';
-
 interface TransitionProps {
   children: ReactNode;
   className?: string;
   show?: boolean;
-  animation?: AnimationValue;
-  delay?: DelayValue;
-  duration?: DurationValue;
+  animation?: 'fade-in' | 'fade-up' | 'fade-down' | 'slide-in-left' | 'slide-in-right';
+  delay?: string; // Accept any string for delay
+  duration?: string; // Accept any string for duration
 }
 
 const Transition: React.FC<TransitionProps> = ({
@@ -24,22 +19,36 @@ const Transition: React.FC<TransitionProps> = ({
   delay,
   duration = 'duration-500',
 }) => {
-  // Map animation values to CSS classes
-  const animationClasses: Record<AnimationValue, string> = {
-    'fade-in': 'animate-fade-in',
-    'fade-up': 'animate-fade-up',
-    'fade-down': 'animate-fade-down',
-    'slide-in-left': 'animate-slide-in-left',
-    'slide-in-right': 'animate-slide-in-right'
-  };
-
   if (!show) return null;
+  
+  let animationClass = '';
+  
+  // Map animation types to classes
+  switch (animation) {
+    case 'fade-in':
+      animationClass = 'animate-fade-in';
+      break;
+    case 'fade-up':
+      animationClass = 'animate-fade-up';
+      break;
+    case 'fade-down':
+      animationClass = 'animate-fade-down';
+      break;
+    case 'slide-in-left':
+      animationClass = 'animate-slide-in-left';
+      break;
+    case 'slide-in-right':
+      animationClass = 'animate-slide-in-right';
+      break;
+    default:
+      animationClass = 'animate-fade-in';
+  }
   
   return (
     <div 
       className={cn(
         "transition-all",
-        animationClasses[animation],
+        animationClass,
         delay,
         duration,
         className
