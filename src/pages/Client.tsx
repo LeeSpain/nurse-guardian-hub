@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -151,7 +152,7 @@ const Client: React.FC = () => {
                   <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
                     Personalized Remote Healthcare
                   </div>
-                  <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-client via-client to-client-muted">
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gray-900">
                     Your Health Journey, <br className="hidden md:block" />Simplified
                   </h1>
                   <p className="text-lg md:text-xl text-gray-600">
@@ -337,7 +338,7 @@ const Client: React.FC = () => {
                 Care Designed For You
                 <span className="ml-2">✦</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-bold mb-6 text-client">Comprehensive Remote Care Solutions</h2>
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-800">Comprehensive Remote Care Solutions</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Our platform offers unique features specifically for individuals seeking quality remote healthcare.
               </p>
@@ -597,5 +598,10 @@ const Client: React.FC = () => {
               </p>
             </div>
           </Transition>
+        </div>
+      </section>
+    </div>
+  );
+};
 
-          <div className="space-y
+export default Client;

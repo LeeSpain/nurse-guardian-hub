@@ -15,16 +15,16 @@ const GlassCard: React.FC<GlassCardProps> = ({
   hover = false,
   variant = 'default',
 }) => {
-  const baseClasses = 'rounded-2xl backdrop-blur-sm border shadow-card p-6 transition-all duration-300';
+  const baseClasses = 'rounded-2xl backdrop-blur-sm border shadow-md p-6 transition-all duration-300';
   
   const variantClasses = {
-    default: 'bg-white/50 border-gray-100',
-    nurse: 'bg-white/50 border-nurse/20 nurse-panel',
-    client: 'bg-white/50 border-client/20 client-panel',
+    default: 'bg-white/80 border-gray-100',
+    nurse: 'bg-white/90 border-nurse/20 nurse-panel',
+    client: 'bg-white/90 border-client/20 client-panel',
   };
   
   const hoverClasses = hover 
-    ? 'hover:shadow-elevated hover:translate-y-[-2px] hover:border-opacity-50' 
+    ? 'hover:shadow-xl hover:translate-y-[-2px] hover:border-opacity-50' 
     : '';
   
   return (
