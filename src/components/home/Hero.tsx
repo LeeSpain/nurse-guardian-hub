@@ -60,8 +60,8 @@ const Hero: React.FC = () => {
                 <div className="absolute -inset-8 bg-gradient-to-r from-purple-600/20 to-client/20 opacity-70 blur-xl rounded-2xl"></div>
                 <div className="relative glass-panel rounded-2xl overflow-hidden shadow-elevated border border-white/30">
                   <img 
-                    src="/lovable-uploads/10dd0118-d393-4fd3-b587-7248faff0e56.png" 
-                    alt="NurseSync Remote Healthcare Consultation" 
+                    src="/lovable-uploads/62e008c6-a46f-4835-93d0-3813f2c6561a.png" 
+                    alt="Nurse providing virtual healthcare consultation" 
                     className="w-full h-auto rounded-2xl object-cover"
                   />
                   <div className="p-8 bg-white/80 backdrop-blur-sm">

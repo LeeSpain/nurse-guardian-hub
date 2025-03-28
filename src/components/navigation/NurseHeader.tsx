@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, CreditCard, Shield } from 'lucide-react';
+import { Menu, X, User, CreditCard, Shield, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
 import Button from '../ui-components/Button';
@@ -33,6 +33,22 @@ const NurseHeader: React.FC = () => {
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
+            <Link 
+              to="/"
+              className="text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center"
+            >
+              <Home size={18} className="mr-1" />
+              Home
+            </Link>
+            <Link 
+              to="/nurse"
+              className={cn(
+                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200",
+                isActivePath('/nurse') && "text-purple-700 font-semibold"
+              )}
+            >
+              Nurse Home
+            </Link>
             <Link 
               to="/nurse/pricing"
               className={cn(
@@ -98,6 +114,26 @@ const NurseHeader: React.FC = () => {
             <div className="rounded-full bg-purple-100 text-purple-700 px-3 py-1 text-xs font-medium inline-block mb-4">
               Healthcare Professional
             </div>
+            
+            <Link
+              to="/"
+              className="block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Home size={20} className="mr-2" />
+              Home
+            </Link>
+            
+            <Link
+              to="/nurse"
+              className={cn(
+                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                isActivePath('/nurse') && "text-purple-700"
+              )}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Nurse Home
+            </Link>
             
             <Link
               to="/nurse/pricing"
