@@ -1,7 +1,9 @@
+
 import React, { useEffect } from 'react';
 import { Check } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
+import GlassCard from '../components/ui-components/GlassCard';
 
 const ClientPricingPage: React.FC = () => {
   // Scroll to top when component mounts
@@ -86,56 +88,56 @@ const ClientPricingPage: React.FC = () => {
         {/* Pricing Plans */}
         <section className="py-16 md:py-24 relative overflow-hidden">
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {plans.map((plan, index) => (
                 <Transition 
                   key={plan.name} 
                   animation="fade-up" 
                   delay={`delay-${(index % 3) * 100 + 100}` as any}
                 >
-                  <div className={`relative rounded-2xl overflow-hidden border ${plan.featured 
-                    ? 'border-client-muted shadow-xl' 
-                    : 'border-gray-200 shadow-lg'}`}>
-                    
-                    {plan.featured && (
-                      <div className="absolute top-0 right-0 bg-client text-white px-4 py-1 text-sm font-medium">
-                        Most Popular
-                      </div>
-                    )}
-                    
-                    <div className={`p-8 h-full flex flex-col ${plan.featured ? 'bg-client-muted/10' : 'bg-white'}`}>
-                      <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                      <p className="text-gray-600 mb-6">{plan.description}</p>
+                  <GlassCard
+                    variant="client"
+                    hover={true}
+                    className={`h-full ${plan.featured ? 'border-client border-opacity-30 shadow-lg' : ''}`}
+                  >
+                    <div className="relative">
+                      {plan.featured && (
+                        <div className="absolute top-0 right-0 translate-x-2 -translate-y-2 bg-client text-white px-3 py-1 text-xs font-medium rounded-full shadow-md">
+                          Most Popular
+                        </div>
+                      )}
                       
-                      <div className="mb-6">
+                      <h3 className="text-lg font-bold mb-2">{plan.name}</h3>
+                      <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
+                      
+                      <div className="mb-4">
                         <div className="flex items-end">
-                          <span className="text-4xl font-bold">{plan.price}</span>
-                          <span className="text-gray-500 ml-1">{plan.billing}</span>
+                          <span className="text-3xl font-bold">{plan.price}</span>
+                          <span className="text-gray-500 ml-1 text-sm">{plan.billing}</span>
                         </div>
                       </div>
                       
-                      <ul className="space-y-3 mb-8">
+                      <ul className="space-y-2 mb-6">
                         {plan.features.map((feature, i) => (
-                          <li key={i} className="flex items-start">
+                          <li key={i} className="flex items-start text-sm">
                             <div className="flex-shrink-0 mr-2 mt-1">
-                              <Check size={16} className="text-client" />
+                              <Check size={14} className="text-client" />
                             </div>
                             <span className="text-gray-700">{feature}</span>
                           </li>
                         ))}
                       </ul>
                       
-                      <div className="mt-auto">
-                        <Button 
-                          variant={plan.featured ? 'client' : 'outline'} 
-                          fullWidth
-                          className={plan.featured ? '' : 'border-client-muted text-client'}
-                        >
-                          Get Started
-                        </Button>
-                      </div>
+                      <Button 
+                        variant={plan.featured ? 'client' : 'outline'} 
+                        fullWidth
+                        size="sm"
+                        className={plan.featured ? 'shadow-md' : 'border-client-muted text-client'}
+                      >
+                        Get Started
+                      </Button>
                     </div>
-                  </div>
+                  </GlassCard>
                 </Transition>
               ))}
             </div>
