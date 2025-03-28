@@ -184,7 +184,7 @@ const ClientDetailedOverview: React.FC = () => {
                   <SimpleAnimation 
                     key={step.number} 
                     type="fade-up"
-                    className={`transition-all ${index * 100}ms`}
+                    className={`transition-all delay-${index * 100}`}
                   >
                     <div className="relative group">
                       <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10">
@@ -205,7 +205,7 @@ const ClientDetailedOverview: React.FC = () => {
                 ))}
               </div>
               
-              <SimpleAnimation type="fade-up" className="transition-delay-500">
+              <SimpleAnimation type="fade-up" className="transition-all delay-500">
                 <div className="mt-12 text-center">
                   <p className="text-gray-600 mb-6">
                     Care seekers can also browse a nurse directory (filtered by specialty, language, etc.) to explore beyond the AI-generated shortlist.
@@ -243,7 +243,7 @@ const ClientDetailedOverview: React.FC = () => {
 
             <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
               {/* Standard Plan */}
-              <SimpleAnimation type="fade-up" className="transition-delay-100">
+              <SimpleAnimation type="fade-up" className="transition-all delay-100">
                 <GlassCard
                   variant="client"
                   hover={true}
@@ -292,7 +292,7 @@ const ClientDetailedOverview: React.FC = () => {
               </SimpleAnimation>
 
               {/* Family Plan */}
-              <SimpleAnimation type="fade-up" className="transition-delay-200">
+              <SimpleAnimation type="fade-up" className="transition-all delay-200">
                 <GlassCard
                   variant="client"
                   hover={true}
