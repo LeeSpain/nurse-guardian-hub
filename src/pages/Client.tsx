@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -598,4 +599,14 @@ const Client: React.FC = () => {
               </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">Benefits of Personalized Remote Healthcare</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Discover how our approach to remote healthcare offers advantages that traditional in-person care cannot
+                Discover how our approach to remote healthcare offers advantages that traditional in-person care cannot match.
+              </p>
+            </div>
+          </Transition>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Client;
