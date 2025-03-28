@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -110,17 +109,19 @@ const Nurse: React.FC = () => {
                   <div className="absolute top-0 left-10 w-20 h-20 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
                   <div className="absolute bottom-0 right-10 w-24 h-24 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
                   
-                  <div className="relative bg-white border border-purple-100 rounded-2xl overflow-hidden shadow-2xl p-1">
+                  {/* Main image container with overflow visible to allow boxes to extend beyond */}
+                  <div className="relative bg-white border border-purple-100 rounded-2xl overflow-visible shadow-2xl p-1">
+                    {/* Inner image container with overflow hidden to keep the image properly contained */}
                     <div className="rounded-xl overflow-hidden">
                       <img 
-                        src="/lovable-uploads/10dd0118-d393-4fd3-b587-7248faff0e56.png" 
+                        src="/lovable-uploads/2a1625f4-ddd4-42ed-8931-f0896ee3e2ee.png" 
                         alt="Nurse using digital healthcare platform" 
                         className="w-full h-auto object-cover"
                       />
                     </div>
                     
                     {/* Floating stats card */}
-                    <div className="absolute -bottom-6 -right-6 bg-white rounded-lg shadow-lg p-4 max-w-[200px] border border-purple-100">
+                    <div className="absolute -bottom-8 -right-8 bg-white rounded-lg shadow-lg p-4 max-w-[200px] border border-purple-100 z-30">
                       <div className="flex items-center mb-2">
                         <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
                           <Clock className="h-4 w-4 text-green-600" />
@@ -134,7 +135,7 @@ const Nurse: React.FC = () => {
                     </div>
                     
                     {/* Floating AI card */}
-                    <div className="absolute -top-5 -left-5 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-lg p-3 max-w-[180px]">
+                    <div className="absolute -top-8 -left-8 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-lg p-3 max-w-[180px] z-30">
                       <div className="flex items-center">
                         <BrainCircuit className="h-5 w-5 mr-2" />
                         <div className="font-semibold">AI-Powered</div>
@@ -452,219 +453,3 @@ const Nurse: React.FC = () => {
                     <div className="flex items-start">
                       <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
                         <Check className="h-4 w-4 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Platform Support</h4>
-                        <p className="text-gray-600 text-sm">Access to all tools, billing, scheduling and AI assistance</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between bg-purple-50 p-4 rounded-lg">
-                    <div>
-                      <div className="text-sm text-purple-600 font-medium">Average Earning Potential</div>
-                      <div className="text-xl font-bold text-purple-900">$75-150/hour</div>
-                    </div>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      className="bg-purple-600 hover:bg-purple-700 text-white"
-                      to="/nurse/pricing"
-                    >
-                      Learn More
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Transition>
-            
-            {/* Path 2: Nurse-Sync Professional */}
-            <Transition animation="slide-in-right">
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-purple-100">
-                <div className="h-8 bg-gradient-to-r from-purple-700 to-purple-900"></div>
-                <div className="p-8">
-                  <div className="flex items-center mb-6">
-                    <div className="h-14 w-14 rounded-xl bg-purple-100 flex items-center justify-center mr-4">
-                      <Users className="h-8 w-8 text-purple-600" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900">Nurse-Sync Professional</h3>
-                  </div>
-                  
-                  <p className="text-gray-600 mb-6">
-                    Join our network of healthcare professionals and receive pre-vetted clients directly from our matching system with guaranteed hours.
-                  </p>
-                  
-                  <div className="space-y-4 mb-8">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
-                        <Check className="h-4 w-4 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Steady Client Flow</h4>
-                        <p className="text-gray-600 text-sm">Regular client assignments without marketing work</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
-                        <Check className="h-4 w-4 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Guaranteed Hours</h4>
-                        <p className="text-gray-600 text-sm">Minimum weekly hours based on your availability</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
-                        <Check className="h-4 w-4 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Professional Support</h4>
-                        <p className="text-gray-600 text-sm">Dedicated support team and continuing education</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between bg-purple-50 p-4 rounded-lg">
-                    <div>
-                      <div className="text-sm text-purple-600 font-medium">Average Earning Potential</div>
-                      <div className="text-xl font-bold text-purple-900">$60-100/hour</div>
-                    </div>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      className="bg-purple-600 hover:bg-purple-700 text-white"
-                      to="/nurse/join-network"
-                    >
-                      Join Network
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Transition>
-          </div>
-          
-          {/* Why Not Do Both Section */}
-          <div className="mt-16 bg-white rounded-2xl shadow-lg p-8 border border-purple-100">
-            <Transition animation="fade-up">
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center bg-purple-100 rounded-full px-3 py-1 mb-4">
-                  <Star className="h-4 w-4 text-purple-600 mr-2" />
-                  <span className="text-purple-700 font-medium text-sm">Why Not Do Both?</span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-2">Maximize Your Potential</h3>
-                <p className="text-gray-600 max-w-3xl mx-auto">
-                  Many of our most successful healthcare professionals blend both approaches, building their own practice 
-                  while accepting platform-matched clients to ensure a steady income.
-                </p>
-              </div>
-              
-              {/* Testimonial */}
-              <div className="bg-gradient-to-r from-purple-50 to-purple-100/50 rounded-xl p-6 mb-8">
-                <div className="flex items-start">
-                  <div className="mr-4 flex-shrink-0">
-                    <div className="w-12 h-12 rounded-full bg-purple-200 flex items-center justify-center">
-                      <span className="text-purple-700 font-bold text-xl">JM</span>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="italic text-gray-700 mb-3">
-                      "I started with just platform-matched clients, which gave me steady income and confidence. 
-                      After six months, I began building my own client base alongside. Now I have the perfect balance of 
-                      reliable income and the freedom to grow my specialized practice."
-                    </p>
-                    <div className="font-medium text-gray-900">Jennifer M.</div>
-                    <div className="text-sm text-gray-500">Psychiatric Nurse Practitioner, 2 years on Nurse-Sync</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="text-center">
-                <Button 
-                  variant="primary" 
-                  size="lg" 
-                  className="bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 shadow-xl hover:shadow-purple-500/20 transition-all"
-                  to="/register"
-                >
-                  Start Your Journey
-                  <ArrowRight size={18} className="ml-2" />
-                </Button>
-              </div>
-            </Transition>
-          </div>
-        </div>
-      </section>
-
-      {/* Connection Process Overview */}
-      <section className="py-20 bg-gradient-to-br from-purple-50 via-white to-purple-50 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-30 mix-blend-multiply">
-          <div className="absolute top-0 right-0 w-full h-full overflow-hidden">
-            <svg width="100%" height="100%" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(128,90,213,0.1)" strokeWidth="0.5" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#smallGrid)" />
-            </svg>
-          </div>
-        </div>
-        
-        <div className="container mx-auto px-4 relative">
-          <Transition animation="fade-up">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center bg-purple-100 rounded-full px-3 py-1 mb-4">
-                <Sparkles className="h-4 w-4 text-purple-600 mr-2" />
-                <span className="text-purple-700 font-medium text-sm">How It Works</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">How You'll Connect With Care Seekers</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Nurse-Sync makes it easy to build your client base through our structured process that balances passive discovery with active outreach.
-              </p>
-            </div>
-          </Transition>
-          
-          <div className="relative">
-            {/* Connection step timeline */}
-            <div className="hidden md:block absolute left-1/2 h-full w-1 bg-gradient-to-b from-purple-300 via-purple-500 to-purple-300 rounded-full transform -translate-x-1/2"></div>
-            
-            <div className="space-y-12 relative">
-              {/* Step 1 */}
-              <Transition animation="fade-up" delay="delay-100">
-                <div className="flex flex-col md:flex-row items-center">
-                  <div className="md:w-1/2 md:pr-16 mb-8 md:mb-0 text-right">
-                    <div className="inline-flex mb-3 text-sm font-semibold text-purple-700 items-center">
-                      <Lightbulb className="h-4 w-4 mr-1" />
-                      STEP 1
-                    </div>
-                    <h3 className="text-2xl font-bold mb-3">Profile Setup</h3>
-                    <p className="text-gray-600">
-                      Create a detailed profile with verified credentials, areas of expertise, 
-                      availability, and a short video introduction to showcase your approach to care.
-                    </p>
-                  </div>
-                  <div className="md:w-16 relative">
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 md:static md:transform-none">
-                      <div className="relative">
-                        <div className="absolute -inset-3 rounded-full bg-purple-200 opacity-50 animate-pulse"></div>
-                        <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center text-white font-bold text-xl z-10 shadow-lg">
-                          1
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="md:w-1/2 md:pl-16 hidden md:block">
-                    {/* Placeholder for right side on larger screens */}
-                  </div>
-                </div>
-              </Transition>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
-  );
-};
-
-export default Nurse;
