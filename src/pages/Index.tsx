@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import NurseHeader from '../components/navigation/NurseHeader';
+import Header from '../components/navigation/Header';
 import Hero from '../components/home/Hero';
 import Features from '../components/home/Features';
 import HowItWorks from '../components/home/HowItWorks';
@@ -16,7 +16,7 @@ const Index: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <NurseHeader />
+      <Header />
       <main className="flex-grow">
         <Hero />
         <Features />

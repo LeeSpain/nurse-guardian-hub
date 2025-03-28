@@ -33,7 +33,7 @@ const Nurse: React.FC = () => {
   return (
     <>
       {/* Hero Section with Modern Design - Moved up to match main homepage */}
-      <section className="relative pt-20 pb-20 overflow-hidden bg-gradient-to-r from-purple-50 via-white to-purple-50">
+      <section className="relative pt-0 pb-20 overflow-hidden bg-gradient-to-r from-purple-50 via-white to-purple-50">
         {/* Layered Background */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-50 via-white to-purple-50"></div>
         <div className="absolute top-0 right-0 w-full h-full overflow-hidden opacity-20">

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
@@ -8,6 +9,7 @@ import Nurse from './pages/Nurse';
 import NurseFeatures from './pages/NurseFeatures';
 import NursePricing from './pages/NursePricing';
 import ClientLayout from './layouts/ClientLayout';
+import NurseLayout from './layouts/NurseLayout';
 import Client from './pages/Client';
 import ClientPricing from './pages/ClientPricing';
 import NotFound from './pages/NotFound';
@@ -19,9 +21,11 @@ function App() {
         <Route path="/" element={<Index />} />
         
         {/* Nurse Routes */}
-        <Route path="/nurse" element={<Nurse />} />
-        <Route path="/nurse/features" element={<NurseFeatures />} />
-        <Route path="/nurse/pricing" element={<NursePricing />} />
+        <Route path="/nurse" element={<NurseLayout />}>
+          <Route index element={<Nurse />} />
+          <Route path="features" element={<NurseFeatures />} />
+          <Route path="pricing" element={<NursePricing />} />
+        </Route>
         
         {/* Client Routes */}
         <Route path="/client" element={<ClientLayout />}>
