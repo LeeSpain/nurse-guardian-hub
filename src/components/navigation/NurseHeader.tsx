@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Search } from 'lucide-react';
+import { Menu, X, User, Search, Calendar, FileText, MessageSquare, Video, CreditCard, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
 import Button from '../ui-components/Button';
@@ -23,7 +23,7 @@ const NurseHeader: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0">
+            <Link to="/nurse" className="flex-shrink-0">
               <Logo />
             </Link>
             <div className="ml-3 rounded-full bg-purple-100 text-purple-700 px-3 py-1 text-xs font-medium">
@@ -36,46 +36,51 @@ const NurseHeader: React.FC = () => {
             <Link 
               to="/nurse"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200",
+                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
                 isActivePath('/nurse') && "text-purple-700"
               )}
             >
+              <FileText size={18} className="mr-1" />
               Home
             </Link>
             <Link 
               to="/nurse/features"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200",
+                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
                 isActivePath('/nurse/features') && "text-purple-700"
               )}
             >
+              <Shield size={18} className="mr-1" />
               Features
             </Link>
             <Link 
               to="/nurse/pricing"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200",
+                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
                 isActivePath('/nurse/pricing') && "text-purple-700"
               )}
             >
+              <CreditCard size={18} className="mr-1" />
               Pricing
             </Link>
             <Link 
               to="/nurse/testimonials"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200",
+                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
                 isActivePath('/nurse/testimonials') && "text-purple-700"
               )}
             >
+              <MessageSquare size={18} className="mr-1" />
               Testimonials
             </Link>
             <Link 
               to="/nurse/support"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200",
+                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
                 isActivePath('/nurse/support') && "text-purple-700"
               )}
             >
+              <Calendar size={18} className="mr-1" />
               Support
             </Link>
           </nav>
@@ -134,51 +139,56 @@ const NurseHeader: React.FC = () => {
             <Link
               to="/nurse"
               className={cn(
-                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
                 isActivePath('/nurse') && "text-purple-700"
               )}
               onClick={() => setIsMenuOpen(false)}
             >
+              <FileText size={20} className="mr-2" />
               Home
             </Link>
             <Link
               to="/nurse/features"
               className={cn(
-                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
                 isActivePath('/nurse/features') && "text-purple-700"
               )}
               onClick={() => setIsMenuOpen(false)}
             >
+              <Shield size={20} className="mr-2" />
               Features
             </Link>
             <Link
               to="/nurse/pricing"
               className={cn(
-                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
                 isActivePath('/nurse/pricing') && "text-purple-700"
               )}
               onClick={() => setIsMenuOpen(false)}
             >
+              <CreditCard size={20} className="mr-2" />
               Pricing
             </Link>
             <Link
               to="/nurse/testimonials"
               className={cn(
-                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
                 isActivePath('/nurse/testimonials') && "text-purple-700"
               )}
               onClick={() => setIsMenuOpen(false)}
             >
+              <MessageSquare size={20} className="mr-2" />
               Testimonials
             </Link>
             <Link
               to="/nurse/support"
               className={cn(
-                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
                 isActivePath('/nurse/support') && "text-purple-700"
               )}
               onClick={() => setIsMenuOpen(false)}
             >
+              <Calendar size={20} className="mr-2" />
               Support
             </Link>
             

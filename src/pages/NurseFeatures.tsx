@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import Transition from '../components/ui-components/Transition';
 import { 
@@ -10,9 +11,16 @@ import {
   LineChart, 
   Shield, 
   Clipboard, 
-  Bot 
+  Bot,
+  Headphones,
+  BookOpen,
+  CheckCircle,
+  Smartphone,
+  PieChart
 } from 'lucide-react';
 import Button from '../components/ui-components/Button';
+import { Link } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const NurseFeatures: React.FC = () => {
   // Scroll to top when component mounts
@@ -22,33 +30,27 @@ const NurseFeatures: React.FC = () => {
 
   const features = [
     {
-      title: "Client Management",
-      description: "Organize and track all your remote clients in one intuitive interface. Filter and sort by care needs, recent activity, or custom tags.",
-      icon: <Users className="h-10 w-10 text-purple-600" />,
-      image: "/placeholder.svg"
-    },
-    {
       title: "AI Documentation Assistant",
-      description: "Create legally-compliant care notes and plans with our AI assistant that helps draft comprehensive documentation while you focus on care.",
+      description: "Create legally-compliant care notes and plans with our AI assistant that helps draft comprehensive documentation through voice-to-text transcription.",
       icon: <Bot className="h-10 w-10 text-purple-600" />,
       image: "/placeholder.svg"
     },
     {
-      title: "Treatment Planning",
-      description: "Build custom care plans with templates and AI suggestions based on best practices for different conditions and client needs.",
-      icon: <Clipboard className="h-10 w-10 text-purple-600" />,
+      title: "Client Management",
+      description: "Organize and track all your remote clients in one intuitive interface with our AI-powered smart matching system.",
+      icon: <Users className="h-10 w-10 text-purple-600" />,
       image: "/placeholder.svg"
     },
     {
-      title: "Video Consultations",
+      title: "Intelligent Scheduling",
+      description: "Manage your calendar with intelligent scheduling tools that optimize your time and reduce no-shows.",
+      icon: <Calendar className="h-10 w-10 text-purple-600" />,
+      image: "/placeholder.svg"
+    },
+    {
+      title: "HD Video Consultations",
       description: "Conduct secure, HIPAA-compliant video consultations with your clients. Record sessions (with permission) for later review.",
       icon: <Video className="h-10 w-10 text-purple-600" />,
-      image: "/placeholder.svg"
-    },
-    {
-      title: "Smart Scheduling",
-      description: "Manage your calendar with intelligent scheduling tools that optimize your time and reduce gaps between appointments.",
-      icon: <Calendar className="h-10 w-10 text-purple-600" />,
       image: "/placeholder.svg"
     },
     {
@@ -70,10 +72,49 @@ const NurseFeatures: React.FC = () => {
       image: "/placeholder.svg"
     },
     {
+      title: "Mobile App Access",
+      description: "Access all features on the go with our dedicated mobile app for managing your remote nursing practice from anywhere.",
+      icon: <Smartphone className="h-10 w-10 text-purple-600" />,
+      image: "/placeholder.svg"
+    },
+    {
       title: "Compliance & Security",
       description: "Rest easy knowing your practice meets all regulatory requirements with our built-in compliance features and enterprise-grade security.",
       icon: <Shield className="h-10 w-10 text-purple-600" />,
       image: "/placeholder.svg"
+    }
+  ];
+
+  const connectionProcess = [
+    {
+      title: "Profile Setup",
+      description: "Create a detailed profile including verified credentials, areas of expertise, availability, and a short bio or video introduction.",
+      icon: <FileText className="h-16 w-16 text-purple-600" />
+    },
+    {
+      title: "Smart Matching",
+      description: "Our AI matches you with care seekers based on your expertise, availability, and their specific needs.",
+      icon: <CheckCircle className="h-16 w-16 text-purple-600" />
+    },
+    {
+      title: "Free Intro Calls",
+      description: "Connect with potential clients through free, 15-minute introductory video calls to discuss needs and assess fit.",
+      icon: <Headphones className="h-16 w-16 text-purple-600" />
+    },
+    {
+      title: "Care Seeker Commitment",
+      description: "After the call, care seekers confirm their choice via a legally binding agreement, committing to pay for ongoing services.",
+      icon: <BookOpen className="h-16 w-16 text-purple-600" />
+    },
+    {
+      title: "Active Outreach",
+      description: "On paid plans, browse anonymized care seeker needs and send introductory messages to pitch your services.",
+      icon: <Users className="h-16 w-16 text-purple-600" />
+    },
+    {
+      title: "Ongoing Management",
+      description: "Manage all your clients via a comprehensive dashboard with tools tailored to your subscription plan.",
+      icon: <PieChart className="h-16 w-16 text-purple-600" />
     }
   ];
 
@@ -94,16 +135,25 @@ const NurseFeatures: React.FC = () => {
                   Advanced Tools for Remote Care Providers
                 </h1>
                 <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                  NurseSync provides everything you need to deliver exceptional care remotely while growing your practice.
+                  Nurse-Sync empowers professional nurses to deliver remote healthcare and manage their practice efficiently, leveraging cutting-edge technology to enhance their workflow and income potential.
                 </p>
               </div>
             </Transition>
           </div>
         </section>
 
-        {/* Main Features */}
-        <section className="py-16 md:py-24 relative overflow-hidden">
+        {/* Value Proposition */}
+        <section className="py-16 md:py-24 bg-white">
           <div className="container mx-auto px-4">
+            <Transition animation="fade-up">
+              <div className="max-w-3xl mx-auto text-center mb-16">
+                <h2 className="text-3xl font-bold mb-6">Why Choose Nurse-Sync</h2>
+                <p className="text-lg text-gray-600">
+                  Designed specifically for nurses, our platform offers AI-powered tools like voice-to-text documentation, intelligent scheduling, and invoicing, alongside a secure, HIPAA-compliant telehealth system for video consultations.
+                </p>
+              </div>
+            </Transition>
+            
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-8">
               {features.map((feature, index) => (
                 <Transition 
@@ -122,6 +172,44 @@ const NurseFeatures: React.FC = () => {
                   </div>
                 </Transition>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Connection Process */}
+        <section className="py-16 md:py-24 bg-gradient-to-r from-purple-50 to-gray-50">
+          <div className="container mx-auto px-4">
+            <Transition animation="fade-up">
+              <div className="max-w-3xl mx-auto text-center mb-16">
+                <h2 className="text-3xl font-bold mb-6">How Nurses Connect with Care Seekers</h2>
+                <p className="text-lg text-gray-600">
+                  Nurse-Sync helps you find and serve care seekers through a structured process that balances passive discovery with active outreach, ensuring you can build your client base effectively.
+                </p>
+              </div>
+            </Transition>
+            
+            <div className="max-w-6xl mx-auto">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {connectionProcess.map((step, index) => (
+                  <Transition 
+                    key={step.title} 
+                    animation="fade-up" 
+                    delay={`delay-${(index % 3) * 100 + 100}` as any}
+                  >
+                    <Card className="bg-white h-full border-purple-100 hover:shadow-md transition-shadow">
+                      <CardHeader className="text-center pb-2">
+                        <div className="mx-auto mb-4">
+                          {step.icon}
+                        </div>
+                        <CardTitle className="text-xl">{step.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-600 text-center">{step.description}</p>
+                      </CardContent>
+                    </Card>
+                  </Transition>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -146,7 +234,7 @@ const NurseFeatures: React.FC = () => {
                             <FileText size={12} className="text-white" />
                           </div>
                         </div>
-                        <span className="opacity-90">Creates structured documentation based on your input</span>
+                        <span className="opacity-90">Voice-to-text transcription for quick and accurate note taking</span>
                       </li>
                       <li className="flex items-start">
                         <div className="flex-shrink-0 mr-2 mt-1">
@@ -154,7 +242,7 @@ const NurseFeatures: React.FC = () => {
                             <FileText size={12} className="text-white" />
                           </div>
                         </div>
-                        <span className="opacity-90">Suggests appropriate medical terminology and codes</span>
+                        <span className="opacity-90">Smart templates for common documentation needs</span>
                       </li>
                       <li className="flex items-start">
                         <div className="flex-shrink-0 mr-2 mt-1">
@@ -162,14 +250,16 @@ const NurseFeatures: React.FC = () => {
                             <FileText size={12} className="text-white" />
                           </div>
                         </div>
-                        <span className="opacity-90">Ensures all documentation is compliant with healthcare regulations</span>
+                        <span className="opacity-90">Advanced compliance checking to ensure all documentation meets regulatory standards</span>
                       </li>
                     </ul>
                     <Button 
                       variant="secondary"
                       className="bg-white text-purple-700 hover:bg-gray-100"
+                      as={Link}
+                      to="/nurse/pricing"
                     >
-                      Learn More
+                      View Pricing Plans
                     </Button>
                   </div>
                 </Transition>
@@ -191,15 +281,17 @@ const NurseFeatures: React.FC = () => {
               <Transition animation="fade-up">
                 <h2 className="text-2xl md:text-4xl font-bold mb-6">Ready to transform your remote practice?</h2>
                 <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-                  Join thousands of healthcare professionals who are delivering exceptional care remotely with NurseSync.
+                  Join thousands of healthcare professionals who are delivering exceptional care remotely with Nurse-Sync. Start with our Free Plan and upgrade as your practice grows.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                   <Button
                     variant="primary"
                     size="lg"
                     className="bg-purple-600 text-white"
+                    as={Link}
+                    to="/nurse/pricing"
                   >
-                    Start Your Free Trial
+                    View Pricing Plans
                   </Button>
                   <Button
                     variant="outline"
