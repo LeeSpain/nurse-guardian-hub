@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -178,7 +177,7 @@ const Nurse: React.FC = () => {
         </div>
       </section>
 
-      {/* Feature Showcase - Redesigned */}
+      {/* Feature Showcase - Redesigned with Fixed Hover */}
       <section className="py-20 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIGZpbGw9InJnYmEoMTI4LDkwLDIxMywwLjA1KSIvPjwvZz48L3N2Zz4=')] opacity-50"></div>
         
@@ -195,94 +194,109 @@ const Nurse: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Feature 1 - AI Documentation */}
             <Transition animation="fade-up" delay="delay-100">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-500"></div>
-                <Card className="relative h-full border-purple-100 overflow-hidden group-hover:border-transparent transition-all duration-300 hover:shadow-xl z-10">
-                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-                  <CardContent className="p-6">
-                    <div className="mb-5 flex items-center">
-                      <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors duration-300">
-                        <Bot className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300">AI Documentation Assistant</h3>
+              <div className="group bg-gradient-to-br from-purple-50 to-white border border-purple-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="p-6 relative">
+                  {/* Purple top border that animates on hover */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                  
+                  <div className="mb-5 flex items-center">
+                    <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-purple-600 transition-colors duration-300">
+                      <Bot className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
                     </div>
-                    <p className="text-gray-600 group-hover:text-white/90 transition-colors duration-300">
-                      Create legally-compliant care notes with our AI that helps draft comprehensive documentation through voice-to-text transcription.
-                    </p>
-                    <div className="mt-5 space-y-2">
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">Voice-to-text transcription</span>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">AI Documentation Assistant</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+                    Create legally-compliant care notes with our AI that helps draft comprehensive documentation through voice-to-text transcription.
+                  </p>
+                  
+                  <div className="mt-5 space-y-2">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
                       </div>
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">Smart templates</span>
-                      </div>
+                      <span className="text-gray-700">Voice-to-text transcription</span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <span className="text-gray-700">Smart templates</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </Transition>
             
             {/* Feature 2 - Client Management */}
             <Transition animation="fade-up" delay="delay-200">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-500"></div>
-                <Card className="relative h-full border-purple-100 overflow-hidden group-hover:border-transparent transition-all duration-300 hover:shadow-xl z-10">
-                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-                  <CardContent className="p-6">
-                    <div className="mb-5 flex items-center">
-                      <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors duration-300">
-                        <Users className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300">Client Management</h3>
+              <div className="group bg-gradient-to-br from-purple-50 to-white border border-purple-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="p-6 relative">
+                  {/* Purple top border that animates on hover */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                  
+                  <div className="mb-5 flex items-center">
+                    <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-purple-600 transition-colors duration-300">
+                      <Users className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
                     </div>
-                    <p className="text-gray-600 group-hover:text-white/90 transition-colors duration-300">
-                      Organize and track all your remote clients with our AI-powered smart matching system for a perfect fit.
-                    </p>
-                    <div className="mt-5 space-y-2">
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">Smart matching system</span>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">Client Management</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+                    Organize and track all your remote clients with our AI-powered smart matching system for a perfect fit.
+                  </p>
+                  
+                  <div className="mt-5 space-y-2">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
                       </div>
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">Session tracking</span>
-                      </div>
+                      <span className="text-gray-700">Smart matching system</span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <span className="text-gray-700">Session tracking</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </Transition>
             
             {/* Feature 3 - Scheduling */}
             <Transition animation="fade-up" delay="delay-300">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-500"></div>
-                <Card className="relative h-full border-purple-100 overflow-hidden group-hover:border-transparent transition-all duration-300 hover:shadow-xl z-10">
-                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-                  <CardContent className="p-6">
-                    <div className="mb-5 flex items-center">
-                      <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors duration-300">
-                        <Calendar className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300">Intelligent Scheduling</h3>
+              <div className="group bg-gradient-to-br from-purple-50 to-white border border-purple-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="p-6 relative">
+                  {/* Purple top border that animates on hover */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                  
+                  <div className="mb-5 flex items-center">
+                    <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-purple-600 transition-colors duration-300">
+                      <Calendar className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
                     </div>
-                    <p className="text-gray-600 group-hover:text-white/90 transition-colors duration-300">
-                      Manage your calendar with intelligent scheduling tools that optimize your time and reduce no-shows.
-                    </p>
-                    <div className="mt-5 space-y-2">
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">Automated reminders</span>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">Intelligent Scheduling</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+                    Manage your calendar with intelligent scheduling tools that optimize your time and reduce no-shows.
+                  </p>
+                  
+                  <div className="mt-5 space-y-2">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
                       </div>
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">No-show reduction</span>
-                      </div>
+                      <span className="text-gray-700">Automated reminders</span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <span className="text-gray-700">No-show reduction</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </Transition>
           </div>
@@ -290,94 +304,109 @@ const Nurse: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-8 mt-8">
             {/* Feature 4 - HD Video */}
             <Transition animation="fade-up" delay="delay-400">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-500"></div>
-                <Card className="relative h-full border-purple-100 overflow-hidden group-hover:border-transparent transition-all duration-300 hover:shadow-xl z-10">
-                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-                  <CardContent className="p-6">
-                    <div className="mb-5 flex items-center">
-                      <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors duration-300">
-                        <Video className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300">HD Video Consultations</h3>
+              <div className="group bg-gradient-to-br from-purple-50 to-white border border-purple-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="p-6 relative">
+                  {/* Purple top border that animates on hover */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                  
+                  <div className="mb-5 flex items-center">
+                    <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-purple-600 transition-colors duration-300">
+                      <Video className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
                     </div>
-                    <p className="text-gray-600 group-hover:text-white/90 transition-colors duration-300">
-                      Conduct secure, HIPAA-compliant video consultations with recording capabilities (with client consent).
-                    </p>
-                    <div className="mt-5 space-y-2">
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">HIPAA-compliant video</span>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">HD Video Consultations</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+                    Conduct secure, HIPAA-compliant video consultations with recording capabilities (with client consent).
+                  </p>
+                  
+                  <div className="mt-5 space-y-2">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
                       </div>
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">Screen sharing</span>
-                      </div>
+                      <span className="text-gray-700">HIPAA-compliant video</span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <span className="text-gray-700">Screen sharing</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </Transition>
             
             {/* Feature 5 - Messaging */}
             <Transition animation="fade-up" delay="delay-500">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-500"></div>
-                <Card className="relative h-full border-purple-100 overflow-hidden group-hover:border-transparent transition-all duration-300 hover:shadow-xl z-10">
-                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-                  <CardContent className="p-6">
-                    <div className="mb-5 flex items-center">
-                      <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors duration-300">
-                        <MessageSquare className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300">Secure Messaging</h3>
+              <div className="group bg-gradient-to-br from-purple-50 to-white border border-purple-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="p-6 relative">
+                  {/* Purple top border that animates on hover */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                  
+                  <div className="mb-5 flex items-center">
+                    <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-purple-600 transition-colors duration-300">
+                      <MessageSquare className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
                     </div>
-                    <p className="text-gray-600 group-hover:text-white/90 transition-colors duration-300">
-                      Communicate through our encrypted messaging system with read receipts and priority flags.
-                    </p>
-                    <div className="mt-5 space-y-2">
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">End-to-end encryption</span>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">Secure Messaging</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+                    Communicate through our encrypted messaging system with read receipts and priority flags.
+                  </p>
+                  
+                  <div className="mt-5 space-y-2">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
                       </div>
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">Priority flags</span>
-                      </div>
+                      <span className="text-gray-700">End-to-end encryption</span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <span className="text-gray-700">Priority flags</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </Transition>
             
             {/* Feature 6 - Billing */}
             <Transition animation="fade-up" delay="delay-500">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-500"></div>
-                <Card className="relative h-full border-purple-100 overflow-hidden group-hover:border-transparent transition-all duration-300 hover:shadow-xl z-10">
-                  <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-                  <CardContent className="p-6">
-                    <div className="mb-5 flex items-center">
-                      <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors duration-300">
-                        <CreditCard className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300">Integrated Billing</h3>
+              <div className="group bg-gradient-to-br from-purple-50 to-white border border-purple-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="p-6 relative">
+                  {/* Purple top border that animates on hover */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                  
+                  <div className="mb-5 flex items-center">
+                    <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 group-hover:bg-purple-600 transition-colors duration-300">
+                      <CreditCard className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
                     </div>
-                    <p className="text-gray-600 group-hover:text-white/90 transition-colors duration-300">
-                      Generate invoices, track payments, and automate reporting with our intuitive financial tools.
-                    </p>
-                    <div className="mt-5 space-y-2">
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">Custom invoicing</span>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">Integrated Billing</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+                    Generate invoices, track payments, and automate reporting with our intuitive financial tools.
+                  </p>
+                  
+                  <div className="mt-5 space-y-2">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
                       </div>
-                      <div className="flex items-start">
-                        <Check className="h-5 w-5 text-purple-600 mr-2 flex-shrink-0 mt-0.5 group-hover:text-purple-200 transition-colors duration-300" />
-                        <span className="text-gray-700 group-hover:text-white/90 transition-colors duration-300">Payment tracking</span>
-                      </div>
+                      <span className="text-gray-700">Custom invoicing</span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5 mr-3 group-hover:bg-purple-200 transition-colors duration-300">
+                        <Check className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <span className="text-gray-700">Payment tracking</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </Transition>
           </div>
@@ -457,159 +486,4 @@ const Nurse: React.FC = () => {
                         <Check className="h-4 w-4 text-green-600" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-800">Your Brand</h4>
-                        <p className="text-gray-600 text-sm">Build your personal brand with customizable profiles</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Transition>
-            
-            {/* Path 2: Matched Connections */}
-            <Transition animation="slide-in-right">
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-purple-100">
-                <div className="h-8 bg-gradient-to-r from-purple-600 to-purple-800"></div>
-                <div className="p-8">
-                  <div className="flex items-center mb-6">
-                    <div className="h-14 w-14 rounded-xl bg-purple-100 flex items-center justify-center mr-4">
-                      <Users className="h-8 w-8 text-purple-600" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900">Matched Connections</h3>
-                  </div>
-                  
-                  <p className="text-gray-600 mb-6">
-                    Let our AI matching system connect you with clients who need your specific expertise, creating reliable income without the business overhead.
-                  </p>
-                  
-                  <div className="space-y-4 mb-8">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
-                        <Check className="h-4 w-4 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Steady Client Flow</h4>
-                        <p className="text-gray-600 text-sm">Receive matched clients based on your expertise</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
-                        <Check className="h-4 w-4 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Reduced Admin</h4>
-                        <p className="text-gray-600 text-sm">We handle payments, marketing, and client acquisition</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
-                        <Check className="h-4 w-4 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Commission Model</h4>
-                        <p className="text-gray-600 text-sm">Simple percentage-based fees on completed sessions</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Transition>
-          </div>
-          
-          <div className="text-center mt-12">
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="border-purple-300 text-purple-700 hover:bg-purple-50"
-              to="/nurse/pricing"
-            >
-              Compare Career Path Options
-              <ArrowRight size={18} className="ml-2" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-purple-800 to-purple-900 text-white">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <Transition animation="fade-up">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Practice?</h2>
-                <p className="text-xl opacity-90 mb-8">
-                  Join thousands of healthcare professionals already delivering exceptional remote care with our platform.
-                </p>
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-700 flex items-center justify-center mt-1 mr-3">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="text-white opacity-90">Free 14-day trial with all features</div>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-700 flex items-center justify-center mt-1 mr-3">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="text-white opacity-90">No credit card required to start</div>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-700 flex items-center justify-center mt-1 mr-3">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="text-white opacity-90">Cancel anytime, no questions asked</div>
-                  </div>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button 
-                    variant="primary" 
-                    size="lg" 
-                    className="bg-white text-purple-700 hover:bg-gray-100 shadow-xl"
-                    to="/login"
-                  >
-                    Start Free Trial
-                    <ArrowRight size={18} className="ml-2" />
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="border-white/30 text-white hover:bg-purple-700"
-                    to="/demo"
-                  >
-                    Schedule a Demo
-                  </Button>
-                </div>
-              </div>
-            </Transition>
-            
-            <Transition animation="fade-in" delay="delay-200">
-              <div className="bg-purple-700/30 p-8 rounded-2xl backdrop-blur-sm">
-                <div className="flex items-center mb-6">
-                  <Star className="h-10 w-10 text-yellow-400 mr-2" />
-                  <h3 className="text-2xl font-bold">What Our Users Say</h3>
-                </div>
-                <blockquote className="mb-6 relative">
-                  <div className="absolute -top-2 -left-2 text-5xl text-purple-500/30">"</div>
-                  <p className="relative z-10 text-white/90 italic">
-                    Nurse-Sync has revolutionized my practice. I've doubled my client base while cutting admin time in half. The AI documentation assistant alone is worth the subscription.
-                  </p>
-                </blockquote>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold mr-4">JD</div>
-                  <div>
-                    <div className="font-semibold">Jennifer D.</div>
-                    <div className="text-white/70 text-sm">Nurse Practitioner, Chicago</div>
-                  </div>
-                </div>
-              </div>
-            </Transition>
-          </div>
-        </div>
-      </section>
-    </>
-  );
-};
-
-export default Nurse;
+                        <h4 className="font
