@@ -24,7 +24,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
   };
   
   const hoverClasses = hover 
-    ? 'hover:shadow-xl hover:translate-y-[-2px] hover:border-opacity-50 hover:border-client/30 hover:shadow-client/5' 
+    ? 'hover:shadow-xl hover:translate-y-[-2px] hover:border-opacity-50 hover:bg-white/100' 
     : '';
   
   return (

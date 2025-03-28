@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';  // Add this import
+import { Link } from 'react-router-dom';
 import GlassCard from '../ui-components/GlassCard';
 import Transition from '../ui-components/Transition';
 import { Shield, Calendar, FileText, CreditCard, Video, Users, Activity, PhoneCall, Check, ArrowRight } from 'lucide-react';
@@ -77,8 +77,7 @@ const Features: React.FC = () => {
           <Transition animation="slide-in-left">
             <div className="relative rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full">
               {/* Gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-700 to-purple-500"></div>
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTAwIDEwMEgwVjBoMTAweiIvPjxwYXRoIGQ9Ik01MC41IDc1LjVjMTQgMCAyNS0xMS4wMSAyNS0yNXMtMTEtMjUtMjUtMjUtMjUgMTEuMDEtMjUgMjUgMTEuMDEgMjUgMjUgMjV6IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48L2c+PC9zdmc+')] opacity-20"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-700 to-purple-600"></div>
               
               {/* Content container */}
               <div className="relative p-8 md:p-10 h-full">
@@ -87,24 +86,24 @@ const Features: React.FC = () => {
                     <Shield className="h-8 w-8 text-white" />
                   </div>
                   <div className="ml-4">
-                    <div className="text-white/80 text-sm font-medium mb-1">For Healthcare Professionals</div>
+                    <div className="text-white/90 text-sm font-medium mb-1">For Healthcare Professionals</div>
                     <h3 className="text-2xl md:text-3xl font-bold text-white">Nurse-Sync AI Assistant</h3>
                   </div>
                 </div>
                 
-                <p className="text-white/90 text-lg mb-8 border-l-4 border-white/30 pl-4 italic">
+                <p className="text-white text-lg mb-8 border-l-4 border-white/30 pl-4 italic font-medium">
                   An intelligent toolkit designed to streamline your remote healthcare practice
                 </p>
                 
-                <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                <div className="grid sm:grid-cols-2 gap-6 mb-8">
                   {nurseFeatures.map((feature, index) => (
                     <Transition key={feature.title} animation="fade-up" delay={`delay-${(index + 1) * 100}` as any}>
-                      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/20 transition-all duration-300 h-full group">
-                        <div className="bg-purple-600/80 w-12 h-12 rounded-lg flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl group-hover:bg-purple-500 transition-all duration-300">
+                      <div className="bg-white/15 backdrop-blur-sm rounded-xl p-5 border border-white/25 hover:bg-white/25 transition-all duration-300 h-full group">
+                        <div className="bg-purple-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl group-hover:bg-purple-500 transition-all duration-300">
                           {feature.icon}
                         </div>
-                        <h4 className="text-lg font-semibold mb-2 text-white group-hover:text-white/90 transition-colors">{feature.title}</h4>
-                        <p className="text-white/80 group-hover:text-white/100 transition-colors">{feature.description}</p>
+                        <h4 className="text-xl font-bold mb-2 text-white group-hover:text-white/90 transition-colors">{feature.title}</h4>
+                        <p className="text-white/85 group-hover:text-white font-medium leading-relaxed transition-colors">{feature.description}</p>
                       </div>
                     </Transition>
                   ))}
@@ -112,10 +111,10 @@ const Features: React.FC = () => {
                 
                 <Link 
                   to="/features/nurse" 
-                  className="inline-flex items-center mt-2 py-3 px-6 rounded-full bg-white/20 text-white font-medium backdrop-blur-sm border border-white/10 hover:bg-white/30 transition-all duration-300"
+                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-purple-700 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   Explore Provider Features
-                  <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
@@ -125,8 +124,7 @@ const Features: React.FC = () => {
           <Transition animation="slide-in-right">
             <div className="relative rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full">
               {/* Gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-client to-client/80"></div>
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTAwIDEwMEgwVjBoMTAweiIvPjxwYXRoIGQ9Ik01MC41IDc1LjVjMTQgMCAyNS0xMS4wMSAyNS0yNXMtMTEtMjUtMjUtMjUtMjUgMTEuMDEtMjUgMjUgMTEuMDEgMjUgMjUgMjV6IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48L2c+PC9zdmc+')] opacity-20"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-client to-client/90"></div>
               
               {/* Content container */}
               <div className="relative p-8 md:p-10 h-full">
@@ -135,24 +133,24 @@ const Features: React.FC = () => {
                     <Users className="h-8 w-8 text-white" />
                   </div>
                   <div className="ml-4">
-                    <div className="text-white/80 text-sm font-medium mb-1">For Care Recipients & Families</div>
+                    <div className="text-white/90 text-sm font-medium mb-1">For Care Recipients & Families</div>
                     <h3 className="text-2xl md:text-3xl font-bold text-white">AI Guardian</h3>
                   </div>
                 </div>
                 
-                <p className="text-white/90 text-lg mb-8 border-l-4 border-white/30 pl-4 italic">
+                <p className="text-white text-lg mb-8 border-l-4 border-white/30 pl-4 italic font-medium">
                   A comprehensive solution that brings care, coordination, and peace of mind together
                 </p>
                 
-                <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                <div className="grid sm:grid-cols-2 gap-6 mb-8">
                   {clientFeatures.map((feature, index) => (
                     <Transition key={feature.title} animation="fade-up" delay={`delay-${(index + 1) * 100}` as any}>
-                      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/20 transition-all duration-300 h-full group">
-                        <div className="bg-client-muted w-12 h-12 rounded-lg flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl group-hover:bg-client-muted/80 transition-all duration-300">
+                      <div className="bg-white/15 backdrop-blur-sm rounded-xl p-5 border border-white/25 hover:bg-white/25 transition-all duration-300 h-full group">
+                        <div className="bg-teal-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl group-hover:bg-teal-500 transition-all duration-300">
                           {feature.icon}
                         </div>
-                        <h4 className="text-lg font-semibold mb-2 text-white group-hover:text-white/90 transition-colors">{feature.title}</h4>
-                        <p className="text-white/80 group-hover:text-white/100 transition-colors">{feature.description}</p>
+                        <h4 className="text-xl font-bold mb-2 text-white group-hover:text-white/90 transition-colors">{feature.title}</h4>
+                        <p className="text-white/85 group-hover:text-white font-medium leading-relaxed transition-colors">{feature.description}</p>
                       </div>
                     </Transition>
                   ))}
@@ -160,10 +158,10 @@ const Features: React.FC = () => {
                 
                 <Link 
                   to="/features/client" 
-                  className="inline-flex items-center mt-2 py-3 px-6 rounded-full bg-white/20 text-white font-medium backdrop-blur-sm border border-white/10 hover:bg-white/30 transition-all duration-300"
+                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-teal-600 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   Explore Client Features
-                  <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
