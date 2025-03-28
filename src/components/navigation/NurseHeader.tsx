@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, CreditCard, MessageSquare, Calendar, Shield } from 'lucide-react';
+import { Menu, X, User, CreditCard, MessageSquare, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
 import Button from '../ui-components/Button';
@@ -60,7 +60,7 @@ const NurseHeader: React.FC = () => {
                 isActivePath('/nurse/support') && "text-purple-700 font-semibold"
               )}
             >
-              <Calendar size={18} className="mr-1" />
+              <Shield size={18} className="mr-1" />
               Support
             </Link>
           </nav>
@@ -139,7 +139,7 @@ const NurseHeader: React.FC = () => {
               )}
               onClick={() => setIsMenuOpen(false)}
             >
-              <Calendar size={20} className="mr-2" />
+              <Shield size={20} className="mr-2" />
               Support
             </Link>
             

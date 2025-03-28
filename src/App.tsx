@@ -10,7 +10,7 @@ import PricingPage from "./pages/Pricing";
 import FeaturesPage from "./pages/Features";
 import NursePricingPage from "./pages/NursePricing";
 import ClientPricingPage from "./pages/ClientPricing";
-import NurseFeatures from "./pages/NurseFeatures";
+import Nurse from "./pages/Nurse";
 import ClientFeatures from "./pages/ClientFeatures";
 import NurseLayout from "./layouts/NurseLayout";
 import ClientLayout from "./layouts/ClientLayout";
@@ -31,8 +31,7 @@ const App = () => (
           
           {/* Nurse specific routes */}
           <Route path="/nurse" element={<NurseLayout />}>
-            <Route index element={<NurseFeatures />} />
-            <Route path="features" element={<NurseFeatures />} />
+            <Route index element={<Nurse />} />
             <Route path="pricing" element={<NursePricingPage />} />
           </Route>
           
@@ -46,7 +45,7 @@ const App = () => (
           {/* Legacy direct routes (can be removed later) */}
           <Route path="/pricing/nurse" element={<NursePricingPage />} />
           <Route path="/pricing/client" element={<ClientPricingPage />} />
-          <Route path="/features/nurse" element={<NurseFeatures />} />
+          <Route path="/features/nurse" element={<Nurse />} />
           <Route path="/features/client" element={<ClientFeatures />} />
           
           {/* 404 route */}
