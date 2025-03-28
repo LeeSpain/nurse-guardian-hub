@@ -9,7 +9,6 @@ import NurseFeatures from './pages/NurseFeatures';
 import NursePricing from './pages/NursePricing';
 import ClientLayout from './layouts/ClientLayout';
 import Client from './pages/Client';
-import ClientFeatures from './pages/ClientFeatures';
 import ClientPricing from './pages/ClientPricing';
 import NotFound from './pages/NotFound';
 
@@ -28,7 +27,6 @@ function App() {
         <Route path="/client" element={<ClientLayout />}>
           <Route index element={<Navigate to="/client/home" replace />} />
           <Route path="home" element={<Client />} />
-          <Route path="features" element={<ClientFeatures />} />
           <Route path="pricing" element={<ClientPricing />} />
         </Route>
         

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, CreditCard, Shield, Home, Search, Star, LifeBuoy } from 'lucide-react';
+import { Menu, X, User, CreditCard, Home, Search, Star, LifeBuoy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
 import Button from '../ui-components/Button';
@@ -53,21 +53,11 @@ const ClientHeader: React.FC = () => {
               to="/client"
               className={cn(
                 "text-gray-600 hover:text-client px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center group",
-                isActivePath('/client') && !isActivePath('/client/features') && !isActivePath('/client/pricing') && !isActivePath('/client/testimonials') && !isActivePath('/client/support') && "text-client font-semibold"
+                isActivePath('/client') && !isActivePath('/client/pricing') && !isActivePath('/client/testimonials') && !isActivePath('/client/support') && "text-client font-semibold"
               )}
             >
               <Home size={18} className="mr-1.5 group-hover:text-client transition-colors" />
               Home
-            </Link>
-            <Link 
-              to="/client/features"
-              className={cn(
-                "text-gray-600 hover:text-client px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center group",
-                isActivePath('/client/features') && "text-client font-semibold"
-              )}
-            >
-              <Shield size={18} className="mr-1.5 group-hover:text-client transition-colors" />
-              Features
             </Link>
             <Link 
               to="/client/pricing"
@@ -158,24 +148,12 @@ const ClientHeader: React.FC = () => {
               to="/client"
               className={cn(
                 "block text-gray-600 hover:text-client px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
-                isActivePath('/client') && !isActivePath('/client/features') && !isActivePath('/client/pricing') && !isActivePath('/client/testimonials') && !isActivePath('/client/support') && "text-client"
+                isActivePath('/client') && !isActivePath('/client/pricing') && !isActivePath('/client/testimonials') && !isActivePath('/client/support') && "text-client"
               )}
               onClick={() => setIsMenuOpen(false)}
             >
               <Home size={20} className="mr-2" />
               Home
-            </Link>
-            
-            <Link
-              to="/client/features"
-              className={cn(
-                "block text-gray-600 hover:text-client px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
-                isActivePath('/client/features') && "text-client"
-              )}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Shield size={20} className="mr-2" />
-              Features
             </Link>
             <Link
               to="/client/pricing"
