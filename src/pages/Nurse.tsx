@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -453,3 +454,161 @@ const Nurse: React.FC = () => {
                     <div className="flex items-start">
                       <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
                         <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Your Brand</h4>
+                        <p className="text-gray-600 text-sm">Build your personal brand with customizable profiles</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+            
+            {/* Path 2: Matched Connections */}
+            <Transition animation="slide-in-right">
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-purple-100">
+                <div className="h-8 bg-gradient-to-r from-purple-600 to-purple-800"></div>
+                <div className="p-8">
+                  <div className="flex items-center mb-6">
+                    <div className="h-14 w-14 rounded-xl bg-purple-100 flex items-center justify-center mr-4">
+                      <Users className="h-8 w-8 text-purple-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900">Matched Connections</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6">
+                    Let our AI matching system connect you with clients who need your specific expertise, creating reliable income without the business overhead.
+                  </p>
+                  
+                  <div className="space-y-4 mb-8">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Steady Client Flow</h4>
+                        <p className="text-gray-600 text-sm">Receive matched clients based on your expertise</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Reduced Admin</h4>
+                        <p className="text-gray-600 text-sm">We handle payments, marketing, and client acquisition</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Commission Model</h4>
+                        <p className="text-gray-600 text-sm">Simple percentage-based fees on completed sessions</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+          </div>
+          
+          <div className="text-center mt-12">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="border-purple-300 text-purple-700 hover:bg-purple-50"
+              to="/nurse/pricing"
+            >
+              Compare Career Path Options
+              <ArrowRight size={18} className="ml-2" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-gradient-to-r from-purple-800 to-purple-900 text-white">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <Transition animation="fade-up">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Practice?</h2>
+                <p className="text-xl opacity-90 mb-8">
+                  Join thousands of healthcare professionals already delivering exceptional remote care with our platform.
+                </p>
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-700 flex items-center justify-center mt-1 mr-3">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="text-white opacity-90">Free 14-day trial with all features</div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-700 flex items-center justify-center mt-1 mr-3">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="text-white opacity-90">No credit card required to start</div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-700 flex items-center justify-center mt-1 mr-3">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="text-white opacity-90">Cancel anytime, no questions asked</div>
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button 
+                    variant="primary" 
+                    size="lg" 
+                    className="bg-white text-purple-700 hover:bg-gray-100 shadow-xl"
+                    to="/login"
+                  >
+                    Start Free Trial
+                    <ArrowRight size={18} className="ml-2" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="border-white/30 text-white hover:bg-purple-700"
+                    to="/demo"
+                  >
+                    Schedule a Demo
+                  </Button>
+                </div>
+              </div>
+            </Transition>
+            
+            <Transition animation="fade-in" delay="delay-200">
+              <div className="bg-purple-700/30 p-8 rounded-2xl backdrop-blur-sm">
+                <div className="flex items-center mb-6">
+                  <Star className="h-10 w-10 text-yellow-400 mr-2" />
+                  <h3 className="text-2xl font-bold">What Our Users Say</h3>
+                </div>
+                <blockquote className="mb-6 relative">
+                  <div className="absolute -top-2 -left-2 text-5xl text-purple-500/30">"</div>
+                  <p className="relative z-10 text-white/90 italic">
+                    Nurse-Sync has revolutionized my practice. I've doubled my client base while cutting admin time in half. The AI documentation assistant alone is worth the subscription.
+                  </p>
+                </blockquote>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold mr-4">JD</div>
+                  <div>
+                    <div className="font-semibold">Jennifer D.</div>
+                    <div className="text-white/70 text-sm">Nurse Practitioner, Chicago</div>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default Nurse;
