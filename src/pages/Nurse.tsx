@@ -346,8 +346,8 @@ const Nurse: React.FC = () => {
               </div>
             </Transition>
             
-            {/* Feature 6 - Billing */}
-            <Transition animation="fade-up" delay="delay-600">
+            {/* Feature 6 - Billing - Here we need to change delay-600 to delay-500 */}
+            <Transition animation="fade-up" delay="delay-500">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-500"></div>
                 <Card className="relative h-full border-purple-100 overflow-hidden group-hover:border-transparent transition-all duration-300 hover:shadow-xl z-10">
@@ -766,3 +766,4 @@ const Nurse: React.FC = () => {
 };
 
 export default Nurse;
+
