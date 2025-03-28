@@ -26,7 +26,7 @@ const Transition: React.FC<TransitionProps> = ({
 }) => {
   const baseClass = "transition-all";
   const animationClass = `animate-${animation}`;
-  const delayClass = delay ? `animate-${delay}` : '';
+  const delayClass = delay || '';
   
   return show ? (
     <div className={cn(baseClass, animationClass, delayClass, duration, className)}>
