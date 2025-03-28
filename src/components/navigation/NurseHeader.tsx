@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, CreditCard, Shield, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -8,7 +8,18 @@ import Button from '../ui-components/Button';
 
 const NurseHeader: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  
+  // Track scroll position for header styling
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   
@@ -19,14 +30,19 @@ const NurseHeader: React.FC = () => {
   };
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-purple-100 shadow-sm">
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-all duration-300",
+      scrolled 
+        ? "bg-white/95 shadow-md border-purple-200" 
+        : "bg-white/90 shadow-sm border-purple-100"
+    )}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0">
               <Logo />
             </Link>
-            <div className="ml-3 rounded-full bg-purple-100 text-purple-700 px-3 py-1 text-xs font-medium">
+            <div className="ml-3 rounded-full bg-gradient-to-r from-purple-100 to-purple-200 text-purple-700 px-3 py-1 text-xs font-medium shadow-sm">
               Healthcare Professional
             </div>
           </div>
@@ -34,39 +50,33 @@ const NurseHeader: React.FC = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link 
-              to="/"
-              className="text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center"
-            >
-              <Home size={18} className="mr-1" />
-              Home
-            </Link>
-            <Link 
               to="/nurse"
               className={cn(
-                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200",
-                isActivePath('/nurse') && "text-purple-700 font-semibold"
+                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center group",
+                isActivePath('/nurse') && !isActivePath('/nurse/pricing') && !isActivePath('/nurse/support') && "text-purple-700 font-semibold"
               )}
             >
-              Nurse Home
+              <Home size={18} className="mr-1.5 group-hover:text-purple-600 transition-colors" />
+              Home
             </Link>
             <Link 
               to="/nurse/pricing"
               className={cn(
-                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
+                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center group",
                 isActivePath('/nurse/pricing') && "text-purple-700 font-semibold"
               )}
             >
-              <CreditCard size={18} className="mr-1" />
+              <CreditCard size={18} className="mr-1.5 group-hover:text-purple-600 transition-colors" />
               Pricing
             </Link>
             <Link 
               to="/nurse/support"
               className={cn(
-                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
+                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center group",
                 isActivePath('/nurse/support') && "text-purple-700 font-semibold"
               )}
             >
-              <Shield size={18} className="mr-1" />
+              <Shield size={18} className="mr-1.5 group-hover:text-purple-600 transition-colors" />
               Support
             </Link>
           </nav>
@@ -75,7 +85,7 @@ const NurseHeader: React.FC = () => {
             <Button 
               variant="primary" 
               size="sm"
-              className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
+              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
               to="/login"
             >
               <User size={16} className="mr-2" />
@@ -87,8 +97,10 @@ const NurseHeader: React.FC = () => {
           <div className="flex md:hidden">
             <button
               type="button"
-              className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+              className="p-2 rounded-md text-gray-500 hover:text-purple-700 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors"
               onClick={toggleMenu}
+              aria-expanded={isMenuOpen}
+              aria-label="Toggle navigation menu"
             >
               <span className="sr-only">Open menu</span>
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -99,25 +111,29 @@ const NurseHeader: React.FC = () => {
       
       {/* Mobile menu */}
       <div className={cn(
-        "md:hidden fixed inset-0 z-40 bg-white/95 backdrop-blur-md transition-transform duration-300 ease-apple transform",
+        "md:hidden fixed inset-0 z-40 bg-white/98 backdrop-blur-md transition-transform duration-300 ease-apple transform",
         isMenuOpen ? "translate-x-0" : "translate-x-full"
       )}>
         <div className="relative h-full">
           <button
-            className="absolute top-6 right-6 p-2 rounded-full bg-gray-100 text-gray-400 hover:text-gray-500"
+            className="absolute top-6 right-6 p-2 rounded-full bg-purple-50 text-purple-600 hover:bg-purple-100 hover:text-purple-700 transition-colors"
             onClick={() => setIsMenuOpen(false)}
+            aria-label="Close menu"
           >
             <X size={24} />
           </button>
           
           <div className="pt-24 pb-6 px-6 space-y-6">
-            <div className="rounded-full bg-purple-100 text-purple-700 px-3 py-1 text-xs font-medium inline-block mb-4">
+            <div className="rounded-full bg-gradient-to-r from-purple-100 to-purple-200 text-purple-700 px-3 py-1 text-xs font-medium inline-block mb-4 shadow-sm">
               Healthcare Professional
             </div>
             
             <Link
-              to="/"
-              className="block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center"
+              to="/nurse"
+              className={cn(
+                "block text-gray-600 hover:text-purple-700 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
+                isActivePath('/nurse') && !isActivePath('/nurse/pricing') && !isActivePath('/nurse/support') && "text-purple-700"
+              )}
               onClick={() => setIsMenuOpen(false)}
             >
               <Home size={20} className="mr-2" />
@@ -125,20 +141,9 @@ const NurseHeader: React.FC = () => {
             </Link>
             
             <Link
-              to="/nurse"
-              className={cn(
-                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
-                isActivePath('/nurse') && "text-purple-700"
-              )}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Nurse Home
-            </Link>
-            
-            <Link
               to="/nurse/pricing"
               className={cn(
-                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
+                "block text-gray-600 hover:text-purple-700 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
                 isActivePath('/nurse/pricing') && "text-purple-700"
               )}
               onClick={() => setIsMenuOpen(false)}
@@ -149,7 +154,7 @@ const NurseHeader: React.FC = () => {
             <Link
               to="/nurse/support"
               className={cn(
-                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
+                "block text-gray-600 hover:text-purple-700 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
                 isActivePath('/nurse/support') && "text-purple-700"
               )}
               onClick={() => setIsMenuOpen(false)}
@@ -163,7 +168,7 @@ const NurseHeader: React.FC = () => {
                 variant="primary" 
                 size="md"
                 fullWidth
-                className="bg-purple-600 hover:bg-purple-700 text-white shadow-md"
+                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md"
                 to="/login"
               >
                 <User size={18} className="mr-2" />
