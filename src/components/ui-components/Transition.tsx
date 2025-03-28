@@ -2,7 +2,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
-type AnimationTypes = 'fade-up' | 'fade-down' | 'fade-left' | 'fade-right' | 'fade' | 'scale' | 'scale-up' | 'scale-down';
+type AnimationTypes = 
+  | 'fade-up' 
+  | 'fade-down' 
+  | 'fade-left' 
+  | 'fade-right' 
+  | 'fade' 
+  | 'fade-in'
+  | 'scale' 
+  | 'scale-up' 
+  | 'scale-down'
+  | 'slide-in-left'
+  | 'slide-in-right';
 
 interface TransitionProps {
   children: React.ReactNode;
@@ -65,9 +76,12 @@ const Transition: React.FC<TransitionProps> = ({
     'fade-left': 'translate-x-[-10px] opacity-0',
     'fade-right': 'translate-x-10 opacity-0',
     'fade': 'opacity-0',
+    'fade-in': 'opacity-0',
     'scale': 'scale-95 opacity-0',
     'scale-up': 'scale-95 translate-y-10 opacity-0',
     'scale-down': 'scale-95 translate-y-[-10px] opacity-0',
+    'slide-in-left': 'translate-x-[-50px] opacity-0',
+    'slide-in-right': 'translate-x-50 opacity-0',
   };
 
   return (
