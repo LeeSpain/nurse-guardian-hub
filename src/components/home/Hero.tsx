@@ -3,6 +3,7 @@ import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import Transition from '../ui-components/Transition';
 import Button from '../ui-components/Button';
+import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   return (
@@ -28,10 +29,26 @@ const Hero: React.FC = () => {
             </Transition>
             <Transition animation="fade-up" delay="delay-300">
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="nurse" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="shadow-lg">
+                <Button 
+                  variant="nurse" 
+                  size="lg" 
+                  icon={<ArrowRight size={18} />} 
+                  iconPosition="right" 
+                  className="shadow-lg"
+                  as={Link}
+                  to="/nurse"
+                >
                   For Healthcare Pros
                 </Button>
-                <Button variant="client" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="shadow-lg">
+                <Button 
+                  variant="client" 
+                  size="lg" 
+                  icon={<ArrowRight size={18} />} 
+                  iconPosition="right" 
+                  className="shadow-lg"
+                  as={Link}
+                  to="/client"
+                >
                   For Care Seekers
                 </Button>
               </div>

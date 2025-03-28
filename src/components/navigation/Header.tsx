@@ -59,7 +59,7 @@ const Header: React.FC = () => {
                     <div className="w-[400px] p-4">
                       <div className="grid grid-cols-1 gap-3">
                         <Link 
-                          to="/features/nurse"
+                          to="/nurse"
                           className="flex p-3 rounded-md hover:bg-purple-50 transition-colors"
                         >
                           <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
@@ -71,7 +71,7 @@ const Header: React.FC = () => {
                           </div>
                         </Link>
                         <Link 
-                          to="/features/client"
+                          to="/client"
                           className="flex p-3 rounded-md hover:bg-client-muted/20 transition-colors"
                         >
                           <div className="w-8 h-8 rounded-full bg-client-muted/20 flex items-center justify-center mr-3">
@@ -101,7 +101,7 @@ const Header: React.FC = () => {
                     <div className="w-[400px] p-4">
                       <div className="grid grid-cols-1 gap-3">
                         <Link 
-                          to="/pricing/nurse"
+                          to="/nurse/pricing"
                           className="flex p-3 rounded-md hover:bg-purple-50 transition-colors"
                         >
                           <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
@@ -113,7 +113,7 @@ const Header: React.FC = () => {
                           </div>
                         </Link>
                         <Link 
-                          to="/pricing/client"
+                          to="/client/pricing"
                           className="flex p-3 rounded-md hover:bg-client-muted/20 transition-colors"
                         >
                           <div className="w-8 h-8 rounded-full bg-client-muted/20 flex items-center justify-center mr-3">
@@ -169,6 +169,8 @@ const Header: React.FC = () => {
                 size="sm"
                 className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
                 icon={<User size={16} />}
+                as={Link}
+                to="/nurse"
               >
                 Nurse Portal
               </Button>
@@ -176,8 +178,10 @@ const Header: React.FC = () => {
                 variant="client" 
                 size="sm"
                 className="rounded-lg shadow-md hover:shadow-lg transition-all"
+                as={Link}
+                to="/client"
               >
-                Client Login
+                Client Portal
               </Button>
             </div>
           </div>
@@ -228,14 +232,14 @@ const Header: React.FC = () => {
               </div>
               <div className="pt-2 pl-5">
                 <Link
-                  to="/features/nurse"
+                  to="/nurse"
                   className="block text-gray-600 hover:text-gray-900 px-3 py-2 text-base"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   For Healthcare Professionals
                 </Link>
                 <Link
-                  to="/features/client"
+                  to="/client"
                   className="block text-gray-600 hover:text-gray-900 px-3 py-2 text-base"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -251,14 +255,14 @@ const Header: React.FC = () => {
               </div>
               <div className="pt-2 pl-5">
                 <Link
-                  to="/pricing/nurse"
+                  to="/nurse/pricing"
                   className="block text-gray-600 hover:text-gray-900 px-3 py-2 text-base"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Nurse Pricing
                 </Link>
                 <Link
-                  to="/pricing/client"
+                  to="/client/pricing"
                   className="block text-gray-600 hover:text-gray-900 px-3 py-2 text-base"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -296,6 +300,8 @@ const Header: React.FC = () => {
                 fullWidth
                 icon={<User size={18} />}
                 className="bg-purple-600 hover:bg-purple-700 text-white shadow-md"
+                as={Link}
+                to="/nurse"
               >
                 Nurse Portal
               </Button>
@@ -304,8 +310,10 @@ const Header: React.FC = () => {
                 size="md"
                 fullWidth
                 className="shadow-md"
+                as={Link}
+                to="/client"
               >
-                Client Login
+                Client Portal
               </Button>
             </div>
           </div>

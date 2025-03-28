@@ -1,7 +1,4 @@
-
 import React, { useEffect } from 'react';
-import Header from '../components/navigation/Header';
-import Footer from '../components/layout/Footer';
 import { Check } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
@@ -65,8 +62,7 @@ const NursePricingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <>
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
@@ -226,8 +222,7 @@ const NursePricingPage: React.FC = () => {
           </div>
         </section>
       </main>
-      <Footer />
-    </div>
+    </>
   );
 };
 
