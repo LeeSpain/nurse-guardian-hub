@@ -1,8 +1,8 @@
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, ElementType, ComponentPropsWithoutRef } from 'react';
 import { cn } from '@/lib/utils';
 
-interface ButtonProps {
+interface ButtonProps<T extends ElementType = 'button'> {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
@@ -13,9 +13,14 @@ interface ButtonProps {
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
   fullWidth?: boolean;
+  as?: T;
+  to?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({
+type ButtonComponentProps<T extends ElementType> = ButtonProps<T> & 
+  Omit<ComponentPropsWithoutRef<T>, keyof ButtonProps>;
+
+const Button = <T extends ElementType = 'button'>({
   children,
   className,
   onClick,
@@ -26,7 +31,9 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   type = 'button',
   fullWidth = false,
-}) => {
+  as,
+  ...props
+}: ButtonComponentProps<T>) => {
   const baseClasses = 'rounded-lg font-medium transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2';
   
   const variantClasses = {
@@ -47,9 +54,11 @@ const Button: React.FC<ButtonProps> = ({
   const widthClass = fullWidth ? 'w-full' : '';
   const disabledClass = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
   
+  const Component = as || 'button';
+  
   return (
-    <button
-      type={type}
+    <Component
+      type={Component === 'button' ? type : undefined}
       className={cn(
         baseClasses,
         variantClasses[variant],
@@ -60,11 +69,12 @@ const Button: React.FC<ButtonProps> = ({
       )}
       onClick={onClick}
       disabled={disabled}
+      {...props}
     >
       {icon && iconPosition === 'left' && <span className="mr-2">{icon}</span>}
       {children}
       {icon && iconPosition === 'right' && <span className="ml-2">{icon}</span>}
-    </button>
+    </Component>
   );
 };
 

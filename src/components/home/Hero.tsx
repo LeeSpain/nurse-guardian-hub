@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Transition from '../ui-components/Transition';
 import Button from '../ui-components/Button';
-import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   return (
