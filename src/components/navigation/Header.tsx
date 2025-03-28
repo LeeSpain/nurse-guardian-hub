@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Bell, Search, ChevronDown } from 'lucide-react';
+import { Menu, X, User, Bell, Search, ChevronDown, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
 import Button from '../ui-components/Button';
@@ -12,14 +12,6 @@ const Header: React.FC = () => {
   const location = useLocation();
   
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  
-  const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Features', path: '/features' },
-    { name: 'Pricing', path: '/pricing' },
-    { name: 'Testimonials', path: '/testimonials' },
-    { name: 'Contact', path: '/contact' },
-  ];
   
   const isActivePath = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
@@ -41,19 +33,125 @@ const Header: React.FC = () => {
           <nav className="hidden md:flex items-center">
             <NavigationMenu>
               <NavigationMenuList className="space-x-1">
-                {navItems.map((item) => (
-                  <NavigationMenuItem key={item.name}>
-                    <Link 
-                      to={item.path}
-                      className={cn(
-                        "text-gray-600 hover:text-gray-900 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md hover:bg-gray-50",
-                        isActivePath(item.path) && "text-purple-700 bg-purple-50"
-                      )}
-                    >
-                      {item.name}
-                    </Link>
-                  </NavigationMenuItem>
-                ))}
+                <NavigationMenuItem>
+                  <Link 
+                    to="/"
+                    className={cn(
+                      "text-gray-600 hover:text-gray-900 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md hover:bg-gray-50",
+                      isActivePath('/') && "text-purple-700 bg-purple-50"
+                    )}
+                  >
+                    Home
+                  </Link>
+                </NavigationMenuItem>
+
+                {/* Features Dropdown */}
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      "text-gray-600 hover:text-gray-900 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md hover:bg-gray-50",
+                      isActivePath('/features') && "text-purple-700 bg-purple-50"
+                    )}
+                  >
+                    Features
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[400px] p-4">
+                      <div className="grid grid-cols-1 gap-3">
+                        <Link 
+                          to="/features/nurse"
+                          className="flex p-3 rounded-md hover:bg-purple-50 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                            <User className="h-4 w-4 text-purple-600" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-medium">For Healthcare Professionals</h4>
+                            <p className="text-xs text-gray-500 mt-0.5">Advanced tools for managing remote care</p>
+                          </div>
+                        </Link>
+                        <Link 
+                          to="/features/client"
+                          className="flex p-3 rounded-md hover:bg-client-muted/20 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-client-muted/20 flex items-center justify-center mr-3">
+                            <Users className="h-4 w-4 text-client" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-medium">For Clients & Families</h4>
+                            <p className="text-xs text-gray-500 mt-0.5">Stay connected with your care providers</p>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                {/* Pricing Dropdown */}
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      "text-gray-600 hover:text-gray-900 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md hover:bg-gray-50",
+                      isActivePath('/pricing') && "text-purple-700 bg-purple-50"
+                    )}
+                  >
+                    Pricing
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[400px] p-4">
+                      <div className="grid grid-cols-1 gap-3">
+                        <Link 
+                          to="/pricing/nurse"
+                          className="flex p-3 rounded-md hover:bg-purple-50 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                            <User className="h-4 w-4 text-purple-600" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-medium">Nurse Pricing</h4>
+                            <p className="text-xs text-gray-500 mt-0.5">Plans for healthcare providers</p>
+                          </div>
+                        </Link>
+                        <Link 
+                          to="/pricing/client"
+                          className="flex p-3 rounded-md hover:bg-client-muted/20 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-client-muted/20 flex items-center justify-center mr-3">
+                            <Users className="h-4 w-4 text-client" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-medium">Client Pricing</h4>
+                            <p className="text-xs text-gray-500 mt-0.5">Plans for care recipients & families</p>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link 
+                    to="/testimonials"
+                    className={cn(
+                      "text-gray-600 hover:text-gray-900 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md hover:bg-gray-50",
+                      isActivePath('/testimonials') && "text-purple-700 bg-purple-50"
+                    )}
+                  >
+                    Testimonials
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link 
+                    to="/contact"
+                    className={cn(
+                      "text-gray-600 hover:text-gray-900 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md hover:bg-gray-50",
+                      isActivePath('/contact') && "text-purple-700 bg-purple-50"
+                    )}
+                  >
+                    Contact
+                  </Link>
+                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </nav>
@@ -112,19 +210,85 @@ const Header: React.FC = () => {
           </button>
           
           <div className="pt-24 pb-6 px-6 space-y-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={cn(
-                  "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
-                  isActivePath(item.path) && "text-purple-700"
-                )}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
+            <Link
+              to="/"
+              className={cn(
+                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                isActivePath('/') && "text-purple-700"
+              )}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
+            </Link>
+
+            <div>
+              <div className="flex items-center justify-between px-3 py-3 text-lg font-medium text-gray-600 border-b border-gray-100">
+                Features
+                <ChevronDown size={18} />
+              </div>
+              <div className="pt-2 pl-5">
+                <Link
+                  to="/features/nurse"
+                  className="block text-gray-600 hover:text-gray-900 px-3 py-2 text-base"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  For Healthcare Professionals
+                </Link>
+                <Link
+                  to="/features/client"
+                  className="block text-gray-600 hover:text-gray-900 px-3 py-2 text-base"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  For Clients & Families
+                </Link>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between px-3 py-3 text-lg font-medium text-gray-600 border-b border-gray-100">
+                Pricing
+                <ChevronDown size={18} />
+              </div>
+              <div className="pt-2 pl-5">
+                <Link
+                  to="/pricing/nurse"
+                  className="block text-gray-600 hover:text-gray-900 px-3 py-2 text-base"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Nurse Pricing
+                </Link>
+                <Link
+                  to="/pricing/client"
+                  className="block text-gray-600 hover:text-gray-900 px-3 py-2 text-base"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Client Pricing
+                </Link>
+              </div>
+            </div>
+            
+            <Link
+              to="/testimonials"
+              className={cn(
+                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                isActivePath('/testimonials') && "text-purple-700"
+              )}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Testimonials
+            </Link>
+
+            <Link
+              to="/contact"
+              className={cn(
+                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100",
+                isActivePath('/contact') && "text-purple-700"
+              )}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Contact
+            </Link>
+            
             <div className="pt-6 space-y-4">
               <Button 
                 variant="primary" 
