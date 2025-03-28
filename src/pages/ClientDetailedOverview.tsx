@@ -1,9 +1,8 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ClientHeader from '../components/navigation/ClientHeader';
 import Footer from '../components/layout/Footer';
-import Transition from '../components/ui-components/Transition';
+import SimpleAnimation from '../components/ui-components/SimpleAnimation';
 import Button from '../components/ui-components/Button';
 import GlassCard from '../components/ui-components/GlassCard';
 import { Check, ArrowRight, User, Users, Calendar, MessageSquare, Activity, LifeBuoy, Smartphone, Shield } from 'lucide-react';
@@ -129,7 +128,7 @@ const ClientDetailedOverview: React.FC = () => {
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxIDAgNi0yLjY5IDYtNnMtMi42OS02LTYtNi02IDIuNjktNiA2IDIuNjkgNiA2IDZ6TTI0IDQ4YzMuMzEgMCA2LTIuNjkgNi02cy0yLjY5LTYtNi02LTYgMi42OS02IDYgMi42OSA2IDYgNnoiIGZpbGw9InJnYmEoMTAwLDEwMCwxMDAsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-10"></div>
           
           <div className="container mx-auto px-4 relative">
-            <Transition animation="fade-up">
+            <SimpleAnimation type="fade-up">
               <div className="text-center mb-12">
                 <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
                   For Care Seekers & Families
@@ -141,14 +140,14 @@ const ClientDetailedOverview: React.FC = () => {
                   Nurse-Sync connects you with professional nurses for remote healthcare, offering a convenient alternative to in-person visits.
                 </p>
               </div>
-            </Transition>
+            </SimpleAnimation>
           </div>
         </section>
 
         {/* Purpose and Value Proposition */}
         <section className="py-16 md:py-24 relative overflow-hidden">
           <div className="container mx-auto px-4">
-            <Transition animation="fade-up">
+            <SimpleAnimation type="fade-up">
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-2xl md:text-3xl font-bold mb-6">Purpose and Value Proposition</h2>
                 <div className="prose prose-lg max-w-none text-gray-600">
@@ -160,14 +159,14 @@ const ClientDetailedOverview: React.FC = () => {
                   </p>
                 </div>
               </div>
-            </Transition>
+            </SimpleAnimation>
           </div>
         </section>
 
         {/* How Care Seekers Connect with Nurses */}
         <section className="py-16 md:py-24 relative overflow-hidden bg-gray-50">
           <div className="container mx-auto px-4">
-            <Transition animation="fade-up">
+            <SimpleAnimation type="fade-up">
               <div className="text-center mb-12">
                 <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
                   Simple Process
@@ -177,15 +176,15 @@ const ClientDetailedOverview: React.FC = () => {
                   Find and choose nurses through a clear, structured process that combines AI-driven matching with personal choice, finalized by a formal agreement.
                 </p>
               </div>
-            </Transition>
+            </SimpleAnimation>
 
             <div className="max-w-6xl mx-auto">
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
                 {connectionSteps.map((step, index) => (
-                  <Transition 
+                  <SimpleAnimation 
                     key={step.number} 
-                    animation="fade-up" 
-                    delay={`delay-${(index + 1) * 100}`}
+                    type="fade-up"
+                    className={`transition-all ${index * 100}ms`}
                   >
                     <div className="relative group">
                       <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10">
@@ -202,11 +201,11 @@ const ClientDetailedOverview: React.FC = () => {
                         <p className="text-gray-600">{step.description}</p>
                       </div>
                     </div>
-                  </Transition>
+                  </SimpleAnimation>
                 ))}
               </div>
               
-              <Transition animation="fade-up" delay="delay-500">
+              <SimpleAnimation type="fade-up" className="transition-delay-500">
                 <div className="mt-12 text-center">
                   <p className="text-gray-600 mb-6">
                     Care seekers can also browse a nurse directory (filtered by specialty, language, etc.) to explore beyond the AI-generated shortlist.
@@ -222,7 +221,7 @@ const ClientDetailedOverview: React.FC = () => {
                     View Pricing Plans
                   </Button>
                 </div>
-              </Transition>
+              </SimpleAnimation>
             </div>
           </div>
         </section>
@@ -230,7 +229,7 @@ const ClientDetailedOverview: React.FC = () => {
         {/* Pricing Structure */}
         <section className="py-16 md:py-24 relative overflow-hidden">
           <div className="container mx-auto px-4">
-            <Transition animation="fade-up">
+            <SimpleAnimation type="fade-up">
               <div className="text-center mb-12">
                 <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
                   Pricing & Features
@@ -240,11 +239,11 @@ const ClientDetailedOverview: React.FC = () => {
                   Care seekers have two pricing tiers, designed for individual or family use, with premium rates reflecting nurse-led care and advanced features.
                 </p>
               </div>
-            </Transition>
+            </SimpleAnimation>
 
             <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
               {/* Standard Plan */}
-              <Transition animation="fade-up" delay="delay-100">
+              <SimpleAnimation type="fade-up" className="transition-delay-100">
                 <GlassCard
                   variant="client"
                   hover={true}
@@ -290,10 +289,10 @@ const ClientDetailedOverview: React.FC = () => {
                     </Button>
                   </div>
                 </GlassCard>
-              </Transition>
+              </SimpleAnimation>
 
               {/* Family Plan */}
-              <Transition animation="fade-up" delay="delay-200">
+              <SimpleAnimation type="fade-up" className="transition-delay-200">
                 <GlassCard
                   variant="client"
                   hover={true}
@@ -344,7 +343,7 @@ const ClientDetailedOverview: React.FC = () => {
                     </Button>
                   </div>
                 </GlassCard>
-              </Transition>
+              </SimpleAnimation>
             </div>
           </div>
         </section>
@@ -354,7 +353,7 @@ const ClientDetailedOverview: React.FC = () => {
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTAwIDEwMEgwVjBoMTAweiIvPjxwYXRoIGQ9Ik01MC41IDc1LjVjMTQgMCAyNS0xMS4wMSAyNS0yNXMtMTEtMjUtMjUtMjUtMjUgMTEuMDEtMjUgMjUgMTEuMDEgMjUgMjUgMjV6IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48L2c+PC9zdmc+')] opacity-20"></div>
           
           <div className="container mx-auto px-4 relative">
-            <Transition animation="fade-up">
+            <SimpleAnimation type="fade-up">
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-2xl md:text-3xl font-bold mb-6">Launch Promotion</h2>
                 <div className="prose prose-lg max-w-none text-white/90">
@@ -383,7 +382,7 @@ const ClientDetailedOverview: React.FC = () => {
                   </Button>
                 </div>
               </div>
-            </Transition>
+            </SimpleAnimation>
           </div>
         </section>
 
@@ -392,13 +391,13 @@ const ClientDetailedOverview: React.FC = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <div className="grid md:grid-cols-2 gap-12 items-center">
-                <Transition animation="slide-in-left">
+                <SimpleAnimation type="slide-in">
                   <div className="aspect-video rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center shadow-xl">
                     <Shield size={120} className="text-client" />
                   </div>
-                </Transition>
+                </SimpleAnimation>
                 
-                <Transition animation="slide-in-right">
+                <SimpleAnimation type="slide-in">
                   <div>
                     <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
                       Security First
@@ -434,7 +433,7 @@ const ClientDetailedOverview: React.FC = () => {
                       </li>
                     </ul>
                   </div>
-                </Transition>
+                </SimpleAnimation>
               </div>
             </div>
           </div>
@@ -444,7 +443,7 @@ const ClientDetailedOverview: React.FC = () => {
         <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-br from-gray-50 via-client-muted/10 to-gray-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <Transition animation="fade-up">
+              <SimpleAnimation type="fade-up">
                 <h2 className="text-2xl md:text-4xl font-bold mb-6">Ready to transform how you receive care?</h2>
                 <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
                   Join Nurse-Sync today and experience healthcare designed around your needs, with dedicated nurse support and family coordination.
@@ -466,7 +465,7 @@ const ClientDetailedOverview: React.FC = () => {
                     Schedule a Demo
                   </Button>
                 </div>
-              </Transition>
+              </SimpleAnimation>
             </div>
           </div>
         </section>
