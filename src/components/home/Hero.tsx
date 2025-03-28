@@ -57,22 +57,25 @@ const Hero: React.FC = () => {
           <div className="w-full lg:w-1/2 lg:pl-16">
             <Transition animation="fade-in" delay="delay-400">
               <div className="relative">
-                {/* Fix: Moved the blur effect and gradient inside the glass-panel to ensure proper layering */}
+                {/* Main glass panel with proper z-index layering */}
                 <div className="relative glass-panel rounded-2xl overflow-hidden shadow-elevated border border-white/30">
-                  {/* Add gradient overlay inside the panel with proper z-index */}
+                  {/* Gradient background with lower z-index */}
                   <div className="absolute -inset-8 bg-gradient-to-r from-purple-600/20 to-client/20 opacity-70 blur-xl rounded-2xl"></div>
                   
+                  {/* Main image */}
                   <img 
                     src="/lovable-uploads/254e5c47-1d67-4c2e-b540-b83c5515ee84.png" 
                     alt="Nurse providing virtual healthcare consultation" 
                     className="relative z-10 w-full h-auto rounded-2xl object-cover"
                   />
+                  
+                  {/* Caption overlay with higher z-index */}
                   <div className="relative z-20 p-8 bg-white/80 backdrop-blur-sm">
                     <h3 className="text-xl font-semibold mb-2">Seamless Virtual Care</h3>
                     <p className="text-gray-700">Connect with healthcare professionals from the comfort of your home, bridging distances with technology.</p>
                   </div>
                   
-                  {/* Time saved card - positioned correctly with proper z-index */}
+                  {/* Time saved card - with highest z-index */}
                   <div className="absolute -bottom-6 -right-6 z-30 bg-white rounded-lg shadow-lg p-4 max-w-[200px] border border-purple-100">
                     <div className="flex items-center mb-2">
                       <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
@@ -89,7 +92,7 @@ const Hero: React.FC = () => {
                     </div>
                   </div>
                   
-                  {/* AI-powered card - positioned correctly with proper z-index */}
+                  {/* AI-powered card - with highest z-index */}
                   <div className="absolute -top-5 -left-5 z-30 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-lg p-3 max-w-[180px]">
                     <div className="flex items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -113,4 +116,3 @@ const Hero: React.FC = () => {
 };
 
 export default Hero;
-
