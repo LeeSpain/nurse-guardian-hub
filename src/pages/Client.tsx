@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -338,7 +337,7 @@ const Client: React.FC = () => {
                 Care Designed For You
                 <span className="ml-2">✦</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-client via-client-muted to-client">Comprehensive Remote Care Solutions</h2>
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 text-client">Comprehensive Remote Care Solutions</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Our platform offers unique features specifically for individuals seeking quality remote healthcare.
               </p>
@@ -351,19 +350,24 @@ const Client: React.FC = () => {
             
             {features.map((feature, index) => (
               <Transition key={feature.title} animation="fade-up" delay={`delay-${(index) * 100}` as any}>
-                <div className="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 group relative z-10">
-                  <div className={`h-2 bg-gradient-to-r ${feature.color}`}></div>
-                  <div className="p-8">
-                    <div className="bg-gradient-to-br from-client-muted/20 to-client/10 rounded-xl w-16 h-16 flex items-center justify-center mb-6 transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-                      {feature.icon}
-                    </div>
-                    <h3 className="text-xl font-bold mb-3 group-hover:text-client transition-colors duration-300">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.description}</p>
-                    
-                    {/* Added subtle indicator/button */}
-                    <div className="mt-6 flex items-center text-client/80 group-hover:text-client transition-colors duration-300">
-                      <span className="text-sm font-medium">Learn more</span>
-                      <ArrowRight size={14} className="ml-1 transform group-hover:translate-x-1 transition-transform duration-300" />
+                <div className="relative group">
+                  {/* Glow effect on hover */}
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-client-muted to-client opacity-0 group-hover:opacity-100 rounded-xl blur-sm transition duration-700"></div>
+                  
+                  <div className="relative bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 z-10">
+                    <div className={`h-2 bg-gradient-to-r ${feature.color}`}></div>
+                    <div className="p-8">
+                      <div className="bg-gradient-to-br from-client-muted/20 to-client/10 rounded-xl w-16 h-16 flex items-center justify-center mb-6 transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                        {feature.icon}
+                      </div>
+                      <h3 className="text-xl font-bold mb-3 group-hover:text-client transition-colors duration-300">{feature.title}</h3>
+                      <p className="text-gray-600">{feature.description}</p>
+                      
+                      {/* Added subtle indicator/button */}
+                      <div className="mt-6 flex items-center text-client/80 group-hover:text-client transition-colors duration-300">
+                        <span className="text-sm font-medium">Learn more</span>
+                        <ArrowRight size={14} className="ml-1 transform group-hover:translate-x-1 transition-transform duration-300" />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -594,47 +598,4 @@ const Client: React.FC = () => {
             </div>
           </Transition>
 
-          <div className="space-y-24">
-            {detailedFeatures.map((feature, index) => (
-              <div key={feature.title} className="relative">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
-                  {/* Feature details */}
-                  <div className={index % 2 === 0 ? 'order-1 md:order-1' : 'order-1 md:order-2'}>
-                    <div className="p-6 md:p-10 bg-gradient-to-br from-client to-client-muted rounded-2xl shadow-xl mb-6 md:mb-0 overflow-hidden relative">
-                      <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-x-8 -translate-y-8 blur-lg"></div>
-                      <div className="relative z-10">
-                        {feature.icon}
-                        <h3 className="text-2xl font-bold text-white mt-6 mb-4">{feature.title}</h3>
-                        <p className="text-white/90 mb-8">{feature.description}</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Feature benefits */}
-                  <div className={index % 2 === 0 ? 'order-2 md:order-2' : 'order-2 md:order-1'}>
-                    <div className="bg-white p-8 border border-gray-100 rounded-xl shadow-lg">
-                      <h4 className="text-xl font-bold text-gray-800 mb-6">Key Benefits</h4>
-                      <ul className="space-y-4">
-                        {feature.benefits.map((benefit, i) => (
-                          <li key={i} className="flex items-start">
-                            <div className="bg-client/10 text-client rounded-full p-1 mr-3 mt-0.5">
-                              <Check size={16} className="text-client" />
-                            </div>
-                            <span className="text-gray-700">{benefit}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-};
-
-export default Client;
-
+          <div className="space-y

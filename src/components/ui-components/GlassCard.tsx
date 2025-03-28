@@ -19,11 +19,13 @@ const GlassCard: React.FC<GlassCardProps> = ({
   
   const variantClasses = {
     default: 'bg-white/50 border-gray-100',
-    nurse: 'bg-white/50 border-nurse/10 nurse-panel', // Keep the panel style, but with new color
-    client: 'bg-white/50 border-client/10 client-panel',
+    nurse: 'bg-white/50 border-nurse/20 nurse-panel',
+    client: 'bg-white/50 border-client/20 client-panel',
   };
   
-  const hoverClasses = hover ? 'hover:shadow-elevated hover:translate-y-[-2px]' : '';
+  const hoverClasses = hover 
+    ? 'hover:shadow-elevated hover:translate-y-[-2px] hover:border-opacity-50' 
+    : '';
   
   return (
     <div className={cn(baseClasses, variantClasses[variant], hoverClasses, className)}>

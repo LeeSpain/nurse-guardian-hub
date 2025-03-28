@@ -183,4 +183,19 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+  
+  /* Added card glow effects */
+  .card-glow {
+    @apply relative;
+  }
+  
+  .card-glow::before {
+    content: '';
+    @apply absolute -inset-0.5 bg-gradient-to-r from-client-muted/50 to-client/50 rounded-xl blur opacity-0 transition duration-700;
+    z-index: -1;
+  }
+  
+  .card-glow:hover::before {
+    @apply opacity-100;
+  }
 }
