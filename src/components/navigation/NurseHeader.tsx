@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, CreditCard, MessageSquare, Shield } from 'lucide-react';
+import { Menu, X, User, CreditCard, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
 import Button from '../ui-components/Button';
@@ -41,16 +42,6 @@ const NurseHeader: React.FC = () => {
             >
               <CreditCard size={18} className="mr-1" />
               Pricing
-            </Link>
-            <Link 
-              to="/nurse/testimonials"
-              className={cn(
-                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
-                isActivePath('/nurse/testimonials') && "text-purple-700 font-semibold"
-              )}
-            >
-              <MessageSquare size={18} className="mr-1" />
-              Testimonials
             </Link>
             <Link 
               to="/nurse/support"
@@ -118,17 +109,6 @@ const NurseHeader: React.FC = () => {
             >
               <CreditCard size={20} className="mr-2" />
               Pricing
-            </Link>
-            <Link
-              to="/nurse/testimonials"
-              className={cn(
-                "block text-gray-600 hover:text-gray-900 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
-                isActivePath('/nurse/testimonials') && "text-purple-700"
-              )}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <MessageSquare size={20} className="mr-2" />
-              Testimonials
             </Link>
             <Link
               to="/nurse/support"

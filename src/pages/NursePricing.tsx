@@ -164,64 +164,79 @@ const NursePricingPage: React.FC = () => {
         </section>
 
         {/* Pricing Plans */}
-        <section className="py-16 md:py-24 relative overflow-hidden">
+        <section className="py-16 md:py-24 bg-white relative overflow-hidden">
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <Transition animation="fade-up">
+                <h2 className="text-3xl font-bold mb-4">Choose Your Plan</h2>
+                <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                  Select the plan that fits your practice needs and growth stage. All plans include our core platform features.
+                </p>
+              </Transition>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
               {plans.map((plan, index) => (
                 <Transition 
-                  key={plan.name} 
+                  key={plan.id} 
                   animation="fade-up" 
                   delay={`delay-${(index % 5) * 100 + 100}` as any}
                 >
-                  <Card className={`relative h-full ${plan.featured 
-                    ? 'border-purple-200 shadow-xl' 
-                    : 'border-gray-200 shadow-lg'}`}>
+                  <Card className={`relative h-full shadow-lg hover:shadow-xl transition-shadow duration-300 ${
+                    plan.featured ? 'border-2 border-purple-400' : 'border border-gray-200'
+                  }`}>
                     
                     {plan.featured && (
-                      <div className="absolute top-0 right-0 bg-purple-600 text-white px-4 py-1 text-sm font-medium">
+                      <div className="absolute -top-4 inset-x-0 mx-auto w-32 bg-purple-600 text-white px-3 py-1 text-sm font-medium rounded-full text-center">
                         Most Popular
                       </div>
                     )}
                     
                     <CardHeader className={`p-6 ${plan.featured ? 'bg-purple-50' : 'bg-white'}`}>
                       <div className="relative">
-                        <CardTitle className="text-xl font-bold flex items-center">
+                        <CardTitle className="text-xl font-bold flex items-center justify-between">
                           {plan.name}
                           <button 
                             onClick={() => toggleTooltip(plan.id)}
                             className="ml-2 text-gray-400 hover:text-purple-600 transition-colors"
+                            aria-label={`More info about ${plan.name}`}
                           >
                             <Info size={16} />
                           </button>
                         </CardTitle>
                         {showTooltip === plan.id && (
-                          <div className="absolute z-10 mt-2 p-3 bg-white rounded-md shadow-lg border border-gray-200 text-sm text-gray-600 w-56">
+                          <div className="absolute z-10 mt-2 p-3 bg-white rounded-md shadow-lg border border-gray-200 text-sm text-gray-600 w-64 right-0">
                             {plan.tooltip}
                           </div>
                         )}
                       </div>
-                      <CardDescription className="text-gray-600">{plan.description}</CardDescription>
+                      <CardDescription className="text-gray-600 mt-2">{plan.description}</CardDescription>
                       
-                      <div className="mt-4">
+                      <div className="mt-6 border-t border-gray-100 pt-4">
                         <div className="flex items-end">
-                          <span className="text-3xl font-bold">{plan.price}</span>
-                          <span className="text-gray-500 ml-1">{plan.billing}</span>
+                          <span className="text-3xl font-bold text-purple-700">{plan.price}</span>
+                          <span className="text-gray-500 ml-2">{plan.billing}</span>
                         </div>
                       </div>
                     </CardHeader>
                     
-                    <CardContent className="p-6 space-y-4">
-                      <div className="space-y-2">
+                    <CardContent className="p-6">
+                      <h4 className="font-semibold text-sm uppercase text-gray-500 mb-4">What's included:</h4>
+                      <div className="space-y-3">
                         {plan.features.map((feature, i) => (
                           <div key={i} className="flex items-start">
-                            <div className="flex-shrink-0 mr-2 mt-1">
+                            <div className="flex-shrink-0 mt-1">
                               {feature.included ? (
-                                <Check size={16} className="text-purple-600" />
+                                <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center">
+                                  <Check size={12} className="text-purple-700" />
+                                </div>
                               ) : (
-                                <X size={16} className="text-gray-300" />
+                                <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+                                  <X size={12} className="text-gray-400" />
+                                </div>
                               )}
                             </div>
-                            <span className={`text-sm ${feature.included ? 'text-gray-700' : 'text-gray-400'}`}>
+                            <span className={`text-sm ml-3 ${feature.included ? 'text-gray-700' : 'text-gray-400'}`}>
                               {feature.text}
                             </span>
                           </div>
@@ -229,13 +244,16 @@ const NursePricingPage: React.FC = () => {
                       </div>
                     </CardContent>
                     
-                    <CardFooter className="p-6 pt-0">
+                    <CardFooter className="p-6 bg-gray-50 rounded-b-lg">
                       <Button 
                         variant={plan.featured ? 'primary' : 'outline'} 
                         fullWidth
-                        className={plan.featured ? 'bg-purple-600 text-white' : 'border-purple-300 text-purple-700'}
+                        className={plan.featured 
+                          ? 'bg-purple-600 hover:bg-purple-700 text-white font-medium' 
+                          : 'border-purple-300 text-purple-700 hover:bg-purple-50 font-medium'
+                        }
                       >
-                        Get Started
+                        {plan.price === '€0' ? 'Start Free' : 'Get Started'}
                       </Button>
                     </CardFooter>
                   </Card>
@@ -250,124 +268,128 @@ const NursePricingPage: React.FC = () => {
           <div className="container mx-auto px-4">
             <Transition animation="fade-up">
               <div className="max-w-3xl mx-auto text-center mb-16">
-                <h2 className="text-3xl font-bold mb-6">Pick Your Perfect Plan</h2>
+                <h2 className="text-3xl font-bold mb-6">Plan Comparison</h2>
                 <p className="text-lg text-gray-600">
-                  All plans include our core telehealth platform and HIPAA-compliant tools. Choose the option that best fits your practice size and needs.
+                  See which plan best fits your professional needs with our detailed comparison chart.
                 </p>
               </div>
             </Transition>
 
-            <div className="max-w-5xl mx-auto">
-              <div className="overflow-hidden bg-white rounded-xl shadow-lg border border-gray-200">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-purple-50">
-                      <th className="px-6 py-4 text-left font-semibold">Plan Feature</th>
-                      <th className="px-4 py-4 text-center font-semibold">Free</th>
-                      <th className="px-4 py-4 text-center font-semibold">Growth</th>
-                      <th className="px-4 py-4 text-center font-semibold">Basic</th>
-                      <th className="px-4 py-4 text-center font-semibold">Professional</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-t border-gray-200">
-                      <td className="px-6 py-4 text-sm">Client Limit</td>
-                      <td className="px-4 py-4 text-center text-sm">2</td>
-                      <td className="px-4 py-4 text-center text-sm">10</td>
-                      <td className="px-4 py-4 text-center text-sm">10</td>
-                      <td className="px-4 py-4 text-center text-sm">Unlimited</td>
-                    </tr>
-                    <tr className="border-t border-gray-200 bg-purple-50/30">
-                      <td className="px-6 py-4 text-sm">Voice-to-Text Notes</td>
-                      <td className="px-4 py-4 text-center text-sm">10/month</td>
-                      <td className="px-4 py-4 text-center text-sm">50/month</td>
-                      <td className="px-4 py-4 text-center text-sm">50/month</td>
-                      <td className="px-4 py-4 text-center text-sm">Unlimited</td>
-                    </tr>
-                    <tr className="border-t border-gray-200">
-                      <td className="px-6 py-4 text-sm">Intro Messages to Clients</td>
-                      <td className="px-4 py-4 text-center text-sm">None</td>
-                      <td className="px-4 py-4 text-center text-sm">10/month</td>
-                      <td className="px-4 py-4 text-center text-sm">5/month</td>
-                      <td className="px-4 py-4 text-center text-sm">Unlimited</td>
-                    </tr>
-                    <tr className="border-t border-gray-200 bg-purple-50/30">
-                      <td className="px-6 py-4 text-sm">Commission Rate</td>
-                      <td className="px-4 py-4 text-center text-sm">N/A</td>
-                      <td className="px-4 py-4 text-center text-sm">20%</td>
-                      <td className="px-4 py-4 text-center text-sm">0%</td>
-                      <td className="px-4 py-4 text-center text-sm">0%</td>
-                    </tr>
-                    <tr className="border-t border-gray-200">
-                      <td className="px-6 py-4 text-sm">Mobile App</td>
-                      <td className="px-4 py-4 text-center text-sm">Limited</td>
-                      <td className="px-4 py-4 text-center text-sm">Full</td>
-                      <td className="px-4 py-4 text-center text-sm">Full</td>
-                      <td className="px-4 py-4 text-center text-sm">Full</td>
-                    </tr>
-                    <tr className="border-t border-gray-200 bg-purple-50/30">
-                      <td className="px-6 py-4 text-sm">Analytics Dashboard</td>
-                      <td className="px-4 py-4 text-center text-sm">
-                        <X size={16} className="inline text-gray-400" />
-                      </td>
-                      <td className="px-4 py-4 text-center text-sm">
-                        <X size={16} className="inline text-gray-400" />
-                      </td>
-                      <td className="px-4 py-4 text-center text-sm">
-                        <Check size={16} className="inline text-purple-600" />
-                      </td>
-                      <td className="px-4 py-4 text-center text-sm">
-                        <Check size={16} className="inline text-purple-600" />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div className="max-w-6xl mx-auto">
+              <div className="overflow-x-auto">
+                <div className="inline-block min-w-full">
+                  <div className="overflow-hidden bg-white rounded-xl shadow-lg border border-gray-200">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead>
+                        <tr className="bg-purple-50">
+                          <th scope="col" className="px-6 py-4 text-left font-semibold text-gray-700">Plan Feature</th>
+                          <th scope="col" className="px-6 py-4 text-center font-semibold text-gray-700">Free</th>
+                          <th scope="col" className="px-6 py-4 text-center font-semibold text-purple-700 bg-purple-50/80">Growth</th>
+                          <th scope="col" className="px-6 py-4 text-center font-semibold text-gray-700">Basic</th>
+                          <th scope="col" className="px-6 py-4 text-center font-semibold text-gray-700">Professional</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        <tr>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-700">Client Limit</td>
+                          <td className="px-6 py-4 text-center text-sm">2</td>
+                          <td className="px-6 py-4 text-center text-sm bg-purple-50/30 font-medium">10</td>
+                          <td className="px-6 py-4 text-center text-sm">10</td>
+                          <td className="px-6 py-4 text-center text-sm">Unlimited</td>
+                        </tr>
+                        <tr>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-700">Voice-to-Text Notes</td>
+                          <td className="px-6 py-4 text-center text-sm">10/month</td>
+                          <td className="px-6 py-4 text-center text-sm bg-purple-50/30 font-medium">50/month</td>
+                          <td className="px-6 py-4 text-center text-sm">50/month</td>
+                          <td className="px-6 py-4 text-center text-sm">Unlimited</td>
+                        </tr>
+                        <tr>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-700">Intro Messages to Clients</td>
+                          <td className="px-6 py-4 text-center text-sm">None</td>
+                          <td className="px-6 py-4 text-center text-sm bg-purple-50/30 font-medium">10/month</td>
+                          <td className="px-6 py-4 text-center text-sm">5/month</td>
+                          <td className="px-6 py-4 text-center text-sm">Unlimited</td>
+                        </tr>
+                        <tr>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-700">Commission Rate</td>
+                          <td className="px-6 py-4 text-center text-sm">N/A</td>
+                          <td className="px-6 py-4 text-center text-sm bg-purple-50/30 font-medium">20%</td>
+                          <td className="px-6 py-4 text-center text-sm">0%</td>
+                          <td className="px-6 py-4 text-center text-sm">0%</td>
+                        </tr>
+                        <tr>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-700">Mobile App</td>
+                          <td className="px-6 py-4 text-center text-sm">Limited</td>
+                          <td className="px-6 py-4 text-center text-sm bg-purple-50/30 font-medium">Full</td>
+                          <td className="px-6 py-4 text-center text-sm">Full</td>
+                          <td className="px-6 py-4 text-center text-sm">Full</td>
+                        </tr>
+                        <tr>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-700">Analytics Dashboard</td>
+                          <td className="px-6 py-4 text-center text-sm">
+                            <X size={16} className="inline text-gray-400" />
+                          </td>
+                          <td className="px-6 py-4 text-center text-sm bg-purple-50/30 font-medium">
+                            <X size={16} className="inline text-gray-400" />
+                          </td>
+                          <td className="px-6 py-4 text-center text-sm">
+                            <Check size={16} className="inline text-purple-600" />
+                          </td>
+                          <td className="px-6 py-4 text-center text-sm">
+                            <Check size={16} className="inline text-purple-600" />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section className="py-16 md:py-24 relative overflow-hidden">
+        <section className="py-16 md:py-24 bg-white relative overflow-hidden">
           <div className="container mx-auto px-4">
             <Transition animation="fade-up">
-              <div className="mb-12 text-center">
+              <div className="mb-16 text-center">
                 <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
                   Frequently Asked Questions
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">Common Questions From Healthcare Providers</h2>
+                <h2 className="text-3xl font-bold mb-4">Common Questions From Healthcare Providers</h2>
                 <p className="text-gray-600 max-w-3xl mx-auto">
                   Find answers to the most common questions about our professional plans.
                 </p>
               </div>
             </Transition>
 
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
               <Transition animation="fade-up" delay="delay-100">
-                <div className="mb-8 p-6 rounded-xl bg-white shadow-md border border-gray-100">
-                  <h3 className="text-lg font-semibold mb-2">How does the Growth Plan's commission model work?</h3>
-                  <p className="text-gray-600">With the Growth Plan, you pay a lower monthly fee (€20) plus 20% of all invoiced business through our platform. For example, if you invoice €500 to clients in a month, Nurse-Sync would receive €100, and you would keep €400. This model is designed to reduce upfront costs while tying our revenue to your success.</p>
+                <div className="p-6 rounded-xl bg-white shadow-lg border border-gray-100 h-full">
+                  <h3 className="text-lg font-semibold mb-3 text-purple-700">How does the Growth Plan's commission model work?</h3>
+                  <p className="text-gray-600">With the Growth Plan, you pay a lower monthly fee (€20) plus 20% of all invoiced business through our platform. For example, if you invoice €500 to clients in a month, Nurse-Sync would receive €100, and you would keep €400.</p>
                 </div>
               </Transition>
 
               <Transition animation="fade-up" delay="delay-200">
-                <div className="mb-8 p-6 rounded-xl bg-white shadow-md border border-gray-100">
-                  <h3 className="text-lg font-semibold mb-2">Can I switch between plans?</h3>
-                  <p className="text-gray-600">Yes, you can switch between plans at any time. If your practice grows, you can upgrade to a plan with more clients or features. Similarly, if you need to downsize, you can switch to a smaller plan. Changes take effect at the start of your next billing cycle.</p>
+                <div className="p-6 rounded-xl bg-white shadow-lg border border-gray-100 h-full">
+                  <h3 className="text-lg font-semibold mb-3 text-purple-700">Can I switch between plans?</h3>
+                  <p className="text-gray-600">Yes, you can switch between plans at any time. If your practice grows, you can upgrade to a plan with more clients or features. Changes take effect at the start of your next billing cycle.</p>
                 </div>
               </Transition>
 
               <Transition animation="fade-up" delay="delay-300">
-                <div className="mb-8 p-6 rounded-xl bg-white shadow-md border border-gray-100">
-                  <h3 className="text-lg font-semibold mb-2">How does the Smart Matching system work?</h3>
-                  <p className="text-gray-600">Our AI-powered matching system connects you with care seekers based on your expertise, availability, and their specific needs. As a nurse, you'll receive connection requests from matched care seekers, and can decide whether to proceed with a free introductory call to discuss their needs.</p>
+                <div className="p-6 rounded-xl bg-white shadow-lg border border-gray-100 h-full">
+                  <h3 className="text-lg font-semibold mb-3 text-purple-700">How does the Smart Matching system work?</h3>
+                  <p className="text-gray-600">Our AI-powered matching system connects you with care seekers based on your expertise, availability, and their specific needs. You'll receive connection requests from matched care seekers, and can decide whether to proceed with a free introductory call.</p>
                 </div>
               </Transition>
 
               <Transition animation="fade-up" delay="delay-400">
-                <div className="p-6 rounded-xl bg-white shadow-md border border-gray-100">
-                  <h3 className="text-lg font-semibold mb-2">What's included in the Team Plan?</h3>
-                  <p className="text-gray-600">The Team Plan is designed for small nursing practices with up to 5 nurses. It includes all Professional Plan features for each nurse, plus team collaboration tools like a shared client database, team scheduling calendar, group messaging, and practice-wide analytics to help manage your collective workflow.</p>
+                <div className="p-6 rounded-xl bg-white shadow-lg border border-gray-100 h-full">
+                  <h3 className="text-lg font-semibold mb-3 text-purple-700">What's included in the Team Plan?</h3>
+                  <p className="text-gray-600">The Team Plan is designed for small nursing practices with up to 5 nurses. It includes all Professional Plan features for each nurse, plus team collaboration tools like a shared client database, team scheduling calendar, and practice-wide analytics.</p>
                 </div>
               </Transition>
             </div>
@@ -375,26 +397,26 @@ const NursePricingPage: React.FC = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 md:py-24 relative overflow-hidden">
+        <section className="py-16 md:py-24 bg-gray-50 relative overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl overflow-hidden shadow-xl">
               <div className="p-8 md:p-12 relative">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTAwIDEwMEgwVjBoMTAweiIvPjxwYXRoIGQ9Ik01MC41IDc1LjVjMTQgMCAyNS0xMS4wMSAyNS0yNXMtMTEtMjUtMjUtMjUtMjUgMTEuMDEtMjUgMjUgMTEuMDEgMjUgMjUgMjV6IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48L2c+PC9zdmc+')] opacity-20"></div>
                 <div className="relative text-center text-white">
-                  <h2 className="text-2xl md:text-4xl font-bold mb-4">Ready to enhance your practice?</h2>
-                  <p className="text-lg md:text-xl mb-8 opacity-90">Start your 14-day free trial with full access to all features.</p>
-                  <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                  <h2 className="text-2xl md:text-4xl font-bold mb-6">Ready to enhance your healthcare practice?</h2>
+                  <p className="text-lg md:text-xl mb-8 opacity-90">Start your 14-day free trial with full access to all features. No credit card required.</p>
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
                     <Button
                       variant="secondary"
                       size="lg"
-                      className="bg-white text-purple-700 hover:bg-gray-100"
+                      className="bg-white text-purple-700 hover:bg-gray-100 font-medium shadow-lg"
                     >
                       Schedule a Demo
                     </Button>
                     <Button
                       variant="outline"
                       size="lg"
-                      className="border-white text-white hover:bg-white/20"
+                      className="border-2 border-white text-white hover:bg-white/20 font-medium"
                     >
                       Start Free Trial
                     </Button>
