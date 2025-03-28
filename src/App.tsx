@@ -11,7 +11,6 @@ import ClientLayout from './layouts/ClientLayout';
 import Client from './pages/Client';
 import ClientFeatures from './pages/ClientFeatures';
 import ClientPricing from './pages/ClientPricing';
-import ClientDetailedOverview from './pages/ClientDetailedOverview';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -31,8 +30,6 @@ function App() {
           <Route path="home" element={<Client />} />
           <Route path="features" element={<ClientFeatures />} />
           <Route path="pricing" element={<ClientPricing />} />
-          <Route path="detailed-overview" element={<ClientDetailedOverview />} />
-          {/* ... keep existing code (other client routes) */}
         </Route>
         
         {/* Other Routes */}
