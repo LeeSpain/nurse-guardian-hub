@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, memo } from 'react';
 import { cn } from '@/lib/utils';
 
 type AnimationTypes = 
@@ -25,7 +25,7 @@ interface TransitionProps {
   once?: boolean;
 }
 
-const Transition: React.FC<TransitionProps> = ({
+const Transition: React.FC<TransitionProps> = memo(({
   children,
   className = '',
   animation = 'fade-up',
@@ -42,17 +42,20 @@ const Transition: React.FC<TransitionProps> = ({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && (!once || !hasAnimated)) {
-          setIsVisible(true);
-          if (once) {
-            setHasAnimated(true);
-          }
+          // Use requestAnimationFrame for smoother animations
+          requestAnimationFrame(() => {
+            setIsVisible(true);
+            if (once) {
+              setHasAnimated(true);
+            }
+          });
         } else if (!entry.isIntersecting && !once && hasAnimated) {
           setIsVisible(false);
         }
       },
       {
         threshold,
-        rootMargin: '0px 0px -50px 0px',
+        rootMargin: '0px 0px -30px 0px', // Reduced rootMargin for earlier triggering
       }
     );
 
@@ -88,7 +91,7 @@ const Transition: React.FC<TransitionProps> = ({
     <div
       ref={ref}
       className={cn(
-        'transition-all transform',
+        'transition-all transform will-change-transform',
         duration,
         delay,
         isVisible ? '' : animationClasses[animation],
@@ -98,6 +101,8 @@ const Transition: React.FC<TransitionProps> = ({
       {children}
     </div>
   );
-};
+});
+
+Transition.displayName = 'Transition';
 
 export default Transition;

@@ -1,45 +1,64 @@
-
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
-import Index from './pages/Index';
-import Features from './pages/Features';
-import Pricing from './pages/Pricing';
-import Nurse from './pages/Nurse';
-import NurseFeatures from './pages/NurseFeatures';
-import NursePricing from './pages/NursePricing';
-import ClientLayout from './layouts/ClientLayout';
-import NurseLayout from './layouts/NurseLayout';
-import Client from './pages/Client';
-import ClientPricing from './pages/ClientPricing';
-import NotFound from './pages/NotFound';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Lazy load components for better performance
+const Index = lazy(() => import('./pages/Index'));
+const Features = lazy(() => import('./pages/Features'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Nurse = lazy(() => import('./pages/Nurse'));
+const NurseFeatures = lazy(() => import('./pages/NurseFeatures'));
+const NursePricing = lazy(() => import('./pages/NursePricing'));
+const Client = lazy(() => import('./pages/Client'));
+const ClientPricing = lazy(() => import('./pages/ClientPricing'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const ClientLayout = lazy(() => import('./layouts/ClientLayout'));
+const NurseLayout = lazy(() => import('./layouts/NurseLayout'));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="w-full max-w-md p-8 space-y-4">
+      <Skeleton className="h-12 w-3/4 mx-auto mb-6" />
+      <Skeleton className="h-48 w-full rounded-xl mb-8" />
+      <div className="space-y-3">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+        <Skeleton className="h-4 w-4/6" />
+      </div>
+    </div>
+  </div>
+);
 
 function App() {
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        
-        {/* Nurse Routes */}
-        <Route path="/nurse" element={<NurseLayout />}>
-          <Route index element={<Nurse />} />
-          <Route path="features" element={<NurseFeatures />} />
-          <Route path="pricing" element={<NursePricing />} />
-        </Route>
-        
-        {/* Client Routes */}
-        <Route path="/client" element={<ClientLayout />}>
-          <Route index element={<Navigate to="/client/home" replace />} />
-          <Route path="home" element={<Client />} />
-          <Route path="pricing" element={<ClientPricing />} />
-        </Route>
-        
-        {/* Other Routes */}
-        <Route path="/features" element={<Features />} />
-        <Route path="/pricing" element={<Pricing />} />
-        
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          
+          {/* Nurse Routes */}
+          <Route path="/nurse" element={<NurseLayout />}>
+            <Route index element={<Nurse />} />
+            <Route path="features" element={<NurseFeatures />} />
+            <Route path="pricing" element={<NursePricing />} />
+          </Route>
+          
+          {/* Client Routes */}
+          <Route path="/client" element={<ClientLayout />}>
+            <Route index element={<Navigate to="/client/home" replace />} />
+            <Route path="home" element={<Client />} />
+            <Route path="pricing" element={<ClientPricing />} />
+          </Route>
+          
+          {/* Other Routes */}
+          <Route path="/features" element={<Features />} />
+          <Route path="/pricing" element={<Pricing />} />
+          
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
       <Toaster />
     </>
   );

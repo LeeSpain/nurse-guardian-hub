@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from '../components/navigation/Header';
 import Hero from '../components/home/Hero';
 import Features from '../components/home/Features';
@@ -9,10 +10,12 @@ import CallToAction from '../components/home/CallToAction';
 import Footer from '../components/layout/Footer';
 
 const Index: React.FC = () => {
-  // Scroll to top when component mounts
+  const location = useLocation();
+  
+  // Scroll to top when component mounts or route changes
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen flex flex-col">

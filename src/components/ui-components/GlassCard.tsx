@@ -1,5 +1,5 @@
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, memo } from 'react';
 import { cn } from '@/lib/utils';
 
 interface GlassCardProps {
@@ -9,13 +9,13 @@ interface GlassCardProps {
   variant?: 'default' | 'nurse' | 'client';
 }
 
-const GlassCard: React.FC<GlassCardProps> = ({
+const GlassCard: React.FC<GlassCardProps> = memo(({
   children,
   className,
   hover = false,
   variant = 'default',
 }) => {
-  const baseClasses = 'rounded-2xl backdrop-blur-sm border shadow-md p-6 transition-all duration-300';
+  const baseClasses = 'rounded-2xl backdrop-blur-sm border shadow-md p-6 transition-all duration-300 will-change-transform';
   
   const variantClasses = {
     default: 'bg-gray-50/70 border-gray-100/50 hover:bg-gray-100/50',
@@ -32,6 +32,8 @@ const GlassCard: React.FC<GlassCardProps> = ({
       {children}
     </div>
   );
-};
+});
+
+GlassCard.displayName = 'GlassCard';
 
 export default GlassCard;

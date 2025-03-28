@@ -1,5 +1,5 @@
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, memo } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SimpleAnimationProps {
@@ -9,7 +9,7 @@ interface SimpleAnimationProps {
   delay?: string;
 }
 
-const SimpleAnimation: React.FC<SimpleAnimationProps> = ({
+const SimpleAnimation: React.FC<SimpleAnimationProps> = memo(({
   children,
   className = "",
   type = 'fade-in',
@@ -24,10 +24,12 @@ const SimpleAnimation: React.FC<SimpleAnimationProps> = ({
   const delayClass = delay ? `delay-${delay}` : '';
   
   return (
-    <div className={cn("transition-all duration-500", animationClass, delayClass, className)}>
+    <div className={cn("transition-all duration-500 will-change-transform", animationClass, delayClass, className)}>
       {children}
     </div>
   );
-};
+});
+
+SimpleAnimation.displayName = 'SimpleAnimation';
 
 export default SimpleAnimation;
