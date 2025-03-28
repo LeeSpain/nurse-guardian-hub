@@ -25,10 +25,23 @@ const Transition: React.FC<TransitionProps> = ({
   duration = 'duration-500',
 }) => {
   const baseClass = "transition-all";
-  const animationClass = `animate-${animation}`;
+  
+  // Create the animation class based on the animation type
+  let animationClass = "";
+  if (animation === 'fade-in') animationClass = "animate-fade-in";
+  if (animation === 'fade-up') animationClass = "animate-fade-up";
+  if (animation === 'fade-down') animationClass = "animate-fade-down";
+  if (animation === 'slide-in-left') animationClass = "animate-slide-in-left";
+  if (animation === 'slide-in-right') animationClass = "animate-slide-in-right";
   
   return show ? (
-    <div className={cn(baseClass, animationClass, delay, duration, className)}>
+    <div className={cn(
+      baseClass,
+      animationClass,
+      delay,
+      duration,
+      className
+    )}>
       {children}
     </div>
   ) : null;
