@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -141,61 +140,205 @@ const Client: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
+      {/* Hero Section - Updated to side-by-side layout */}
       <section className="pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-gradient-to-br from-gray-50 via-client-muted/20 to-gray-50">
         <div className="container mx-auto px-4">
-          <Transition animation="fade-up">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
-                Personalized Remote Healthcare
-              </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-client via-client to-client-muted">
-                Your Health Journey, <br className="hidden md:block" />Simplified
-              </h1>
-              <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-                Connect with trusted healthcare professionals, manage your care plan, and coordinate with family members—all from the comfort of your home.
-              </p>
-            </div>
-          </Transition>
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            {/* Left side - Text content */}
+            <div className="w-full lg:w-1/2">
+              <Transition animation="fade-up">
+                <div className="mb-8">
+                  <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
+                    Personalized Remote Healthcare
+                  </div>
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-client via-client to-client-muted">
+                    Your Health Journey, <br className="hidden md:block" />Simplified
+                  </h1>
+                  <p className="text-lg md:text-xl text-gray-600">
+                    Connect with trusted healthcare professionals, manage your care plan, and coordinate with family members—all from the comfort of your home.
+                  </p>
+                </div>
+              </Transition>
 
-          <Transition animation="fade-up" delay="delay-100">
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-              <Button 
-                variant="client" 
-                size="lg" 
-                className="shadow-lg"
-                icon={<UserPlus size={18} />}
-              >
-                Find Your Care Professional
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="border-client text-client"
-                icon={<ArrowRight size={18} />}
-              >
-                View Demo
-              </Button>
+              <Transition animation="fade-up" delay="delay-100">
+                <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                  <Button 
+                    variant="client" 
+                    size="lg" 
+                    className="shadow-lg"
+                    icon={<UserPlus size={18} />}
+                  >
+                    Find Your Care Professional
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="border-client text-client"
+                    icon={<ArrowRight size={18} />}
+                  >
+                    View Demo
+                  </Button>
+                </div>
+              </Transition>
             </div>
-          </Transition>
 
-          <Transition animation="fade-up" delay="delay-200">
-            <div className="mt-16 relative">
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10"></div>
-              <div className="bg-gradient-to-br from-client-muted/40 to-client/30 rounded-xl overflow-hidden shadow-2xl mx-auto max-w-5xl aspect-video relative">
-                <img 
-                  src="/lovable-uploads/d215d01f-93d6-423a-994e-1cb106f5b3ae.png"
-                  alt="Remote healthcare consultation" 
-                  className="w-full h-full object-cover opacity-90"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="rounded-full bg-white/90 backdrop-blur-sm p-5 shadow-xl">
-                    <Video className="h-16 w-16 text-client" />
+            {/* Right side - Dashboard mockup */}
+            <div className="w-full lg:w-1/2">
+              <Transition animation="fade-in" delay="delay-400">
+                <div className="relative">
+                  <div className="relative glass-panel rounded-2xl overflow-visible shadow-elevated border border-white/30">
+                    <div className="absolute -inset-8 bg-gradient-to-r from-purple-600/20 to-client/20 opacity-70 blur-xl rounded-2xl"></div>
+                    
+                    {/* Dashboard Mockup */}
+                    <div className="relative z-10 rounded-2xl overflow-hidden bg-white p-3">
+                      {/* Dashboard Header */}
+                      <div className="bg-client rounded-t-lg p-3 flex items-center justify-between text-white">
+                        <div className="flex items-center space-x-2">
+                          <div className="h-3 w-3 rounded-full bg-white/30"></div>
+                          <span className="font-medium">CareSync Dashboard</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Bell size={16} />
+                          <div className="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center text-xs">JS</div>
+                        </div>
+                      </div>
+                      
+                      {/* Dashboard Content */}
+                      <div className="p-4">
+                        {/* Welcome Section */}
+                        <div className="mb-4 bg-client/10 rounded-lg p-4">
+                          <h3 className="text-lg font-semibold text-gray-800">Welcome back, Jessica!</h3>
+                          <p className="text-sm text-gray-600">Your next appointment is in 2 days</p>
+                        </div>
+                        
+                        {/* Stats Cards */}
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-xs text-gray-500">Blood Pressure</span>
+                              <Activity size={16} className="text-client" />
+                            </div>
+                            <div className="font-bold text-xl">120/80</div>
+                            <div className="text-xs text-green-600 flex items-center">
+                              <ArrowRight size={12} className="transform rotate-45" />
+                              Normal
+                            </div>
+                          </div>
+                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-xs text-gray-500">Heart Rate</span>
+                              <Heart size={16} className="text-client" />
+                            </div>
+                            <div className="font-bold text-xl">72 bpm</div>
+                            <div className="text-xs text-green-600 flex items-center">
+                              <ArrowRight size={12} className="transform rotate-45" />
+                              Normal
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Upcoming Appointments */}
+                        <div className="mb-4">
+                          <h4 className="font-medium text-sm mb-2 text-gray-700">Upcoming Appointments</h4>
+                          <div className="bg-white border border-gray-100 rounded-lg p-3 mb-2 flex items-center">
+                            <div className="h-10 w-10 rounded-full bg-client/20 flex items-center justify-center mr-3">
+                              <Video size={16} className="text-client" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-sm font-medium">Dr. Sarah Johnson</div>
+                              <div className="text-xs text-gray-500">Wed, Jun 15 • 10:00 AM</div>
+                            </div>
+                            <Button variant="outline" size="sm" className="text-xs h-8 border-client text-client">
+                              Join
+                            </Button>
+                          </div>
+                          <div className="bg-white border border-gray-100 rounded-lg p-3 flex items-center">
+                            <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
+                              <Users size={16} className="text-blue-500" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-sm font-medium">Family Check-in</div>
+                              <div className="text-xs text-gray-500">Fri, Jun 17 • 2:00 PM</div>
+                            </div>
+                            <Button variant="outline" size="sm" className="text-xs h-8 border-blue-500 text-blue-500">
+                              Join
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {/* Medication Reminder */}
+                        <div className="bg-client/5 rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-medium text-sm text-gray-700">Today's Medications</h4>
+                            <span className="text-xs text-client">View all</span>
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-md mb-2 border border-gray-100">
+                            <div className="flex items-center">
+                              <div className="h-8 w-8 rounded-full bg-amber-500/20 flex items-center justify-center mr-2">
+                                <div className="h-4 w-4 rounded-full bg-amber-500"></div>
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium">Vitamin D</div>
+                                <div className="text-xs text-gray-500">1 pill • Morning</div>
+                              </div>
+                            </div>
+                            <div className="h-5 w-5 rounded border border-client flex items-center justify-center">
+                              <Check size={12} className="text-client" />
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-white rounded-md border border-gray-100">
+                            <div className="flex items-center">
+                              <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center mr-2">
+                                <div className="h-4 w-4 rounded-full bg-blue-500"></div>
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium">Atorvastatin</div>
+                                <div className="text-xs text-gray-500">1 pill • Evening</div>
+                              </div>
+                            </div>
+                            <div className="h-5 w-5 rounded border border-gray-400"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Time saved card - kept from original design */}
+                    <div className="absolute -bottom-8 -right-8 z-30 bg-white rounded-lg shadow-lg p-4 max-w-[200px] border border-purple-100">
+                      <div className="flex items-center mb-2">
+                        <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                          </svg>
+                        </div>
+                        <div className="font-semibold text-gray-800">Time Saved</div>
+                      </div>
+                      <div className="flex items-baseline">
+                        <span className="text-2xl font-bold text-gray-900">70%</span>
+                        <span className="ml-1 text-sm text-gray-500">on documentation</span>
+                      </div>
+                    </div>
+                    
+                    {/* Smart Matching card - kept from original design */}
+                    <div className="absolute -top-8 -left-8 z-30 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-lg p-3 max-w-[180px]">
+                      <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="9" cy="7" r="4"></circle>
+                          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <div className="font-semibold">Smart Matching</div>
+                      </div>
+                      <div className="text-xs opacity-90 mt-1">
+                        Find the perfect care provider match
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Transition>
             </div>
-          </Transition>
+          </div>
         </div>
       </section>
 
@@ -455,167 +598,4 @@ const Client: React.FC = () => {
               </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">Benefits of Personalized Remote Healthcare</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Discover how our approach to remote healthcare offers advantages that traditional in-person care cannot match.
-              </p>
-            </div>
-          </Transition>
-
-          <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8">
-              <Transition animation="fade-right">
-                <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 h-full">
-                  <div className="flex flex-col h-full">
-                    <div className="mb-6">
-                      <div className="w-14 h-14 rounded-full bg-client-muted/20 flex items-center justify-center">
-                        <Clock className="h-7 w-7 text-client" />
-                      </div>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4">Convenience & Accessibility</h3>
-                    <div className="space-y-4 mb-6 flex-grow">
-                      <p className="text-gray-600">
-                        Access healthcare from the comfort of your home without the hassle of travel, waiting rooms, or scheduling conflicts.
-                      </p>
-                      <ul className="space-y-2">
-                        <li className="flex items-start">
-                          <Check size={18} className="text-client mr-2 flex-shrink-0 mt-1" />
-                          <span>No travel time or transportation concerns</span>
-                        </li>
-                        <li className="flex items-start">
-                          <Check size={18} className="text-client mr-2 flex-shrink-0 mt-1" />
-                          <span>Extended availability including evenings and weekends</span>
-                        </li>
-                        <li className="flex items-start">
-                          <Check size={18} className="text-client mr-2 flex-shrink-0 mt-1" />
-                          <span>Reduced exposure to other illnesses in waiting rooms</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </Transition>
-
-              <Transition animation="fade-left">
-                <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 h-full">
-                  <div className="flex flex-col h-full">
-                    <div className="mb-6">
-                      <div className="w-14 h-14 rounded-full bg-client-muted/20 flex items-center justify-center">
-                        <FileText className="h-7 w-7 text-client" />
-                      </div>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4">Personalized Attention</h3>
-                    <div className="space-y-4 mb-6 flex-grow">
-                      <p className="text-gray-600">
-                        Enjoy a more personalized healthcare experience with dedicated professionals focused on your specific needs.
-                      </p>
-                      <ul className="space-y-2">
-                        <li className="flex items-start">
-                          <Check size={18} className="text-client mr-2 flex-shrink-0 mt-1" />
-                          <span>More one-on-one time with your care provider</span>
-                        </li>
-                        <li className="flex items-start">
-                          <Check size={18} className="text-client mr-2 flex-shrink-0 mt-1" />
-                          <span>Continuity of care with the same healthcare team</span>
-                        </li>
-                        <li className="flex items-start">
-                          <Check size={18} className="text-client mr-2 flex-shrink-0 mt-1" />
-                          <span>Care plans tailored to your home environment</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </Transition>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Brief */}
-      <section className="py-20 bg-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-        <div className="container mx-auto px-4">
-          <Transition animation="fade-up">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
-                Success Stories
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Hear From Our Care Community</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Thousands of individuals and families have transformed their healthcare experience with NurseSync.
-              </p>
-            </div>
-          </Transition>
-
-          <div className="max-w-5xl mx-auto">
-            <Transition animation="fade-up">
-              <div className="bg-white rounded-xl shadow-lg p-8 md:p-10 border border-gray-200 relative">
-                <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-client-muted to-client rounded-t-xl"></div>
-                <div className="text-4xl text-client-muted mb-6">"</div>
-                <p className="text-lg md:text-xl text-gray-700 mb-8">
-                  NurseSync has completely transformed how our family manages my father's care. The ability to coordinate between multiple caregivers and healthcare providers has eliminated so much stress and confusion. We feel connected and informed, even when we can't be there in person.
-                </p>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-full bg-client-muted/20 flex items-center justify-center text-client font-bold">
-                    JD
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="font-semibold">Jennifer Davis</h4>
-                    <p className="text-gray-500 text-sm">Family Caregiver, Chicago</p>
-                  </div>
-                </div>
-              </div>
-            </Transition>
-
-            <div className="text-center mt-10">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="border-client text-client"
-                as={Link}
-                to="/client/testimonials"
-              >
-                View All Testimonials
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-client to-client-muted text-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <Transition animation="fade-up">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Healthcare Experience?</h2>
-              <p className="text-lg md:text-xl text-white/90 mb-10">
-                Join thousands of care recipients who have discovered a simpler, more connected way to manage their healthcare journey.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button 
-                  variant="secondary" 
-                  size="lg" 
-                  className="bg-white text-client hover:bg-gray-100"
-                  icon={<UserPlus size={18} />}
-                >
-                  Start Your Free Trial
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="border-white text-white hover:bg-white/10"
-                  as={Link}
-                  to="/client/pricing"
-                  icon={<ArrowRight size={18} />}
-                >
-                  View Pricing Plans
-                </Button>
-              </div>
-            </Transition>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-};
-
-export default Client;
+                Discover how our approach to remote healthcare offers advantages that traditional in-person care cannot
