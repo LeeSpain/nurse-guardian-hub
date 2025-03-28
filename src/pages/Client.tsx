@@ -318,38 +318,119 @@ const Client: React.FC = () => {
         </div>
       </section>
 
-      {/* Core Features Section */}
+      {/* Core Features Section - Enhanced with more visual elements */}
       <section className="py-20 bg-white relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-        <div className="container mx-auto px-4">
+        
+        {/* Background decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-client/5 blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-purple-500/5 blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-client-muted/5 blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 relative">
           <Transition animation="fade-up">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
+              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client border border-client/10">
+                <span className="mr-2">✦</span>
                 Care Designed For You
+                <span className="ml-2">✦</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Comprehensive Remote Care Solutions</h2>
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-client via-client-muted to-client">Comprehensive Remote Care Solutions</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Our platform offers unique features designed specifically for individuals seeking quality remote healthcare.
+                Our platform offers unique features specifically for individuals seeking quality remote healthcare.
               </p>
             </div>
           </Transition>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+            {/* Connecting line between cards */}
+            <div className="absolute top-28 left-0 right-0 h-0.5 bg-gradient-to-r from-client/10 via-client/30 to-client/10 hidden lg:block"></div>
+            
             {features.map((feature, index) => (
               <Transition key={feature.title} animation="fade-up" delay={`delay-${(index) * 100}` as any}>
-                <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-1 group">
-                  <div className={`h-3 bg-gradient-to-r ${feature.color}`}></div>
-                  <div className="p-6">
-                    <div className="bg-client-muted/20 rounded-full w-16 h-16 flex items-center justify-center mb-5">
+                <div className="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 group relative z-10">
+                  <div className={`h-2 bg-gradient-to-r ${feature.color}`}></div>
+                  <div className="p-8">
+                    <div className="bg-gradient-to-br from-client-muted/20 to-client/10 rounded-xl w-16 h-16 flex items-center justify-center mb-6 transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
                       {feature.icon}
                     </div>
-                    <h3 className="text-xl font-bold mb-3 group-hover:text-client transition-colors">{feature.title}</h3>
+                    <h3 className="text-xl font-bold mb-3 group-hover:text-client transition-colors duration-300">{feature.title}</h3>
                     <p className="text-gray-600">{feature.description}</p>
+                    
+                    {/* Added subtle indicator/button */}
+                    <div className="mt-6 flex items-center text-client/80 group-hover:text-client transition-colors duration-300">
+                      <span className="text-sm font-medium">Learn more</span>
+                      <ArrowRight size={14} className="ml-1 transform group-hover:translate-x-1 transition-transform duration-300" />
+                    </div>
                   </div>
                 </div>
               </Transition>
             ))}
           </div>
+          
+          {/* Added testimonial/stat cards */}
+          <div className="mt-20 grid md:grid-cols-3 gap-6">
+            <Transition animation="fade-up" delay="delay-100">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-lg">
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-full bg-client/10 flex items-center justify-center text-client mr-4">
+                    <Users size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-2xl font-bold text-gray-900">95%</h4>
+                    <p className="text-gray-600">Patient satisfaction rate</p>
+                  </div>
+                </div>
+                <p className="text-gray-600 italic">"The remote care features have transformed how I manage my health. I feel more connected than ever."</p>
+              </div>
+            </Transition>
+            
+            <Transition animation="fade-up" delay="delay-200">
+              <div className="bg-gradient-to-br from-client/5 to-white rounded-xl p-6 border border-client/10 shadow-lg">
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-full bg-client/10 flex items-center justify-center text-client mr-4">
+                    <Clock size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-2xl font-bold text-gray-900">24/7</h4>
+                    <p className="text-gray-600">Access to care services</p>
+                  </div>
+                </div>
+                <p className="text-gray-600 italic">"Knowing I can reach out any time of day or night gives me peace of mind I never had before."</p>
+              </div>
+            </Transition>
+            
+            <Transition animation="fade-up" delay="delay-300">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-lg">
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-full bg-client/10 flex items-center justify-center text-client mr-4">
+                    <FileText size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-2xl font-bold text-gray-900">85%</h4>
+                    <p className="text-gray-600">Reduction in paperwork</p>
+                  </div>
+                </div>
+                <p className="text-gray-600 italic">"The digital documentation system saves me time and helps everyone stay on the same page with my care plan."</p>
+              </div>
+            </Transition>
+          </div>
+          
+          {/* Added visual CTA */}
+          <Transition animation="fade-up">
+            <div className="mt-16 text-center">
+              <Button 
+                variant="client" 
+                size="lg" 
+                className="shadow-lg"
+                icon={<UserPlus size={18} />}
+              >
+                Get Started With Your Care Plan
+              </Button>
+            </div>
+          </Transition>
         </div>
       </section>
 
@@ -515,73 +596,4 @@ const Client: React.FC = () => {
           <div className="space-y-24">
             {detailedFeatures.map((feature, index) => (
               <div key={feature.title} className="relative">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
-                  <Transition animation={index % 2 === 0 ? "fade-left" : "fade-right"}>
-                    <div className={`order-2 ${index % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
-                      <div className="bg-gradient-to-br from-client to-client-muted rounded-xl overflow-hidden shadow-xl p-8">
-                        <div className="bg-white/20 backdrop-blur-sm w-20 h-20 rounded-xl flex items-center justify-center mb-6 shadow-lg">
-                          {feature.icon}
-                        </div>
-                        <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">{feature.title}</h3>
-                        <p className="text-white/90 text-lg mb-8">{feature.description}</p>
-                        <ul className="space-y-3">
-                          {feature.benefits.map((benefit, i) => (
-                            <li key={i} className="flex items-start">
-                              <div className="flex-shrink-0 mr-2 mt-1.5">
-                                <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center">
-                                  <Check size={12} className="text-client" />
-                                </div>
-                              </div>
-                              <span className="text-white/90">{benefit}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </Transition>
-                  
-                  <Transition animation={index % 2 === 0 ? "fade-right" : "fade-left"}>
-                    <div className={`order-1 ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
-                      <div className="aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 shadow-lg">
-                        <img
-                          src={index === 0 
-                            ? "/lovable-uploads/d215d01f-93d6-423a-994e-1cb106f5b3ae.png"
-                            : index === 1 
-                            ? "/lovable-uploads/62e008c6-a46f-4835-93d0-3813f2c6561a.png"
-                            : "/lovable-uploads/10dd0118-d393-4fd3-b587-7248faff0e56.png"
-                          }
-                          alt={feature.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </div>
-                  </Transition>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* NEW SECTION: Benefits of Remote Healthcare */}
-      <section className="py-20 bg-gray-50 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-        <div className="container mx-auto px-4">
-          <Transition animation="fade-up">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
-                Why Choose Remote Care
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Benefits of Personalized Remote Healthcare</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Discover how our approach to remote healthcare offers advantages that traditional in-person care cannot match.
-              </p>
-            </div>
-          </Transition>
-        </div>
-      </section>
-    </div>
-  );
-};
-
-export default Client;
+                <div className="grid md:grid-cols-2 gap-12
