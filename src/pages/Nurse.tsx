@@ -17,7 +17,8 @@ import {
   Sparkles,
   Lightbulb,
   Clock,
-  Briefcase
+  Briefcase,
+  Award
 } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
@@ -31,8 +32,8 @@ const Nurse: React.FC = () => {
 
   return (
     <>
-      {/* Hero Section with Modern Design */}
-      <section className="relative pt-28 pb-20 overflow-hidden">
+      {/* Hero Section with Modern Design - Moved up to match main homepage */}
+      <section className="relative pt-20 pb-20 overflow-hidden bg-gradient-to-r from-purple-50 via-white to-purple-50">
         {/* Layered Background */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-50 via-white to-purple-50"></div>
         <div className="absolute top-0 right-0 w-full h-full overflow-hidden opacity-20">
@@ -121,17 +122,17 @@ const Nurse: React.FC = () => {
                       />
                     </div>
                     
-                    {/* Floating stats card */}
+                    {/* Changed this card to something different */}
                     <div className="absolute -bottom-8 -right-8 bg-white rounded-lg shadow-lg p-4 max-w-[200px] border border-purple-100 z-30">
                       <div className="flex items-center mb-2">
-                        <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
-                          <Clock className="h-4 w-4 text-green-600" />
+                        <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center mr-2">
+                          <Award className="h-4 w-4 text-blue-600" />
                         </div>
-                        <div className="font-semibold text-gray-800">Time Saved</div>
+                        <div className="font-semibold text-gray-800">Success Rate</div>
                       </div>
                       <div className="flex items-baseline">
-                        <span className="text-2xl font-bold text-gray-900">70%</span>
-                        <span className="ml-1 text-sm text-gray-500">on documentation</span>
+                        <span className="text-2xl font-bold text-gray-900">95%</span>
+                        <span className="ml-1 text-sm text-gray-500">client satisfaction</span>
                       </div>
                     </div>
                     
