@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, CreditCard, MessageSquare, Shield } from 'lucide-react';
@@ -23,7 +22,7 @@ const NurseHeader: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
-            <Link to="/nurse" className="flex-shrink-0">
+            <Link to="/" className="flex-shrink-0">
               <Logo />
             </Link>
             <div className="ml-3 rounded-full bg-purple-100 text-purple-700 px-3 py-1 text-xs font-medium">
