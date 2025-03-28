@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Check, X, Info, ArrowRight, Briefcase, Users } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
@@ -176,7 +177,7 @@ const NursePricingPage: React.FC = () => {
             
             <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
               {/* Independent Practice Path */}
-              <Transition animation="fade-right" delay="delay-100">
+              <Transition animation="slide-in-left" delay="delay-100">
                 <div className="relative">
                   <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl blur opacity-20"></div>
                   <Card className="relative h-full border-purple-100 hover:border-purple-200 transition-all duration-300 hover:shadow-xl z-10">
@@ -237,7 +238,7 @@ const NursePricingPage: React.FC = () => {
               </Transition>
               
               {/* Nurse-Sync Nurse Path */}
-              <Transition animation="fade-left" delay="delay-200">
+              <Transition animation="slide-in-right" delay="delay-200">
                 <div className="relative">
                   <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl blur opacity-20"></div>
                   <Card className="relative h-full border-indigo-100 hover:border-indigo-200 transition-all duration-300 hover:shadow-xl z-10">
@@ -524,3 +525,5 @@ const NursePricingPage: React.FC = () => {
     </>
   );
 };
+
+export default NursePricingPage;
