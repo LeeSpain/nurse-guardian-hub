@@ -1,59 +1,49 @@
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from '@/components/ui/sonner';
+import Index from './pages/Index';
+import Features from './pages/Features';
+import Pricing from './pages/Pricing';
+import Nurse from './pages/Nurse';
+import NurseFeatures from './pages/NurseFeatures';
+import NursePricing from './pages/NursePricing';
+import ClientLayout from './layouts/ClientLayout';
+import Client from './pages/Client';
+import ClientFeatures from './pages/ClientFeatures';
+import ClientPricing from './pages/ClientPricing';
+import ClientDetailedOverview from './pages/ClientDetailedOverview';
+import NotFound from './pages/NotFound';
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import PricingPage from "./pages/Pricing";
-import FeaturesPage from "./pages/Features";
-import NursePricingPage from "./pages/NursePricing";
-import ClientPricingPage from "./pages/ClientPricing";
-import Nurse from "./pages/Nurse";
-import ClientFeatures from "./pages/ClientFeatures";
-import NurseLayout from "./layouts/NurseLayout";
-import ClientLayout from "./layouts/ClientLayout";
-
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+function App() {
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        
+        {/* Nurse Routes */}
+        <Route path="/nurse" element={<Nurse />} />
+        <Route path="/nurse/features" element={<NurseFeatures />} />
+        <Route path="/nurse/pricing" element={<NursePricing />} />
+        
+        {/* Client Routes */}
+        <Route path="/client" element={<ClientLayout />}>
+          <Route index element={<Navigate to="/client/home" replace />} />
+          <Route path="home" element={<Client />} />
+          <Route path="features" element={<ClientFeatures />} />
+          <Route path="pricing" element={<ClientPricing />} />
+          <Route path="detailed-overview" element={<ClientDetailedOverview />} />
+          {/* ... keep existing code (other client routes) */}
+        </Route>
+        
+        {/* Other Routes */}
+        <Route path="/features" element={<Features />} />
+        <Route path="/pricing" element={<Pricing />} />
+        
+        <Route path="*" element={<NotFound />} />
+      </Routes>
       <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Main shared routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/features" element={<FeaturesPage />} />
-          
-          {/* Nurse specific routes */}
-          <Route path="/nurse" element={<NurseLayout />}>
-            <Route index element={<Nurse />} />
-            <Route path="pricing" element={<NursePricingPage />} />
-          </Route>
-          
-          {/* Client specific routes */}
-          <Route path="/client" element={<ClientLayout />}>
-            <Route index element={<ClientFeatures />} />
-            <Route path="features" element={<ClientFeatures />} />
-            <Route path="pricing" element={<ClientPricingPage />} />
-          </Route>
-          
-          {/* Legacy direct routes (can be removed later) */}
-          <Route path="/pricing/nurse" element={<NursePricingPage />} />
-          <Route path="/pricing/client" element={<ClientPricingPage />} />
-          <Route path="/features/nurse" element={<Nurse />} />
-          <Route path="/features/client" element={<ClientFeatures />} />
-          
-          {/* 404 route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </>
+  );
+}
 
 export default App;
