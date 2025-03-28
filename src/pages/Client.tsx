@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -18,7 +17,8 @@ import {
   ChevronRight,
   Award,
   Clock,
-  FileText
+  FileText,
+  CircleCheck
 } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
@@ -440,58 +440,112 @@ const Client: React.FC = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 bg-gray-50 relative">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-        <div className="container mx-auto px-4">
+      {/* How It Works Section - Enhanced and Upgraded */}
+      <section className="py-24 md:py-32 relative overflow-hidden">
+        {/* Background elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-client-muted/10"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zMCAyMEgxMHYtMWgyMHYxeiIgZmlsbD0icmdiYSgxMDAsMTAwLDEwMCwwLjEpIi8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-40 left-10 w-72 h-72 rounded-full bg-client/5 blur-3xl"></div>
+        <div className="absolute bottom-40 right-10 w-80 h-80 rounded-full bg-purple-500/5 blur-3xl"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
           <Transition animation="fade-up">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
+              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client border border-client/10">
+                <span className="mr-2">✦</span>
                 Simple Three-Step Process
+                <span className="ml-2">✦</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">How NurseSync Works For You</h2>
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-800">How NurseSync Works For You</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Getting started with remote healthcare has never been easier. Our streamlined process connects you with the care you need in just a few steps.
+                Getting started with remote healthcare has never been easier. Our streamlined process connects you with the care you need in just a few simple steps.
               </p>
             </div>
           </Transition>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto relative">
-            <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-client-muted/30 to-client/40 -translate-y-1/2 hidden md:block"></div>
+          {/* Process steps - Enhanced with better visuals */}
+          <div className="max-w-6xl mx-auto relative">
+            {/* Timeline connector */}
+            <div className="hidden lg:block absolute left-0 right-0 top-1/2 h-1 -translate-y-1/2 bg-gradient-to-r from-client-muted/30 via-client/60 to-client-muted/30 z-0"></div>
             
-            <Transition animation="fade-up" delay="delay-0">
-              <div className="bg-white rounded-xl shadow-md p-8 relative z-10">
-                <div className="w-12 h-12 bg-client rounded-full text-white flex items-center justify-center font-bold text-lg mb-6">1</div>
-                <h3 className="text-xl font-bold mb-4">Create Your Profile</h3>
-                <p className="text-gray-600 mb-6">Sign up and complete your health profile with your medical history, preferences, and care needs.</p>
-                <div className="text-client font-medium flex items-center">
-                  <span>Get Started</span>
-                  <ChevronRight size={16} className="ml-1" />
-                </div>
-              </div>
-            </Transition>
+            <div className="grid md:grid-cols-3 gap-10 lg:gap-16 relative z-10">
+              {[
+                {
+                  step: "01",
+                  title: "Create Your Profile",
+                  description: "Sign up and complete your health profile with your medical history, preferences, and specific care needs.",
+                  icon: <UserPlus className="h-8 w-8 text-white" />,
+                  action: "Get Started"
+                },
+                {
+                  step: "02",
+                  title: "Match With Care Provider",
+                  description: "Our AI technology connects you with healthcare professionals who specialize in your specific needs.",
+                  icon: <Users className="h-8 w-8 text-white" />,
+                  action: "View Providers"
+                },
+                {
+                  step: "03",
+                  title: "Begin Your Care Plan",
+                  description: "Start your personalized care journey with video consultations, monitoring, and continuous support.",
+                  icon: <CircleCheck className="h-8 w-8 text-white" />,
+                  action: "Learn More"
+                }
+              ].map((step, index) => (
+                <Transition key={step.step} animation="fade-up" delay={`delay-${index * 100}` as any}>
+                  <div className="group relative">
+                    {/* Step number with glow effect */}
+                    <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 z-20">
+                      <div className="relative">
+                        <div className="absolute inset-0 rounded-full bg-client blur-md opacity-30 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500"></div>
+                        <div className="w-20 h-20 flex items-center justify-center bg-gradient-to-br from-client to-client-muted rounded-full shadow-lg border border-white/20 relative">
+                          <span className="text-2xl font-bold text-white">{step.step}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Card with content */}
+                    <GlassCard variant="client" hover className="pt-14 mt-10 relative z-10 h-full transition-transform duration-500 group-hover:-translate-y-2">
+                      {/* Icon */}
+                      <div className="absolute -right-5 -top-5 w-16 h-16 rounded-xl bg-gradient-to-br from-client to-client-muted shadow-lg flex items-center justify-center transform rotate-12 group-hover:rotate-0 transition-all duration-500">
+                        {step.icon}
+                      </div>
+                      
+                      <h3 className="text-xl font-bold mb-4 text-gray-800 group-hover:text-client transition-colors duration-300">{step.title}</h3>
+                      <p className="text-gray-600 mb-6">{step.description}</p>
+                      
+                      <div className="mt-auto pt-4 border-t border-gray-100">
+                        <button className="flex items-center text-client font-medium group/btn">
+                          <span>{step.action}</span>
+                          <ChevronRight size={18} className="ml-1 transform group-hover/btn:translate-x-1 transition-transform duration-300" />
+                        </button>
+                      </div>
+                    </GlassCard>
+                    
+                    {/* Circle connector for desktop */}
+                    {index < 2 && (
+                      <div className="hidden lg:block absolute -right-8 top-1/2 transform -translate-y-1/2 translate-x-1/2 z-10">
+                        <div className="w-4 h-4 rounded-full bg-white border-2 border-client"></div>
+                      </div>
+                    )}
+                  </div>
+                </Transition>
+              ))}
+            </div>
             
-            <Transition animation="fade-up" delay="delay-100">
-              <div className="bg-white rounded-xl shadow-md p-8 relative z-10">
-                <div className="w-12 h-12 bg-client rounded-full text-white flex items-center justify-center font-bold text-lg mb-6">2</div>
-                <h3 className="text-xl font-bold mb-4">Match With Care Provider</h3>
-                <p className="text-gray-600 mb-6">We'll connect you with healthcare professionals who specialize in your specific care needs.</p>
-                <div className="text-client font-medium flex items-center">
-                  <span>View Providers</span>
-                  <ChevronRight size={16} className="ml-1" />
-                </div>
-              </div>
-            </Transition>
-            
-            <Transition animation="fade-up" delay="delay-200">
-              <div className="bg-white rounded-xl shadow-md p-8 relative z-10">
-                <div className="w-12 h-12 bg-client rounded-full text-white flex items-center justify-center font-bold text-lg mb-6">3</div>
-                <h3 className="text-xl font-bold mb-4">Begin Your Care Plan</h3>
-                <p className="text-gray-600 mb-6">Start your personalized care plan with video consultations, monitoring, and continuous support.</p>
-                <div className="text-client font-medium flex items-center">
-                  <span>Learn More</span>
-                  <ChevronRight size={16} className="ml-1" />
-                </div>
+            {/* Call to action - Added to maintain consistency with other sections */}
+            <Transition animation="fade-up" delay="delay-300">
+              <div className="mt-20 text-center">
+                <Button 
+                  variant="client" 
+                  size="lg" 
+                  className="shadow-lg"
+                  icon={<ArrowRight size={18} />}
+                >
+                  Start Your Care Journey Today
+                </Button>
               </div>
             </Transition>
           </div>
@@ -540,68 +594,4 @@ const Client: React.FC = () => {
       </section>
 
       {/* NEW SECTION: Our Healthcare Professionals */}
-      <section className="py-20 bg-gray-50 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-        <div className="container mx-auto px-4">
-          <Transition animation="fade-up">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
-                Expert Care Team
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Healthcare Professionals</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Meet the dedicated team of healthcare experts ready to provide personalized care through our remote platform.
-              </p>
-            </div>
-          </Transition>
-
-          <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
-            {professionalTypes.map((prof, index) => (
-              <Transition key={prof.title} animation="fade-up" delay={`delay-${index * 100}` as any}>
-                <GlassCard variant="client" hover className="h-full flex flex-col">
-                  <div className="w-full h-56 rounded-lg overflow-hidden mb-5 bg-gray-100">
-                    <img
-                      src={prof.imageUrl}
-                      alt={prof.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-gray-800">{prof.title}</h3>
-                  <p className="text-gray-600 mb-4">{prof.description}</p>
-                  <div className="mt-auto pt-4">
-                    <Button 
-                      variant="outline" 
-                      className="border-client text-client hover:bg-client/5 w-full"
-                    >
-                      View Available Professionals
-                    </Button>
-                  </div>
-                </GlassCard>
-              </Transition>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Detailed Features Section */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
-        <div className="container mx-auto px-4">
-          <Transition animation="fade-up">
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
-                Advanced Capabilities
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Powerful Features for Complete Care</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Discover how our innovative platform transforms the way you receive and manage healthcare.
-              </p>
-            </div>
-          </Transition>
-        </div>
-      </section>
-    </div>
-  );
-};
-
-export default Client;
+      <section className="
