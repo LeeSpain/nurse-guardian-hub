@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -346,7 +347,7 @@ const Nurse: React.FC = () => {
               </div>
             </Transition>
             
-            {/* Feature 6 - Billing - Here we need to change delay-600 to delay-500 */}
+            {/* Feature 6 - Billing */}
             <Transition animation="fade-up" delay="delay-500">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-700 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-500"></div>
@@ -388,6 +389,209 @@ const Nurse: React.FC = () => {
               View Pricing Plans
               <ArrowRight size={18} className="ml-2" />
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Two Career Paths Section */}
+      <section className="py-20 bg-gradient-to-br from-purple-50 to-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIGZpbGw9InJnYmEoMTI4LDkwLDIxMywwLjA1KSIvPjwvZz48L3N2Zz4=')] opacity-20"></div>
+        
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <Transition animation="fade-up">
+              <div className="inline-flex items-center bg-purple-100 rounded-full px-3 py-1 mb-4">
+                <Sparkles className="h-4 w-4 text-purple-600 mr-2" />
+                <span className="text-purple-700 font-medium text-sm">Two Career Paths</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Choose Your Path to Success</h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Nurse-Sync offers healthcare professionals two flexible avenues to maximize their earning potential while delivering exceptional care.
+              </p>
+            </Transition>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+            {/* Path 1: Independent Practice */}
+            <Transition animation="slide-in-left">
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-purple-100">
+                <div className="h-8 bg-gradient-to-r from-purple-500 to-purple-700"></div>
+                <div className="p-8">
+                  <div className="flex items-center mb-6">
+                    <div className="h-14 w-14 rounded-xl bg-purple-100 flex items-center justify-center mr-4">
+                      <Briefcase className="h-8 w-8 text-purple-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900">Independent Practice</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6">
+                    Build your own healthcare practice using our platform's advanced tools while maintaining full autonomy over your schedule and client base.
+                  </p>
+                  
+                  <div className="space-y-4 mb-8">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Complete Flexibility</h4>
+                        <p className="text-gray-600 text-sm">Set your own rates, hours, and choose your clients</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Full Revenue</h4>
+                        <p className="text-gray-600 text-sm">Keep 100% of your client fees (platform subscription applies)</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Platform Support</h4>
+                        <p className="text-gray-600 text-sm">Access to all tools, billing, scheduling and AI assistance</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between bg-purple-50 p-4 rounded-lg">
+                    <div>
+                      <div className="text-sm text-purple-600 font-medium">Average Earning Potential</div>
+                      <div className="text-xl font-bold text-purple-900">$75-150/hour</div>
+                    </div>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
+                      to="/nurse/pricing"
+                    >
+                      Learn More
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+            
+            {/* Path 2: Nurse-Sync Professional */}
+            <Transition animation="slide-in-right">
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-purple-100">
+                <div className="h-8 bg-gradient-to-r from-purple-700 to-purple-900"></div>
+                <div className="p-8">
+                  <div className="flex items-center mb-6">
+                    <div className="h-14 w-14 rounded-xl bg-purple-100 flex items-center justify-center mr-4">
+                      <Users className="h-8 w-8 text-purple-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900">Nurse-Sync Professional</h3>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6">
+                    Join our network of healthcare professionals and receive pre-vetted clients directly from our matching system with guaranteed hours.
+                  </p>
+                  
+                  <div className="space-y-4 mb-8">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Steady Client Flow</h4>
+                        <p className="text-gray-600 text-sm">Regular client assignments without marketing work</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Guaranteed Hours</h4>
+                        <p className="text-gray-600 text-sm">Minimum weekly hours based on your availability</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                        <Check className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">Professional Support</h4>
+                        <p className="text-gray-600 text-sm">Dedicated support team and continuing education</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between bg-purple-50 p-4 rounded-lg">
+                    <div>
+                      <div className="text-sm text-purple-600 font-medium">Average Earning Potential</div>
+                      <div className="text-xl font-bold text-purple-900">$60-100/hour</div>
+                    </div>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
+                      to="/nurse/join-network"
+                    >
+                      Join Network
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+          </div>
+          
+          {/* Why Not Do Both Section */}
+          <div className="mt-16 bg-white rounded-2xl shadow-lg p-8 border border-purple-100">
+            <Transition animation="fade-up">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center bg-purple-100 rounded-full px-3 py-1 mb-4">
+                  <Star className="h-4 w-4 text-purple-600 mr-2" />
+                  <span className="text-purple-700 font-medium text-sm">Why Not Do Both?</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold mb-2">Maximize Your Potential</h3>
+                <p className="text-gray-600 max-w-3xl mx-auto">
+                  Many of our most successful healthcare professionals blend both approaches, building their own practice 
+                  while accepting platform-matched clients to ensure a steady income.
+                </p>
+              </div>
+              
+              {/* Testimonial */}
+              <div className="bg-gradient-to-r from-purple-50 to-purple-100/50 rounded-xl p-6 mb-8">
+                <div className="flex items-start">
+                  <div className="mr-4 flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-purple-200 flex items-center justify-center">
+                      <span className="text-purple-700 font-bold text-xl">JM</span>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="italic text-gray-700 mb-3">
+                      "I started with just platform-matched clients, which gave me steady income and confidence. 
+                      After six months, I began building my own client base alongside. Now I have the perfect balance of 
+                      reliable income and the freedom to grow my specialized practice."
+                    </p>
+                    <div className="font-medium text-gray-900">Jennifer M.</div>
+                    <div className="text-sm text-gray-500">Psychiatric Nurse Practitioner, 2 years on Nurse-Sync</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <Button 
+                  variant="primary" 
+                  size="lg" 
+                  className="bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 shadow-xl hover:shadow-purple-500/20 transition-all"
+                  to="/register"
+                >
+                  Start Your Journey
+                  <ArrowRight size={18} className="ml-2" />
+                </Button>
+              </div>
+            </Transition>
           </div>
         </div>
       </section>
@@ -455,14 +659,12 @@ const Nurse: React.FC = () => {
                   </div>
                 </div>
               </Transition>
-              
-              {/* Step 2 */}
-              <Transition animation="fade-up" delay="delay-200">
-                <div className="flex flex-col md:flex-row items-center">
-                  <div className="md:w-1/2 md:pr-16 mb-8 md:mb-0 hidden md:block">
-                    {/* Placeholder for left side on larger screens */}
-                  </div>
-                  <div className="md:w-16 relative">
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 md:static md:transform-none">
-                      <div className="relative">
-                        <div className="absolute -inset-3 rounded-
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default Nurse;
