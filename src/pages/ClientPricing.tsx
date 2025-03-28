@@ -4,6 +4,8 @@ import { Check } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
 import GlassCard from '../components/ui-components/GlassCard';
+import ClientHeader from '../components/navigation/ClientHeader';
+import Footer from '../components/layout/Footer';
 
 const ClientPricingPage: React.FC = () => {
   // Scroll to top when component mounts
@@ -13,56 +15,44 @@ const ClientPricingPage: React.FC = () => {
 
   const plans = [
     {
-      name: 'Basic Care',
-      description: 'Essential care monitoring for individuals',
-      price: '$19',
+      name: 'Standard Plan',
+      description: 'Individual care monitoring and support',
+      price: '€50',
       billing: 'per month',
       featured: false,
       features: [
-        'Connect with 1 healthcare provider',
-        'Basic health tracking',
-        'Video consultations',
-        'Secure messaging',
-        'Appointment scheduling',
-        'Care history documentation'
+        'Smart matching with compatible nurses',
+        'Free 15-minute intro calls with nurses',
+        '4 HD Video Calls/Month',
+        'Unlimited secure messaging',
+        'Personal dashboard access',
+        'Wellness tracking with AI summaries',
+        'Emergency support',
+        'Mobile app access'
       ]
     },
     {
-      name: 'Family Care',
-      description: 'Enhanced care for families and caregivers',
-      price: '$49',
+      name: 'Family Plan',
+      description: 'Enhanced care for up to 4 family members',
+      price: '€100',
       billing: 'per month',
       featured: true,
       features: [
-        'Connect with multiple healthcare providers',
-        'Advanced health tracking & analytics',
-        'Unlimited video consultations',
-        'Family dashboard access (up to 5 members)',
-        'Medication & appointment reminders',
-        'Priority scheduling',
-        'Emergency support access'
-      ]
-    },
-    {
-      name: 'Premium Care',
-      description: 'Comprehensive support for complex care needs',
-      price: '$99',
-      billing: 'per month',
-      featured: false,
-      features: [
-        'All Family Care features',
-        'Expanded family access (up to 10 members)',
-        'Caregiver coordination tools',
-        'Advanced health analytics',
-        'Custom care plan builder',
-        'Dedicated care coordinator',
-        '24/7 emergency response'
+        'Smart matching for up to 4 care seekers',
+        'Free intro calls for each care seeker',
+        '16 total HD video calls/month (4 per person)',
+        'Unlimited messaging with assigned nurses',
+        'Enhanced family dashboard with shared access',
+        'Individual & family wellness tracking',
+        'Family-wide emergency alerts',
+        'Multi-user mobile app access'
       ]
     }
   ];
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
+      <ClientHeader />
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-gradient-to-br from-gray-50 via-client-muted/20 to-gray-50">
@@ -88,12 +78,12 @@ const ClientPricingPage: React.FC = () => {
         {/* Pricing Plans */}
         <section className="py-16 md:py-24 relative overflow-hidden">
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {plans.map((plan, index) => (
                 <Transition 
                   key={plan.name} 
                   animation="fade-up" 
-                  delay={`delay-${(index % 3) * 100 + 100}` as any}
+                  delay={index === 0 ? "delay-100" : "delay-200"}
                 >
                   <GlassCard
                     variant="client"
@@ -144,8 +134,49 @@ const ClientPricingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* FAQ Section */}
+        {/* Launch Strategy Section */}
         <section className="py-16 md:py-24 relative overflow-hidden bg-gray-50">
+          <div className="container mx-auto px-4">
+            <Transition animation="fade-up">
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
+                    Limited Time Offer
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-4">Launch Promotion</h2>
+                </div>
+                
+                <div className="bg-white rounded-xl shadow-lg p-8 border border-client-muted/20">
+                  <div className="prose prose-lg max-w-none text-gray-600">
+                    <p>
+                      <strong>As part of our launch strategy:</strong>
+                    </p>
+                    <ul>
+                      <li>Get free introductory calls in your first month without impacting your monthly call limits</li>
+                      <li>Enjoy 20% off any paid plan for the first 3 months</li>
+                      <li>Experience premium nurse-led care with unlimited messaging and family tools</li>
+                    </ul>
+                    <p>
+                      Our pricing reflects the value of dedicated nurse expertise and comprehensive family coordination, providing superior service compared to standard telehealth platforms.
+                    </p>
+                  </div>
+                  
+                  <div className="mt-6 text-center">
+                    <Button
+                      variant="client"
+                      size="lg"
+                    >
+                      Take Advantage Now
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="py-16 md:py-24 relative overflow-hidden">
           <div className="container mx-auto px-4">
             <Transition animation="fade-up">
               <div className="mb-12 text-center">
@@ -163,7 +194,7 @@ const ClientPricingPage: React.FC = () => {
               <Transition animation="fade-up" delay="delay-100">
                 <div className="mb-8 p-6 rounded-xl bg-white shadow-md border border-gray-100">
                   <h3 className="text-lg font-semibold mb-2">How do I find a nurse on your platform?</h3>
-                  <p className="text-gray-600">You can search for available healthcare providers through our directory, or you may be invited by your existing healthcare provider if they use our platform.</p>
+                  <p className="text-gray-600">You can use our Smart Matching system which provides a shortlist of 3-5 nurses based on your needs, or browse our nurse directory manually filtered by specialty, language, and other preferences.</p>
                 </div>
               </Transition>
 
@@ -177,14 +208,14 @@ const ClientPricingPage: React.FC = () => {
               <Transition animation="fade-up" delay="delay-300">
                 <div className="mb-8 p-6 rounded-xl bg-white shadow-md border border-gray-100">
                   <h3 className="text-lg font-semibold mb-2">Can multiple family members access my care information?</h3>
-                  <p className="text-gray-600">Yes, our Family Care and Premium Care plans allow you to grant secure access to family members or other caregivers, with customizable permission levels to control what information they can see.</p>
+                  <p className="text-gray-600">Yes, our Family Plan allows you to grant secure access to up to 4 family members or other caregivers, with customizable permission levels to control what information they can see.</p>
                 </div>
               </Transition>
 
               <Transition animation="fade-up" delay="delay-400">
                 <div className="p-6 rounded-xl bg-white shadow-md border border-gray-100">
                   <h3 className="text-lg font-semibold mb-2">Is there a mobile app available?</h3>
-                  <p className="text-gray-600">Yes, we offer mobile apps for both iOS and Android devices, allowing you to stay connected with your care team from anywhere.</p>
+                  <p className="text-gray-600">Yes, we offer mobile apps for both iOS and Android devices, allowing you to stay connected with your care team from anywhere. The app includes full functionality for video calls, messaging, wellness tracking, and dashboard access.</p>
                 </div>
               </Transition>
             </div>
@@ -222,7 +253,8 @@ const ClientPricingPage: React.FC = () => {
           </div>
         </section>
       </main>
-    </>
+      <Footer />
+    </div>
   );
 };
 
