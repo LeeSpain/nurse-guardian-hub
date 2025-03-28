@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Search, Calendar, FileText, MessageSquare, Video, CreditCard, Shield } from 'lucide-react';
+import { Menu, X, User, Search, Calendar, FileText, MessageSquare, Video, CreditCard, Shield, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
 import Button from '../ui-components/Button';
@@ -36,18 +36,18 @@ const NurseHeader: React.FC = () => {
             <Link 
               to="/nurse"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
-                isActivePath('/nurse') && "text-purple-700"
+                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
+                isActivePath('/nurse') && "text-purple-700 font-semibold"
               )}
             >
-              <FileText size={18} className="mr-1" />
+              <Heart size={18} className="mr-1" />
               Home
             </Link>
             <Link 
               to="/nurse/features"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
-                isActivePath('/nurse/features') && "text-purple-700"
+                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
+                isActivePath('/nurse/features') && "text-purple-700 font-semibold"
               )}
             >
               <Shield size={18} className="mr-1" />
@@ -56,8 +56,8 @@ const NurseHeader: React.FC = () => {
             <Link 
               to="/nurse/pricing"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
-                isActivePath('/nurse/pricing') && "text-purple-700"
+                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
+                isActivePath('/nurse/pricing') && "text-purple-700 font-semibold"
               )}
             >
               <CreditCard size={18} className="mr-1" />
@@ -66,8 +66,8 @@ const NurseHeader: React.FC = () => {
             <Link 
               to="/nurse/testimonials"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
-                isActivePath('/nurse/testimonials') && "text-purple-700"
+                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
+                isActivePath('/nurse/testimonials') && "text-purple-700 font-semibold"
               )}
             >
               <MessageSquare size={18} className="mr-1" />
@@ -76,8 +76,8 @@ const NurseHeader: React.FC = () => {
             <Link 
               to="/nurse/support"
               className={cn(
-                "text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
-                isActivePath('/nurse/support') && "text-purple-700"
+                "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center",
+                isActivePath('/nurse/support') && "text-purple-700 font-semibold"
               )}
             >
               <Calendar size={18} className="mr-1" />
@@ -86,22 +86,15 @@ const NurseHeader: React.FC = () => {
           </nav>
           
           <div className="hidden md:flex items-center space-x-6">
-            <div className="relative">
-              <button className="text-gray-500 hover:text-gray-700 transition-colors bg-gray-100 p-2 rounded-full">
-                <Search size={18} />
-              </button>
-            </div>
-            
-            <div className="flex items-center">
-              <Button 
-                variant="primary" 
-                size="sm"
-                className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
-                icon={<User size={16} />}
-              >
-                Login / Sign Up
-              </Button>
-            </div>
+            <Button 
+              variant="primary" 
+              size="sm"
+              className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
+              to="/login"
+            >
+              <User size={16} className="mr-2" />
+              Login / Sign Up
+            </Button>
           </div>
           
           {/* Mobile menu button */}
@@ -144,7 +137,7 @@ const NurseHeader: React.FC = () => {
               )}
               onClick={() => setIsMenuOpen(false)}
             >
-              <FileText size={20} className="mr-2" />
+              <Heart size={20} className="mr-2" />
               Home
             </Link>
             <Link
@@ -197,9 +190,10 @@ const NurseHeader: React.FC = () => {
                 variant="primary" 
                 size="md"
                 fullWidth
-                icon={<User size={18} />}
                 className="bg-purple-600 hover:bg-purple-700 text-white shadow-md"
+                to="/login"
               >
+                <User size={18} className="mr-2" />
                 Login / Sign Up
               </Button>
             </div>
