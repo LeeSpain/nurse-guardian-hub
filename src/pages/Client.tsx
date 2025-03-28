@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -596,4 +597,44 @@ const Client: React.FC = () => {
           <div className="space-y-24">
             {detailedFeatures.map((feature, index) => (
               <div key={feature.title} className="relative">
-                <div className="grid md:grid-cols-2 gap-12
+                <div className="grid md:grid-cols-2 gap-12 items-center">
+                  {/* Feature details */}
+                  <div className={index % 2 === 0 ? 'order-1 md:order-1' : 'order-1 md:order-2'}>
+                    <div className="p-6 md:p-10 bg-gradient-to-br from-client to-client-muted rounded-2xl shadow-xl mb-6 md:mb-0 overflow-hidden relative">
+                      <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-x-8 -translate-y-8 blur-lg"></div>
+                      <div className="relative z-10">
+                        {feature.icon}
+                        <h3 className="text-2xl font-bold text-white mt-6 mb-4">{feature.title}</h3>
+                        <p className="text-white/90 mb-8">{feature.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Feature benefits */}
+                  <div className={index % 2 === 0 ? 'order-2 md:order-2' : 'order-2 md:order-1'}>
+                    <div className="bg-white p-8 border border-gray-100 rounded-xl shadow-lg">
+                      <h4 className="text-xl font-bold text-gray-800 mb-6">Key Benefits</h4>
+                      <ul className="space-y-4">
+                        {feature.benefits.map((benefit, i) => (
+                          <li key={i} className="flex items-start">
+                            <div className="bg-client/10 text-client rounded-full p-1 mr-3 mt-0.5">
+                              <Check size={16} className="text-client" />
+                            </div>
+                            <span className="text-gray-700">{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Client;
+
