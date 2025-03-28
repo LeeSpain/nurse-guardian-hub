@@ -420,8 +420,8 @@ const NursePricingPage: React.FC = () => {
               
               {/* Pricing Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                {plans.slice(0, 3).map((plan) => (
-                  <Transition key={plan.id} animation="fade-up" delay={`delay-${plans.indexOf(plan) * 100}`} className="h-full">
+                {plans.slice(0, 3).map((plan, index) => (
+                  <Transition key={plan.id} animation="fade-up" delay={index === 0 ? "delay-100" : index === 1 ? "delay-200" : "delay-300"} className="h-full">
                     <div className="relative h-full group">
                       <div className={`absolute inset-0 rounded-xl bg-gradient-to-tl ${plan.color} opacity-40 group-hover:opacity-60 transition-opacity duration-300`}></div>
                       
@@ -652,14 +652,14 @@ const NursePricingPage: React.FC = () => {
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-3">
                     <Button
                       variant="secondary"
-                      size="default"
+                      size="md"
                       className="bg-white text-purple-700 hover:bg-gray-100 shadow-md"
                     >
                       Schedule a Demo
                     </Button>
                     <Button
                       variant="outline"
-                      size="default"
+                      size="md"
                       className="border-white text-white hover:bg-white/20"
                     >
                       Start Free Trial
@@ -676,3 +676,4 @@ const NursePricingPage: React.FC = () => {
 };
 
 export default NursePricingPage;
+
