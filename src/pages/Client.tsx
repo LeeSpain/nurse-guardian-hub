@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -594,4 +595,51 @@ const Client: React.FC = () => {
       </section>
 
       {/* NEW SECTION: Our Healthcare Professionals */}
-      <section className="
+      <section className="py-24 bg-gradient-to-br from-gray-50 via-white to-client-muted/10 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+        <div className="container mx-auto px-4">
+          <Transition animation="fade-up">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
+                Expert Care Team
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Healthcare Professionals</h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Our network includes verified, experienced healthcare providers dedicated to delivering personalized care.
+              </p>
+            </div>
+          </Transition>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {professionalTypes.map((professional, index) => (
+              <Transition key={professional.title} animation="fade-up" delay={`delay-${index * 100}` as any}>
+                <div className="relative group">
+                  <div className="relative rounded-xl overflow-hidden mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300">
+                    <div className="aspect-w-4 aspect-h-3">
+                      <img 
+                        src={professional.imageUrl} 
+                        alt={professional.title}
+                        className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-700" 
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h3 className="text-xl font-bold text-white">{professional.title}</h3>
+                    </div>
+                  </div>
+                  <p className="text-gray-600">{professional.description}</p>
+                  <button className="mt-4 text-sm font-medium text-client flex items-center group-hover:underline">
+                    Learn more about our {professional.title.toLowerCase()}
+                    <ArrowRight size={14} className="ml-1 transform group-hover:translate-x-1 transition-transform duration-300" />
+                  </button>
+                </div>
+              </Transition>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Client;
