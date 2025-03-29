@@ -43,6 +43,7 @@ function App() {
             <Route index element={<Nurse />} />
             <Route path="features" element={<NurseFeatures />} />
             <Route path="pricing" element={<NursePricing />} />
+            <Route path="support" element={<NotFound />} /> {/* Added support route */}
           </Route>
           
           {/* Client Routes */}
@@ -50,6 +51,8 @@ function App() {
             <Route index element={<Navigate to="/client/home" replace />} />
             <Route path="home" element={<Client />} />
             <Route path="pricing" element={<ClientPricing />} />
+            <Route path="testimonials" element={<NotFound />} /> {/* Added testimonials route */}
+            <Route path="support" element={<NotFound />} /> {/* Added support route */}
           </Route>
           
           {/* Other Routes */}

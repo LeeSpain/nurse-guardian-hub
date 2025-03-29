@@ -22,7 +22,21 @@ const Header: React.FC = () => {
             </Link>
           </div>
           
-          {/* Removed desktop navigation menu */}
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link 
+              to="/features"
+              className="text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors"
+            >
+              Features
+            </Link>
+            <Link 
+              to="/pricing"
+              className="text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors"
+            >
+              Pricing
+            </Link>
+          </nav>
           
           <div className="hidden md:flex items-center space-x-6">
             <div className="flex items-center space-x-4">
@@ -41,7 +55,7 @@ const Header: React.FC = () => {
                 size="sm"
                 className="rounded-lg shadow-md hover:shadow-lg transition-all"
                 as={Link}
-                to="/client"
+                to="/client/home"
               >
                 For Care Seekers
               </Button>
@@ -76,7 +90,21 @@ const Header: React.FC = () => {
           </button>
           
           <div className="pt-24 pb-6 px-6 space-y-6">
-            {/* Removed navigation links from mobile menu */}
+            {/* Mobile navigation links */}
+            <Link
+              to="/features"
+              className="block text-gray-600 hover:text-purple-700 px-3 py-3 text-lg font-medium border-b border-gray-100"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Features
+            </Link>
+            <Link
+              to="/pricing"
+              className="block text-gray-600 hover:text-purple-700 px-3 py-3 text-lg font-medium border-b border-gray-100"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Pricing
+            </Link>
             
             <div className="pt-6 space-y-4">
               <Button 
@@ -87,6 +115,7 @@ const Header: React.FC = () => {
                 className="bg-purple-600 hover:bg-purple-700 text-white shadow-md"
                 as={Link}
                 to="/nurse"
+                onClick={() => setIsMenuOpen(false)}
               >
                 For Healthcare Pros
               </Button>
@@ -96,7 +125,8 @@ const Header: React.FC = () => {
                 fullWidth
                 className="shadow-md"
                 as={Link}
-                to="/client"
+                to="/client/home"
+                onClick={() => setIsMenuOpen(false)}
               >
                 For Care Seekers
               </Button>
