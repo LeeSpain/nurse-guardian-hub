@@ -89,11 +89,11 @@ const Features: React.FC = () => {
             </div>
           </Transition>
           
-          {/* Client Experience Box - Improved contrast */}
+          {/* Client Experience Box - Improved color consistency */}
           <Transition animation="slide-in-right">
             <div className="relative rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full">
-              {/* Modified gradient background for better text contrast */}
-              <div className="absolute inset-0 bg-gradient-to-br from-teal-700 to-teal-600"></div>
+              {/* Modified gradient background for better consistency */}
+              <div className="absolute inset-0 bg-gradient-to-br from-client to-client-muted"></div>
               
               {/* Content container */}
               <div className="relative p-8 md:p-10 h-full">
@@ -125,7 +125,7 @@ const Features: React.FC = () => {
                 
                 <Link 
                   to="/features/client" 
-                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-teal-700 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-client font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   Explore Client Features
                   <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
