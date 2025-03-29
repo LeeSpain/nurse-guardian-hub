@@ -7,8 +7,8 @@ import Button from '../ui-components/Button';
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative pt-28 pb-8 md:pt-36 md:pb-16 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIGZpbGw9InJnYmEoMTAwLDEwMCwxMDAsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-30"></div>
+    <section className="relative pt-32 pb-12 md:pt-40 md:pb-20 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIGZpbGw9InJnYmEoMTAwLDEwMCwxMDAsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-30 will-change-transform"></div>
       
       <div className="container px-4 mx-auto relative">
         <div className="flex flex-col lg:flex-row items-center">
@@ -58,7 +58,7 @@ const Hero: React.FC = () => {
           
           <div className="w-full lg:w-1/2 lg:pl-16">
             <Transition animation="fade-in" delay="delay-400">
-              <div className="relative">
+              <div className="relative will-change-transform">
                 <div className="relative glass-panel rounded-2xl overflow-visible shadow-elevated border border-white/30">
                   <div className="absolute -inset-8 bg-gradient-to-r from-purple-600/20 to-client/20 opacity-70 blur-xl rounded-2xl"></div>
                   
@@ -67,6 +67,7 @@ const Hero: React.FC = () => {
                       src="/lovable-uploads/d215d01f-93d6-423a-994e-1cb106f5b3ae.png" 
                       alt="Nurse providing virtual healthcare consultation" 
                       className="w-full h-auto object-cover"
+                      loading="eager"
                     />
                   </div>
                   
@@ -87,7 +88,7 @@ const Hero: React.FC = () => {
                     </div>
                   </div>
                   
-                  {/* Updated Smart Matching card */}
+                  {/* Smart Matching card */}
                   <div className="absolute -top-8 -left-8 z-30 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg shadow-lg p-3 max-w-[180px]">
                     <div className="flex items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

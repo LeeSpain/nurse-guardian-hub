@@ -1,63 +1,32 @@
 
 import React from 'react';
+import { CheckCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import GlassCard from '../ui-components/GlassCard';
 import Transition from '../ui-components/Transition';
-import { Shield, Calendar, FileText, CreditCard, Video, Users, Activity, PhoneCall, Check, ArrowRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 const Features: React.FC = () => {
   const nurseFeatures = [
-    {
-      title: "Client Management",
-      description: "Organize and track all your remote clients in one intuitive interface.",
-      icon: <Users className="h-6 w-6 text-white" />
-    },
-    {
-      title: "Documentation",
-      description: "Create legally-compliant care notes and plans with AI assistance.",
-      icon: <FileText className="h-6 w-6 text-white" />
-    },
-    {
-      title: "Scheduling",
-      description: "Manage your calendar and video sessions across multiple clients.",
-      icon: <Calendar className="h-6 w-6 text-white" />
-    },
-    {
-      title: "Invoicing",
-      description: "Generate and track payments, automate billing reports.",
-      icon: <CreditCard className="h-6 w-6 text-white" />
-    }
+    "Smart matching with care seekers",
+    "AI documentation templates",
+    "Voice-to-text consultation notes",
+    "Secure HIPAA-compliant messaging",
+    "Automatic billing and invoicing",
+    "Calendar integration and scheduling"
   ];
   
   const clientFeatures = [
-    {
-      title: "Care Access",
-      description: "Connect with your assigned nurse through video calls and messaging.",
-      icon: <Video className="h-6 w-6 text-white" />
-    },
-    {
-      title: "Family Dashboard",
-      description: "Share updates and information with approved family members.",
-      icon: <Users className="h-6 w-6 text-white" />
-    },
-    {
-      title: "Wellness Tracking",
-      description: "Daily check-ins and AI-powered health summaries.",
-      icon: <Activity className="h-6 w-6 text-white" />
-    },
-    {
-      title: "Emergency Support",
-      description: "Quick access to help when needed most.",
-      icon: <PhoneCall className="h-6 w-6 text-white" />
-    }
+    "On-demand healthcare consultations",
+    "Find the perfect healthcare match",
+    "Family member access management",
+    "Symptom and history tracking",
+    "Medical document organization",
+    "Secure video consultations"
   ];
   
   return (
-    <section className="py-16 md:py-20 relative overflow-hidden">
-      {/* Background design elements */}
+    <section className="py-16 md:py-24 relative overflow-hidden">
+      {/* Simplified background elements */}
       <div className="absolute inset-0 bg-gradient-to-tr from-gray-50 via-white to-purple-50 opacity-80"></div>
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNEgyNHYtMmgxMnYyeiIgZmlsbD0icmdiYSgxMDAsMTAwLDEwMCwwLjEpIi8+PC9nPjwvc3ZnPg==')] opacity-30"></div>
       
       <div className="container mx-auto px-4 relative">
         <Transition animation="fade-up">
@@ -65,55 +34,55 @@ const Features: React.FC = () => {
             <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
               Tailored Experience
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-700 via-purple-600 to-purple-800">One Platform, Two Experiences</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Customized For Everyone</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              NurseSync adapts intelligently to provide the perfect tools for both healthcare providers and care recipients.
+              NurseSync adapts to your specific role, providing tailored tools for both healthcare providers and care seekers.
             </p>
           </div>
         </Transition>
         
-        <div className="grid md:grid-cols-2 gap-12">
+        <div className="grid md:grid-cols-2 gap-10">
           {/* Nurse Experience Box */}
           <Transition animation="slide-in-left">
             <div className="relative rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full">
               {/* Gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-700 to-purple-600"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800"></div>
               
               {/* Content container */}
               <div className="relative p-8 md:p-10 h-full">
-                <div className="flex items-center mb-6">
-                  <div className="h-14 w-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                    <Shield className="h-8 w-8 text-white" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="rounded-full bg-white/20 backdrop-blur-sm p-2.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
                   </div>
-                  <div className="ml-4">
-                    <div className="text-white/90 text-sm font-medium mb-1">For Healthcare Professionals</div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-white">Nurse-Sync AI Assistant</h3>
+                  <div className="text-xs font-medium text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+                    For Healthcare Providers
                   </div>
                 </div>
                 
-                <p className="text-white text-lg mb-8 border-l-4 border-white/30 pl-4 italic font-medium">
-                  An intelligent toolkit designed to streamline your remote healthcare practice
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Nurse Experience</h3>
+                <p className="text-white/90 mb-6">
+                  Built with healthcare professionals in mind. Streamline your remote practice and focus on what matters: providing excellent care.
                 </p>
                 
-                <div className="grid sm:grid-cols-2 gap-6 mb-8">
+                <ul className="space-y-2.5 mb-8">
                   {nurseFeatures.map((feature, index) => (
-                    <Transition key={feature.title} animation="fade-up" delay={`delay-${(index + 1) * 100}` as any}>
-                      <div className="bg-white/15 backdrop-blur-sm rounded-xl p-5 border border-white/25 hover:bg-white/25 transition-all duration-300 h-full group">
-                        <div className="bg-purple-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl group-hover:bg-purple-500 transition-all duration-300">
-                          {feature.icon}
-                        </div>
-                        <h4 className="text-xl font-bold mb-2 text-white group-hover:text-white/90 transition-colors">{feature.title}</h4>
-                        <p className="text-white/85 group-hover:text-white font-medium leading-relaxed transition-colors">{feature.description}</p>
-                      </div>
-                    </Transition>
+                    <li key={index} className="flex items-start">
+                      <CheckCircle size={18} className="text-white/80 mr-2 mt-0.5 flex-shrink-0" />
+                      <span className="text-white/90">{feature}</span>
+                    </li>
                   ))}
-                </div>
+                </ul>
                 
                 <Link 
                   to="/features/nurse" 
                   className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-purple-700 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  Explore Provider Features
+                  Explore Nurse Features
                   <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
@@ -128,33 +97,31 @@ const Features: React.FC = () => {
               
               {/* Content container */}
               <div className="relative p-8 md:p-10 h-full">
-                <div className="flex items-center mb-6">
-                  <div className="h-14 w-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                    <Users className="h-8 w-8 text-white" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="rounded-full bg-white/20 backdrop-blur-sm p-2.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
                   </div>
-                  <div className="ml-4">
-                    <div className="text-white/90 text-sm font-medium mb-1">For Care Recipients & Families</div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-white">AI Guardian</h3>
+                  <div className="text-xs font-medium text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+                    For Care Seekers
                   </div>
                 </div>
                 
-                <p className="text-white text-lg mb-8 border-l-4 border-white/30 pl-4 italic font-medium">
-                  A comprehensive solution that brings care, coordination, and peace of mind together
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Client Experience</h3>
+                <p className="text-white/90 mb-6">
+                  Access quality healthcare from the comfort of your home. Connect with qualified nurses tailored to your specific needs.
                 </p>
                 
-                <div className="grid sm:grid-cols-2 gap-6 mb-8">
+                <ul className="space-y-2.5 mb-8">
                   {clientFeatures.map((feature, index) => (
-                    <Transition key={feature.title} animation="fade-up" delay={`delay-${(index + 1) * 100}` as any}>
-                      <div className="bg-white/15 backdrop-blur-sm rounded-xl p-5 border border-white/25 hover:bg-white/25 transition-all duration-300 h-full group">
-                        <div className="bg-teal-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl group-hover:bg-teal-500 transition-all duration-300">
-                          {feature.icon}
-                        </div>
-                        <h4 className="text-xl font-bold mb-2 text-white group-hover:text-white/90 transition-colors">{feature.title}</h4>
-                        <p className="text-white/85 group-hover:text-white font-medium leading-relaxed transition-colors">{feature.description}</p>
-                      </div>
-                    </Transition>
+                    <li key={index} className="flex items-start">
+                      <CheckCircle size={18} className="text-white/80 mr-2 mt-0.5 flex-shrink-0" />
+                      <span className="text-white/90">{feature}</span>
+                    </li>
                   ))}
-                </div>
+                </ul>
                 
                 <Link 
                   to="/features/client" 

@@ -20,18 +20,12 @@ const Index: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow space-y-0">
+      <main className="flex-grow">
         <Hero />
         <Features />
-        <div className="py-0 md:py-4">
-          <HowItWorks />
-        </div>
-        <div className="py-0 md:py-4">
-          <Testimonials />
-        </div>
-        <div className="py-0 md:py-4">
-          <CallToAction />
-        </div>
+        <HowItWorks />
+        <Testimonials />
+        <CallToAction />
       </main>
       <Footer />
     </div>
