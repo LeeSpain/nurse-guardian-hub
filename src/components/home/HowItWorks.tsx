@@ -2,6 +2,7 @@
 import React from 'react';
 import Transition from '../ui-components/Transition';
 import { UserPlus, UserCog, UsersRound, BrainCircuit } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const HowItWorks: React.FC = () => {
   const steps = [
@@ -9,25 +10,29 @@ const HowItWorks: React.FC = () => {
       number: "01",
       title: "Choose Your Role",
       description: "Sign up as either a healthcare professional or care seeker/family member.",
-      icon: <UserPlus className="h-7 w-7 text-white" />
+      icon: <UserPlus className="h-7 w-7 text-white" />,
+      bgColor: "from-purple-100 to-purple-200"
     },
     {
       number: "02",
       title: "Set Up Your Profile",
       description: "Create your profile with relevant information and preferences.",
-      icon: <UserCog className="h-7 w-7 text-white" />
+      icon: <UserCog className="h-7 w-7 text-white" />,
+      bgColor: "from-purple-200 to-purple-300"
     },
     {
       number: "03",
       title: "Connect",
       description: "Nurses and clients connect through our smart matching system.",
-      icon: <UsersRound className="h-7 w-7 text-white" />
+      icon: <UsersRound className="h-7 w-7 text-white" />,
+      bgColor: "from-purple-300 to-purple-400"
     },
     {
       number: "04",
       title: "AI-Assisted Care",
       description: "Our AI adapts to your role, providing the perfect interface and tools.",
-      icon: <BrainCircuit className="h-7 w-7 text-white" />
+      icon: <BrainCircuit className="h-7 w-7 text-white" />,
+      bgColor: "from-purple-400 to-purple-500"
     }
   ];
   
@@ -57,22 +62,25 @@ const HowItWorks: React.FC = () => {
               delay={`delay-${(index + 1) * 100}` as any}
             >
               <div className="relative group">
-                {/* Step number - simplified version */}
+                {/* Step number - visual enhancement */}
                 <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10">
                   <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-purple-600 to-purple-800 rounded-full shadow-lg text-xl font-bold text-white">
                     {step.number}
                   </div>
                 </div>
                 
-                {/* Card with information */}
-                <div className="relative mt-8 bg-white rounded-2xl p-6 shadow-lg border border-purple-100/30 transition-shadow duration-300 hover:shadow-xl">
+                {/* Card with enhanced styling */}
+                <div className={cn(
+                  "relative mt-8 rounded-2xl p-6 shadow-xl border border-purple-100/50 transition-all duration-300 hover:shadow-2xl bg-gradient-to-br",
+                  step.bgColor
+                )}>
                   <div className="flex justify-end mb-4">
                     <div className="bg-gradient-to-br from-purple-600 to-purple-800 w-12 h-12 rounded-lg shadow-md flex items-center justify-center">
                       {step.icon}
                     </div>
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-800">{step.title}</h3>
-                  <p className="text-gray-600">{step.description}</p>
+                  <p className="text-gray-700">{step.description}</p>
                 </div>
               </div>
             </Transition>
