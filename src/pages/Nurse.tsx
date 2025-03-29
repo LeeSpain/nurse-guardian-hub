@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -500,3 +501,58 @@ const Nurse: React.FC = () => {
                     <p className="text-gray-600 mb-6">
                       Join our network of on-demand healthcare professionals providing care through our platform to clients seeking immediate assistance.
                     </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                          <Check className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-800">Steady Income</h4>
+                          <p className="text-gray-600 text-sm">Regular clients without marketing efforts</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                          <Check className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-800">Simplified Billing</h4>
+                          <p className="text-gray-600 text-sm">We handle all payment processing and administration</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1 mr-3">
+                          <Check className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-800">Flexible Scheduling</h4>
+                          <p className="text-gray-600 text-sm">Choose when you're available to provide care</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="md" 
+                      className="text-blue-700 border-blue-200 hover:bg-blue-50 w-full"
+                      to="/nurse/pricing"
+                    >
+                      Learn More
+                      <ArrowRight size={16} className="ml-2" />
+                    </Button>
+                  </div>
+                </div>
+              </Transition>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Nurse;
