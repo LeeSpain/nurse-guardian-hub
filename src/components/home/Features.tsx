@@ -54,14 +54,14 @@ const Features: React.FC = () => {
   ];
   
   return (
-    <section className="py-24 md:py-32 relative overflow-hidden">
+    <section className="py-16 md:py-20 relative overflow-hidden">
       {/* Background design elements */}
       <div className="absolute inset-0 bg-gradient-to-tr from-gray-50 via-white to-purple-50 opacity-80"></div>
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNEgyNHYtMmgxMnYyeiIgZmlsbD0icmdiYSgxMDAsMTAwLDEwMCwwLjEpIi8+PC9nPjwvc3ZnPg==')] opacity-30"></div>
       
       <div className="container mx-auto px-4 relative">
         <Transition animation="fade-up">
-          <div className="text-center mb-20">
+          <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
               Tailored Experience
             </div>
@@ -72,7 +72,7 @@ const Features: React.FC = () => {
           </div>
         </Transition>
         
-        <div className="grid md:grid-cols-2 gap-16">
+        <div className="grid md:grid-cols-2 gap-12">
           {/* Nurse Experience Box */}
           <Transition animation="slide-in-left">
             <div className="relative rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full">
@@ -120,11 +120,11 @@ const Features: React.FC = () => {
             </div>
           </Transition>
           
-          {/* Client Experience Box */}
+          {/* Client Experience Box - Improved contrast */}
           <Transition animation="slide-in-right">
             <div className="relative rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full">
-              {/* Gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-client to-client/90"></div>
+              {/* Modified gradient background for better text contrast */}
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-700 to-teal-600"></div>
               
               {/* Content container */}
               <div className="relative p-8 md:p-10 h-full">
@@ -158,7 +158,7 @@ const Features: React.FC = () => {
                 
                 <Link 
                   to="/features/client" 
-                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-teal-600 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-teal-700 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   Explore Client Features
                   <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
