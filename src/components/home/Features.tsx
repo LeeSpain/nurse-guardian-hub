@@ -44,13 +44,13 @@ const Features: React.FC = () => {
           {/* Nurse Experience Box */}
           <Transition animation="slide-in-left">
             <div className="relative rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full">
-              {/* Gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800"></div>
+              {/* Solid purple background */}
+              <div className="absolute inset-0 bg-purple-600"></div>
               
               {/* Content container */}
-              <div className="relative p-8 md:p-10 h-full">
+              <div className="relative p-8 md:p-10 h-full z-10">
                 <div className="flex items-center justify-between mb-6">
-                  <div className="rounded-full bg-white/20 backdrop-blur-sm p-2.5">
+                  <div className="rounded-full bg-white/20 p-2.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                       <circle cx="9" cy="7" r="4"></circle>
@@ -58,7 +58,7 @@ const Features: React.FC = () => {
                       <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
                   </div>
-                  <div className="text-xs font-medium text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+                  <div className="text-xs font-medium text-white/70 bg-white/10 px-3 py-1 rounded-full">
                     For Healthcare Providers
                   </div>
                 </div>
@@ -88,22 +88,22 @@ const Features: React.FC = () => {
             </div>
           </Transition>
           
-          {/* Client Experience Box - Improved color consistency */}
+          {/* Client Experience Box - Solid Green */}
           <Transition animation="slide-in-right">
             <div className="relative rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full">
-              {/* Modified gradient background for better consistency */}
-              <div className="absolute inset-0 bg-gradient-to-br from-client to-client-muted"></div>
+              {/* Solid green background */}
+              <div className="absolute inset-0 bg-emerald-500"></div>
               
               {/* Content container */}
-              <div className="relative p-8 md:p-10 h-full">
+              <div className="relative p-8 md:p-10 h-full z-10">
                 <div className="flex items-center justify-between mb-6">
-                  <div className="rounded-full bg-white/20 backdrop-blur-sm p-2.5">
+                  <div className="rounded-full bg-white/20 p-2.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                   </div>
-                  <div className="text-xs font-medium text-white/70 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+                  <div className="text-xs font-medium text-white/70 bg-white/10 px-3 py-1 rounded-full">
                     For Care Seekers
                   </div>
                 </div>
@@ -124,7 +124,7 @@ const Features: React.FC = () => {
                 
                 <Link 
                   to="/features/client" 
-                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-client font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-emerald-600 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   Explore Client Features
                   <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
