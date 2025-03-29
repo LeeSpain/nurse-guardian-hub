@@ -22,22 +22,7 @@ const Header: React.FC = () => {
             </Link>
           </div>
           
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/features"
-              className="text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors"
-            >
-              Features
-            </Link>
-            <Link 
-              to="/pricing"
-              className="text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors"
-            >
-              Pricing
-            </Link>
-          </nav>
-          
+          {/* Desktop Navigation - No additional links */}
           <div className="hidden md:flex items-center space-x-6">
             <div className="flex items-center space-x-4">
               <Button 
@@ -90,22 +75,7 @@ const Header: React.FC = () => {
           </button>
           
           <div className="pt-24 pb-6 px-6 space-y-6">
-            {/* Mobile navigation links */}
-            <Link
-              to="/features"
-              className="block text-gray-600 hover:text-purple-700 px-3 py-3 text-lg font-medium border-b border-gray-100"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Features
-            </Link>
-            <Link
-              to="/pricing"
-              className="block text-gray-600 hover:text-purple-700 px-3 py-3 text-lg font-medium border-b border-gray-100"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Pricing
-            </Link>
-            
+            {/* Removed additional links - now only buttons */}
             <div className="pt-6 space-y-4">
               <Button 
                 variant="primary" 
