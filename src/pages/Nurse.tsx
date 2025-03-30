@@ -23,7 +23,7 @@ import {
 import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import Header from '../components/navigation/Header';
+import NurseHeader from '../components/navigation/NurseHeader';
 import Footer from '../components/layout/Footer';
 
 const Nurse: React.FC = () => {
@@ -34,7 +34,7 @@ const Nurse: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <NurseHeader />
       <main className="flex-grow pt-20">
         {/* Hero Section - Updated to match main homepage */}
         <section className="relative pt-32 pb-12 md:pt-40 md:pb-20 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
