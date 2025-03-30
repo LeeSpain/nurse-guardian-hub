@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
@@ -14,6 +13,8 @@ const NursePricing = lazy(() => import('./pages/NursePricing'));
 const NurseSupport = lazy(() => import('./pages/NurseSupport')); // Added new import
 const Client = lazy(() => import('./pages/Client'));
 const ClientPricing = lazy(() => import('./pages/ClientPricing'));
+const ClientTestimonials = lazy(() => import('./pages/ClientTestimonials')); // New import
+const ClientSupport = lazy(() => import('./pages/ClientSupport')); // New import
 const NotFound = lazy(() => import('./pages/NotFound'));
 const ClientLayout = lazy(() => import('./layouts/ClientLayout'));
 const NurseLayout = lazy(() => import('./layouts/NurseLayout'));
@@ -45,7 +46,7 @@ function App() {
             <Route index element={<Nurse />} />
             <Route path="features" element={<NurseFeatures />} />
             <Route path="pricing" element={<NursePricing />} />
-            <Route path="support" element={<NurseSupport />} /> {/* Updated to use NurseSupport */}
+            <Route path="support" element={<NurseSupport />} />
           </Route>
           
           {/* Client Routes */}
@@ -53,8 +54,8 @@ function App() {
             <Route index element={<Navigate to="/client/home" replace />} />
             <Route path="home" element={<Client />} />
             <Route path="pricing" element={<ClientPricing />} />
-            <Route path="testimonials" element={<NotFound />} /> {/* Added testimonials route */}
-            <Route path="support" element={<NotFound />} /> {/* Added support route */}
+            <Route path="testimonials" element={<ClientTestimonials />} /> {/* Updated to use real component */}
+            <Route path="support" element={<ClientSupport />} /> {/* Updated to use real component */}
           </Route>
           
           {/* Other Routes */}

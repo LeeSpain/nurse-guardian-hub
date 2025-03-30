@@ -15,7 +15,9 @@ const ClientLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <ClientHeader />
-      <Outlet />
+      <main className="flex-grow">
+        <Outlet />
+      </main>
       <Footer />
     </div>
   );
