@@ -24,7 +24,6 @@ import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import NurseHeader from '../components/navigation/NurseHeader';
-import Footer from '../components/layout/Footer';
 
 const Nurse: React.FC = () => {
   // Scroll to top when component mounts
@@ -397,6 +396,7 @@ const Nurse: React.FC = () => {
                 variant="primary" 
                 size="lg" 
                 className="bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 shadow-xl hover:shadow-purple-500/20 transition-all"
+                as={Link}
                 to="/nurse/pricing"
               >
                 View Pricing Plans
@@ -477,6 +477,7 @@ const Nurse: React.FC = () => {
                       variant="outline" 
                       size="md" 
                       className="text-purple-700 border-purple-200 hover:bg-purple-50 w-full"
+                      as={Link}
                       to="/nurse/pricing"
                     >
                       Learn More
@@ -538,6 +539,7 @@ const Nurse: React.FC = () => {
                       variant="outline" 
                       size="md" 
                       className="text-blue-700 border-blue-200 hover:bg-blue-50 w-full"
+                      as={Link}
                       to="/nurse/pricing"
                     >
                       Learn More
@@ -550,7 +552,6 @@ const Nurse: React.FC = () => {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 };
