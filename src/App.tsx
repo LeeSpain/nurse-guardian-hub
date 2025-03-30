@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
@@ -10,6 +11,7 @@ const Pricing = lazy(() => import('./pages/Pricing'));
 const Nurse = lazy(() => import('./pages/Nurse'));
 const NurseFeatures = lazy(() => import('./pages/NurseFeatures'));
 const NursePricing = lazy(() => import('./pages/NursePricing'));
+const NurseSupport = lazy(() => import('./pages/NurseSupport')); // Added new import
 const Client = lazy(() => import('./pages/Client'));
 const ClientPricing = lazy(() => import('./pages/ClientPricing'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -43,7 +45,7 @@ function App() {
             <Route index element={<Nurse />} />
             <Route path="features" element={<NurseFeatures />} />
             <Route path="pricing" element={<NursePricing />} />
-            <Route path="support" element={<NotFound />} /> {/* Added support route */}
+            <Route path="support" element={<NurseSupport />} /> {/* Updated to use NurseSupport */}
           </Route>
           
           {/* Client Routes */}
