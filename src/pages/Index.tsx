@@ -20,7 +20,7 @@ const Index: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow"> 
+      <main className="flex-grow pt-16"> {/* Added pt-16 to account for fixed header */}
         <Hero />
         <Features />
         <HowItWorks />

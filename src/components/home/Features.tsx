@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CheckCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -23,24 +24,24 @@ const Features: React.FC = () => {
   ];
   
   return (
-    <section className="py-16 md:py-24 relative overflow-hidden">
+    <section className="py-12 md:py-16 relative overflow-hidden">
       {/* Simplified background elements */}
       <div className="absolute inset-0 bg-gradient-to-tr from-gray-50 via-white to-purple-50 opacity-80"></div>
       
       <div className="container mx-auto px-4 relative">
         <Transition animation="fade-up">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center px-4 py-1.5 mb-3 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
               Tailored Experience
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Customized For Everyone</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Customized For Everyone</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               NurseSync adapts to your specific role, providing tailored tools for both healthcare providers and care seekers.
             </p>
           </div>
         </Transition>
         
-        <div className="grid md:grid-cols-2 gap-10">
+        <div className="grid md:grid-cols-2 gap-8">
           {/* Nurse Experience Box */}
           <Transition animation="slide-in-left">
             <div className="relative rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 h-full">
@@ -48,8 +49,8 @@ const Features: React.FC = () => {
               <div className="absolute inset-0 bg-purple-600"></div>
               
               {/* Content container */}
-              <div className="relative p-8 md:p-10 h-full z-10">
-                <div className="flex items-center justify-between mb-6">
+              <div className="relative p-6 md:p-8 h-full z-10">
+                <div className="flex items-center justify-between mb-5">
                   <div className="rounded-full bg-white/20 p-2.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -63,12 +64,12 @@ const Features: React.FC = () => {
                   </div>
                 </div>
                 
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Nurse Experience</h3>
-                <p className="text-white/90 mb-6">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">Nurse Experience</h3>
+                <p className="text-white/90 mb-5">
                   Built with healthcare professionals in mind. Streamline your remote practice and focus on what matters: providing excellent care.
                 </p>
                 
-                <ul className="space-y-2.5 mb-8">
+                <ul className="space-y-2 mb-6">
                   {nurseFeatures.map((feature, index) => (
                     <li key={index} className="flex items-start">
                       <CheckCircle size={18} className="text-white/80 mr-2 mt-0.5 flex-shrink-0" />
@@ -79,7 +80,7 @@ const Features: React.FC = () => {
                 
                 <Link 
                   to="/features/nurse" 
-                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-purple-700 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="inline-flex items-center mt-2 py-2.5 px-5 rounded-full bg-white text-purple-700 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   Explore Nurse Features
                   <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
@@ -95,8 +96,8 @@ const Features: React.FC = () => {
               <div className="absolute inset-0 bg-emerald-500"></div>
               
               {/* Content container */}
-              <div className="relative p-8 md:p-10 h-full z-10">
-                <div className="flex items-center justify-between mb-6">
+              <div className="relative p-6 md:p-8 h-full z-10">
+                <div className="flex items-center justify-between mb-5">
                   <div className="rounded-full bg-white/20 p-2.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -108,12 +109,12 @@ const Features: React.FC = () => {
                   </div>
                 </div>
                 
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Client Experience</h3>
-                <p className="text-white/90 mb-6">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">Client Experience</h3>
+                <p className="text-white/90 mb-5">
                   Access quality healthcare from the comfort of your home. Connect with qualified nurses tailored to your specific needs.
                 </p>
                 
-                <ul className="space-y-2.5 mb-8">
+                <ul className="space-y-2 mb-6">
                   {clientFeatures.map((feature, index) => (
                     <li key={index} className="flex items-start">
                       <CheckCircle size={18} className="text-white/80 mr-2 mt-0.5 flex-shrink-0" />
@@ -124,7 +125,7 @@ const Features: React.FC = () => {
                 
                 <Link 
                   to="/features/client" 
-                  className="inline-flex items-center mt-4 py-3 px-6 rounded-full bg-white text-emerald-600 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="inline-flex items-center mt-2 py-2.5 px-5 rounded-full bg-white text-emerald-600 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   Explore Client Features
                   <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
