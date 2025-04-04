@@ -15,7 +15,7 @@ const NurseLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <NurseHeader />
-      <main className="flex-grow pt-20">
+      <main className="flex-grow">
         <Outlet />
       </main>
       <Footer />

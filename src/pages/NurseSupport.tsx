@@ -1,30 +1,29 @@
-
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone, MessageSquare, FileQuestion, ExternalLink, Clock } from 'lucide-react';
+import PageHero from '../components/ui-components/PageHero';
 
 const NurseSupport = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow">
-        {/* Hero Section - Matched to main homepage measurements */}
-        <section className="relative pt-32 pb-12 md:pt-40 md:pb-20 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIGZpbGw9InJnYmEoMTAwLDEwMCwxMDAsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-30 will-change-transform"></div>
-          
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <div className="max-w-3xl mx-auto text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-900">
-                  Healthcare Professional Support
-                </span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-8">
-                We're here to help you succeed in your healthcare career journey. Find the assistance you need.
-              </p>
-            </div>
+        <PageHero
+          title="Healthcare Professional Support"
+          subtitle="We're here to help you succeed in your healthcare career journey. Find the assistance you need."
+          badge="We're Here to Help"
+          badgeColor="purple"
+          image="/placeholder.svg"
+        >
+          <Button className="bg-purple-600 hover:bg-purple-700">
+            Contact Support
+          </Button>
+        </PageHero>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        {/* Contact Options Section */}
+        <section className="py-12 md:py-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <Card className="bg-white/80 backdrop-blur-sm border border-purple-100 shadow-md hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <CardTitle className="flex items-center text-purple-700">
@@ -80,7 +79,7 @@ const NurseSupport = () => {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-16 bg-white">
+        <section className="py-12 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
@@ -153,7 +152,7 @@ const NurseSupport = () => {
         </section>
         
         {/* Support Resources Section */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-12 bg-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-10 text-center">Additional Resources</h2>
             

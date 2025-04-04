@@ -33,7 +33,7 @@ const PageHero: React.FC<PageHeroProps> = ({
   };
 
   return (
-    <section className="pt-16 pb-24 px-6 md:px-10 overflow-hidden relative bg-gradient-to-br from-[#EFF6FF] via-[#F0FDFA] to-[#ECFDF5]">
+    <section className="pt-20 pb-8 md:pt-24 md:pb-16 px-4 md:px-10 overflow-hidden relative bg-gradient-to-br from-[#EFF6FF] via-[#F0FDFA] to-[#ECFDF5]">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
@@ -61,6 +61,9 @@ const PageHero: React.FC<PageHeroProps> = ({
                   src={image} 
                   alt={imageAlt} 
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  width="800"
+                  height="450"
                 />
               </div>
             </div>

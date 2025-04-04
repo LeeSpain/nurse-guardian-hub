@@ -16,16 +16,14 @@ const NursePricingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'career' | 'pricing'>('career');
 
   return (
-    <>
-      <main className="flex-grow">
-        <PricingHero />
-        <PricingTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-        {activeTab === 'career' && <CareerPaths />}
-        {activeTab === 'pricing' && <PricingPlans />}
-        <PricingFAQ />
-        <PricingCTA />
-      </main>
-    </>
+    <main className="flex-grow">
+      <PricingHero />
+      <PricingTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      {activeTab === 'career' && <CareerPaths />}
+      {activeTab === 'pricing' && <PricingPlans />}
+      <PricingFAQ />
+      <PricingCTA />
+    </main>
   );
 };
 
