@@ -2,6 +2,7 @@
 import React from 'react';
 import Transition from '../ui-components/Transition';
 import { Star, Quote } from 'lucide-react';
+import ImageWithFallback from '../ui-components/ImageWithFallback';
 import { 
   Carousel,
   CarouselContent,
@@ -47,7 +48,7 @@ const Testimonials: React.FC = () => {
   ];
   
   return (
-    <section className="py-16 md:py-20 relative overflow-hidden">
+    <section className="py-12 md:py-16 relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-purple-50"></div>
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNEgyNHYtMmgxMnYyeiIgZmlsbD0icmdiYSgxMDAsMTAwLDEwMCwwLjA1KSIvPjwvZz48L3N2Zz4=')] opacity-20"></div>
@@ -62,7 +63,7 @@ const Testimonials: React.FC = () => {
       
       <div className="container mx-auto px-4 relative">
         <Transition animation="fade-up">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center px-4 py-1.5 mb-3 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
               Testimonials
             </div>
@@ -153,10 +154,12 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
         <div className="flex items-center">
           <div className="mr-3 relative">
             <div className={`absolute inset-0 rounded-full border-2 ${testimonial.type === 'nurse' ? 'border-purple-300' : 'border-client'} scale-110 opacity-50`}></div>
-            <img 
+            <ImageWithFallback 
               src={testimonial.avatar} 
               alt={testimonial.author} 
               className={`h-12 w-12 rounded-full border-2 ${testimonial.type === 'nurse' ? 'border-purple-300' : 'border-client'} object-cover`}
+              width={48}
+              height={48}
             />
           </div>
           <div>

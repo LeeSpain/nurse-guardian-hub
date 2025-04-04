@@ -7,25 +7,25 @@ import Button from '../ui-components/Button';
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative pt-20 pb-8 md:pt-24 md:pb-16 px-4 md:px-10 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
+    <section className="relative pt-16 pb-6 md:pt-20 md:pb-12 px-4 md:px-8 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIGZpbGw9InJnYmEoMTAwLDEwMCwxMDAsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-30 will-change-transform"></div>
       
       <div className="container mx-auto relative">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-center gap-10">
-            <div className="w-full lg:w-1/2 mb-10 lg:mb-0">
+          <div className="flex flex-col lg:flex-row items-center gap-8">
+            <div className="w-full lg:w-1/2 mb-8 lg:mb-0">
               <Transition animation="fade-up">
                 <span className="inline-block py-1 px-3 mb-3 text-xs font-semibold bg-purple-100 text-purple-600 rounded-full">
                   Remote Healthcare Platform
                 </span>
               </Transition>
               <Transition animation="fade-up" delay="delay-100">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-5 leading-tight text-balance">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight text-balance">
                   <span className="text-gradient-nurse">Nurses</span> and <span className="text-gradient-client">Care Seekers</span>, connected remotely.
                 </h1>
               </Transition>
               <Transition animation="fade-up" delay="delay-200">
-                <p className="text-lg text-gray-700 mb-6 max-w-xl">
+                <p className="text-lg text-gray-700 mb-5 max-w-xl">
                   NurseSync bridges professional care providers with those who need them through an intelligent AI assistant, removing the need for in-person visits.
                 </p>
               </Transition>
@@ -72,6 +72,7 @@ const Hero: React.FC = () => {
                         width="800"
                         height="520"
                         fetchPriority="high"
+                        decoding="async"
                       />
                     </div>
                     

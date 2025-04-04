@@ -39,37 +39,44 @@ const Transition: React.FC<TransitionProps> = memo(({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && (!once || !hasAnimated)) {
-          // Use requestAnimationFrame for smoother animations
-          requestAnimationFrame(() => {
-            setIsVisible(true);
-            if (once) {
-              setHasAnimated(true);
-            }
-          });
-        } else if (!entry.isIntersecting && !once && hasAnimated) {
-          setIsVisible(false);
+    // Use IntersectionObserver only in client-side rendering
+    if (typeof window !== 'undefined') {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting && (!once || !hasAnimated)) {
+            // Use requestAnimationFrame for smoother animations
+            requestAnimationFrame(() => {
+              setIsVisible(true);
+              if (once) {
+                setHasAnimated(true);
+              }
+            });
+          } else if (!entry.isIntersecting && !once && hasAnimated) {
+            setIsVisible(false);
+          }
+        },
+        {
+          threshold,
+          rootMargin: '0px 0px -50px 0px', // Trigger earlier for a smoother experience
         }
-      },
-      {
-        threshold,
-        rootMargin: '0px 0px -30px 0px', // Reduced rootMargin for earlier triggering
+      );
+
+      const currentRef = ref.current;
+      if (currentRef) {
+        observer.observe(currentRef);
       }
-    );
 
-    const currentRef = ref.current;
-
-    if (currentRef) {
-      observer.observe(currentRef);
+      return () => {
+        if (currentRef) {
+          observer.unobserve(currentRef);
+        }
+      };
     }
 
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
+    // If SSR or no IntersectionObserver support, show content immediately
+    setIsVisible(true);
+    return undefined;
   }, [threshold, once, hasAnimated]);
 
   // Animation classes
@@ -87,16 +94,21 @@ const Transition: React.FC<TransitionProps> = memo(({
     'slide-in-right': 'translate-x-50 opacity-0',
   };
 
+  // Performance optimization: only use transform and opacity transitions
   return (
     <div
       ref={ref}
       className={cn(
-        'transition-all transform will-change-transform',
+        'transition-transform opacity-100 will-change-transform',
         duration,
         delay,
         isVisible ? '' : animationClasses[animation],
         className
       )}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transition: `transform ${duration === 'duration-300' ? '300ms' : duration === 'duration-500' ? '500ms' : duration === 'duration-700' ? '700ms' : '1000ms'} cubic-bezier(0.16, 1, 0.3, 1), opacity ${duration === 'duration-300' ? '300ms' : duration === 'duration-500' ? '500ms' : duration === 'duration-700' ? '700ms' : '1000ms'} cubic-bezier(0.16, 1, 0.3, 1)`
+      }}
     >
       {children}
     </div>
