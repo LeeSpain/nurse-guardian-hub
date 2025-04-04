@@ -1,9 +1,9 @@
-
 import React, { useEffect } from 'react';
 import { Check, Award, Shield, Star } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
 import GlassCard from '../components/ui-components/GlassCard';
+import PageHero from '../components/ui-components/PageHero';
 
 const ClientPricingPage: React.FC = () => {
   // Scroll to top when component mounts
@@ -50,26 +50,26 @@ const ClientPricingPage: React.FC = () => {
 
   return (
     <main className="flex-grow">
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden bg-gradient-to-br from-gray-50 via-client-muted/20 to-gray-50">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxIDAgNi0yLjY5IDYtNnMtMi42OS02LTYtNi02IDIuNjktNiA2IDIuNjkgNiA2IDZ6TTI0IDQ4YzMuMzEgMCA2LTIuNjkgNi02cy0yLjY5LTYtNi02LTYgMi42OS02IDYgMi42OSA2IDYgNnoiIGZpbGw9InJnYmEoMTAwLDEwMCwxMDAsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-10"></div>
-        
-        <div className="container mx-auto px-4 relative">
-          <Transition animation="fade-up">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted/20 text-client">
-                Client & Family Plans
-              </div>
-              <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-client via-client to-client/80">
-                Pricing for Care Recipients & Families
-              </h1>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Stay connected with your healthcare team and manage your care with confidence using our secure platform.
-              </p>
-            </div>
-          </Transition>
+      <PageHero
+        title="Pricing for Care Recipients & Families"
+        subtitle="Stay connected with your healthcare team and manage your care with confidence using our secure platform."
+        badge="Client & Family Plans"
+        badgeColor="client"
+        image="/placeholder.svg"
+      >
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Button variant="client" size="lg">
+            View All Plans
+          </Button>
+          <Button 
+            variant="outline"
+            size="lg"
+            className="border-client-muted text-client"
+          >
+            Contact Sales
+          </Button>
         </div>
-      </section>
+      </PageHero>
 
       {/* Pricing Plans */}
       <section className="py-16 md:py-24 relative overflow-hidden">
@@ -131,7 +131,7 @@ const ClientPricingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Why Choose Us Section - New Section */}
+      {/* Why Choose Us Section */}
       <section className="py-16 md:py-24 bg-gray-50 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxIDAgNi0yLjY5IDYtNnMtMi42OS02LTYtNi02IDIuNjktNiA2IDIuNjkgNiA2IDZ6TTI0IDQ4YzMuMzEgMCA2LTIuNjkgNi02cy0yLjY5LTYtNi02LTYgMi42OS02IDYgMi42OSA2IDYgNnoiIGZpbGw9InJnYmEoMTAwLDEwMCwxMDAsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-5"></div>
         

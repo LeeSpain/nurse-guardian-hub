@@ -12,6 +12,7 @@ const NurseFeatures = lazy(() => import('./pages/NurseFeatures'));
 const NursePricing = lazy(() => import('./pages/NursePricing'));
 const NurseSupport = lazy(() => import('./pages/NurseSupport')); // Added new import
 const Client = lazy(() => import('./pages/Client'));
+const ClientFeatures = lazy(() => import('./pages/ClientFeatures')); // New import
 const ClientPricing = lazy(() => import('./pages/ClientPricing'));
 const ClientTestimonials = lazy(() => import('./pages/ClientTestimonials')); // New import
 const ClientSupport = lazy(() => import('./pages/ClientSupport')); // New import
@@ -53,9 +54,10 @@ function App() {
           <Route path="/client" element={<ClientLayout />}>
             <Route index element={<Navigate to="/client/home" replace />} />
             <Route path="home" element={<Client />} />
+            <Route path="features" element={<ClientFeatures />} />
             <Route path="pricing" element={<ClientPricing />} />
-            <Route path="testimonials" element={<ClientTestimonials />} /> {/* Updated to use real component */}
-            <Route path="support" element={<ClientSupport />} /> {/* Updated to use real component */}
+            <Route path="testimonials" element={<ClientTestimonials />} /> 
+            <Route path="support" element={<ClientSupport />} /> 
           </Route>
           
           {/* Other Routes */}

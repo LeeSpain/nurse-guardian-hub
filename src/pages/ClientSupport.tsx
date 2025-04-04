@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { MessageSquare, Mail, Phone, FileQuestion, ExternalLink, LifeBuoy, HelpCircle, BookOpen, Link } from 'lucide-react';
+import PageHero from '../components/ui-components/PageHero';
 
 const ClientSupport = () => {
   const faqs = [
@@ -54,21 +55,20 @@ const ClientSupport = () => {
   ];
 
   return (
-    <div className="pt-32 pb-16 bg-gradient-to-br from-white via-client-muted/10 to-white">
-      <div className="container mx-auto px-4">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted text-client">
-            We're Here to Help
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Support & Resources
-          </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Get the help you need to make the most of your healthcare experience on our platform.
-          </p>
-        </div>
+    <div>
+      <PageHero
+        title="Support & Resources"
+        subtitle="Get the help you need to make the most of your healthcare experience on our platform."
+        badge="We're Here to Help"
+        badgeColor="client"
+        image="/placeholder.svg"
+      >
+        <button className="px-8 py-3 rounded-lg bg-client text-white font-medium hover:bg-client/90 transition-colors shadow-md">
+          Contact Support
+        </button>
+      </PageHero>
 
+      <div className="container mx-auto px-4 py-16">
         {/* Contact Options */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow text-center">

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Star, MessageSquare, Quote } from 'lucide-react';
+import PageHero from '../components/ui-components/PageHero';
 
 const ClientTestimonials = () => {
   const testimonials = [
@@ -49,23 +50,22 @@ const ClientTestimonials = () => {
   ];
 
   return (
-    <div className="pt-32 pb-16 bg-gradient-to-br from-white via-client-muted/10 to-white">
-      <div className="container mx-auto px-4">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 rounded-full text-sm font-medium bg-client-muted text-client">
-            Our Clients Speak
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Stories from People We've Helped
-          </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Real experiences from clients who have transformed their healthcare journey with our platform.
-          </p>
-        </div>
+    <div>
+      <PageHero
+        title="Stories from People We've Helped"
+        subtitle="Real experiences from clients who have transformed their healthcare journey with our platform."
+        badge="Our Clients Speak"
+        badgeColor="client"
+        image="/lovable-uploads/2a1625f4-ddd4-42ed-8931-f0896ee3e2ee.png"
+      >
+        <button className="px-8 py-3 rounded-lg bg-client text-white font-medium hover:bg-client/90 transition-colors shadow-md">
+          Share Your Story
+        </button>
+      </PageHero>
 
+      <div className="container mx-auto px-4">
         {/* Featured Testimonial */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 md:p-12 mb-16 max-w-5xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 md:p-12 mb-16 max-w-5xl mx-auto -mt-16">
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="md:w-1/3">
               <div className="relative">
