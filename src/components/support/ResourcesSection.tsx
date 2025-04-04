@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { Link as LinkIcon } from 'lucide-react';
+import { Link as LinkIcon, LucideIcon } from 'lucide-react';
 
 interface ResourceItem {
   title: string;
   description: string;
-  icon: React.FC<{ size?: number; className?: string }>;
+  icon: LucideIcon;
   link: string;
 }
 

@@ -1,6 +1,5 @@
-
 import React, { lazy, Suspense } from 'react';
-import { MessageSquare, Mail, Phone, FileQuestion, ExternalLink, LifeBuoy, HelpCircle, BookOpen, Link } from 'lucide-react';
+import { MessageSquare, Mail, Phone, FileQuestion, ExternalLink, BookOpen } from 'lucide-react';
 import PageHero from '../components/ui-components/PageHero';
 import { Skeleton } from '@/components/ui/skeleton';
 
