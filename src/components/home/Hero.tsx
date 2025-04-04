@@ -71,7 +71,7 @@ const Hero: React.FC = () => {
                         loading="eager"
                         width="800"
                         height="520"
-                        fetchpriority="high"
+                        fetchPriority="high"
                       />
                     </div>
                     
