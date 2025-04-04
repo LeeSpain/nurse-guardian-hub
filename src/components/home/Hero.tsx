@@ -7,7 +7,7 @@ import Button from '../ui-components/Button';
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative pt-16 pb-6 md:pt-20 md:pb-12 px-4 md:px-8 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
+    <section className="relative pt-24 pb-6 md:pt-32 md:pb-12 px-4 md:px-8 overflow-hidden bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIGZpbGw9InJnYmEoMTAwLDEwMCwxMDAsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-30 will-change-transform"></div>
       
       <div className="container mx-auto relative">
