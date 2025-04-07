@@ -245,6 +245,7 @@ const NurseFeatures: React.FC = () => {
                   size="lg"
                   className="bg-purple-600 hover:bg-purple-700 text-white"
                   to="/nurse/pricing"
+                  as={Link}
                 >
                   View Pricing Plans
                   <ArrowRight size={18} className="ml-2" />
