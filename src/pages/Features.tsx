@@ -88,7 +88,7 @@ const FeaturesPage: React.FC = () => {
                     </ul>
                     
                     <Link 
-                      to="/features/nurse" 
+                      to="/nurse/features" 
                       className="mt-auto inline-flex items-center justify-center gap-2 bg-white text-purple-700 hover:bg-gray-100 transition-colors font-medium px-6 py-3 rounded-lg"
                     >
                       Explore Provider Features
@@ -142,7 +142,7 @@ const FeaturesPage: React.FC = () => {
                     </ul>
                     
                     <Link 
-                      to="/features/client" 
+                      to="/client/features" 
                       className="mt-auto inline-flex items-center justify-center gap-2 bg-white text-client hover:bg-gray-100 transition-colors font-medium px-6 py-3 rounded-lg"
                     >
                       Explore Client Features
@@ -172,6 +172,8 @@ const FeaturesPage: React.FC = () => {
                     variant="primary"
                     size="lg"
                     className="bg-purple-600 text-white"
+                    as={Link}
+                    to="/pricing"
                   >
                     Start Your Free Trial
                   </Button>
@@ -179,6 +181,8 @@ const FeaturesPage: React.FC = () => {
                     variant="outline"
                     size="lg"
                     className="border-gray-300 text-gray-700"
+                    as={Link}
+                    to="/contact"
                   >
                     Contact Sales
                   </Button>

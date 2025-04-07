@@ -86,7 +86,7 @@ const Features: React.FC = () => {
                       </div>
                       
                       <Link 
-                        to="/features/nurse" 
+                        to="/nurse/features" 
                         className="mt-auto inline-flex items-center px-6 py-3 rounded-full bg-white text-purple-700 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg group"
                       >
                         Explore Nurse Features
@@ -140,7 +140,7 @@ const Features: React.FC = () => {
                       </div>
                       
                       <Link 
-                        to="/features/client" 
+                        to="/client/features" 
                         className="mt-auto inline-flex items-center px-6 py-3 rounded-full bg-white text-emerald-600 font-medium hover:bg-white/90 transition-all duration-300 shadow-md hover:shadow-lg group"
                       >
                         Explore Client Features

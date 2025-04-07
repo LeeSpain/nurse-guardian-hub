@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Transition from '../ui-components/Transition';
 import Button from '../ui-components/Button';
 
@@ -25,10 +26,26 @@ const CallToAction: React.FC = () => {
             
             <Transition animation="fade-up" delay="delay-200">
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="primary" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="bg-white text-purple-700 hover:bg-gray-100 shadow-lg">
+                <Button 
+                  variant="primary" 
+                  size="lg" 
+                  icon={<ArrowRight size={18} />} 
+                  iconPosition="right" 
+                  className="bg-white text-purple-700 hover:bg-gray-100 shadow-lg"
+                  as={Link}
+                  to="/nurse"
+                >
                   Join as Healthcare Pro
                 </Button>
-                <Button variant="primary" size="lg" icon={<ArrowRight size={18} />} iconPosition="right" className="bg-white text-client hover:bg-gray-100 shadow-lg">
+                <Button 
+                  variant="primary" 
+                  size="lg" 
+                  icon={<ArrowRight size={18} />} 
+                  iconPosition="right" 
+                  className="bg-white text-client hover:bg-gray-100 shadow-lg"
+                  as={Link}
+                  to="/client/home"
+                >
                   Join as Care Seeker
                 </Button>
               </div>
