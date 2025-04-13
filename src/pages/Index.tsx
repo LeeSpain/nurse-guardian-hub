@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import Header from '../components/navigation/Header';
 import Footer from '../components/layout/Footer';
 import Hero from '../components/home/Hero';
+import VideoOverlay from '../components/video/VideoOverlay';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Lazy load secondary components
@@ -50,6 +51,10 @@ const Index: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      
+      {/* Video Overlay - NurseSync Introduction */}
+      <VideoOverlay videoId="6jsBNwkedOE" />
+      
       <main className="flex-grow">
         {/* Hero is critical, load it eagerly */}
         <Hero />
