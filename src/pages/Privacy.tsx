@@ -12,8 +12,9 @@ const Privacy: React.FC = () => {
       <Header />
       <PageHero 
         title="Privacy Policy"
-        description="How we protect and use your data at NurseSync"
-        className="bg-gradient-to-r from-purple-50 to-gray-50"
+        subtitle="How we protect and use your data at NurseSync"
+        badge="Legal"
+        badgeColor="default"
       />
       
       <main className="flex-grow py-12">

@@ -40,8 +40,9 @@ const About: React.FC = () => {
       <Header />
       <PageHero 
         title="About NurseSync"
-        description="Our mission, vision, and the team behind the technology"
-        className="bg-gradient-to-r from-purple-50 via-white to-client-muted/30"
+        subtitle="Our mission, vision, and the team behind the technology"
+        badge="Our Story"
+        badgeColor="purple"
       />
       
       <main className="flex-grow">

@@ -12,8 +12,9 @@ const Terms: React.FC = () => {
       <Header />
       <PageHero 
         title="Terms of Service"
-        description="Guidelines for using the NurseSync platform"
-        className="bg-gradient-to-r from-purple-50 to-gray-50"
+        subtitle="Guidelines for using the NurseSync platform"
+        badge="Legal"
+        badgeColor="default"
       />
       
       <main className="flex-grow py-12">
