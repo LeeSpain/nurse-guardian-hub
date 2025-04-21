@@ -526,6 +526,8 @@ const NursePricingPage: React.FC = () => {
                       
                       <div className="mt-auto">
                         <Button
+                          as="link"
+                          to={`/register/nurse?plan=${plan.id}`}
                           variant={plan.featured ? 'primary' : 'outline'}
                           fullWidth
                           size="md"
@@ -534,7 +536,7 @@ const NursePricingPage: React.FC = () => {
                             : 'border-purple-200 text-purple-700 hover:bg-purple-50 shadow-sm'
                           }
                         >
-                          {plan.id === 'free' ? 'Sign Up Free' : 'Subscribe Now'}
+                          {plan.id === 'free' ? 'Sign Up Free' : 'Join This Plan'}
                         </Button>
                       </div>
                     </div>

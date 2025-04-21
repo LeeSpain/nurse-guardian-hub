@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import Header from '../components/navigation/Header';
 import Footer from '../components/layout/Footer';
@@ -181,11 +180,19 @@ const PricingPage: React.FC = () => {
                       
                       <div className="mt-auto">
                         <Button 
-                          variant={plan.featured ? 'nurse' : 'outline'} 
+                          as="link"
+                          to={plan.type === "nurse"
+                            ? `/register/nurse?plan=${plan.name.toLowerCase()}`
+                            : `/register/client?plan=${plan.name.toLowerCase().replace(' ', '-')}`
+                          }
+                          variant={plan.featured ? (plan.type === "nurse" ? 'nurse' : 'client') : 'outline'} 
                           fullWidth
-                          className={plan.featured ? 'bg-purple-600 text-white' : 'border-purple-300 text-purple-700'}
+                          className={plan.featured
+                            ? (plan.type === "nurse" ? 'bg-purple-600 text-white' : '')
+                            : (plan.type === "nurse" ? 'border-purple-300 text-purple-700' : 'border-client-muted text-client')
+                          }
                         >
-                          Get Started
+                          Join This Plan
                         </Button>
                       </div>
                     </div>
@@ -252,11 +259,19 @@ const PricingPage: React.FC = () => {
                       
                       <div className="mt-auto">
                         <Button 
-                          variant={plan.featured ? 'client' : 'outline'} 
+                          as="link"
+                          to={plan.type === "nurse"
+                            ? `/register/nurse?plan=${plan.name.toLowerCase()}`
+                            : `/register/client?plan=${plan.name.toLowerCase().replace(' ', '-')}`
+                          }
+                          variant={plan.featured ? (plan.type === "nurse" ? 'nurse' : 'client') : 'outline'} 
                           fullWidth
-                          className={plan.featured ? '' : 'border-client-muted text-client'}
+                          className={plan.featured
+                            ? (plan.type === "nurse" ? 'bg-purple-600 text-white' : '')
+                            : (plan.type === "nurse" ? 'border-purple-300 text-purple-700' : 'border-client-muted text-client')
+                          }
                         >
-                          Get Started
+                          Join This Plan
                         </Button>
                       </div>
                     </div>

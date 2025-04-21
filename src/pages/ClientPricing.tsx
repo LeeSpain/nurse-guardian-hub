@@ -116,12 +116,15 @@ const ClientPricingPage: React.FC = () => {
                       ))}
                     </ul>
                     
+                    {/* Update CTA to link to registration for client with selected plan */}
                     <Button 
+                      as="link"
+                      to={`/register/client?plan=${plan.id}`}
                       variant={plan.featured ? 'client' : 'outline'} 
                       fullWidth
                       className={plan.featured ? 'shadow-md' : 'border-client-muted text-client'}
                     >
-                      Get Started
+                      Join This Plan
                     </Button>
                   </div>
                 </GlassCard>
