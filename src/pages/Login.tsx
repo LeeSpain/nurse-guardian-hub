@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/navigation/Header';
 import Footer from '../components/layout/Footer';
 import { 
@@ -12,21 +12,66 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Button from '../components/ui-components/Button';
+import { useUser, UserRole } from '../contexts/UserContext';
 import { toast } from 'sonner';
 
 const Login: React.FC = () => {
-  const handleLogin = (e: React.FormEvent) => {
+  const { login, register, isLoading } = useUser();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Form states
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [accountType, setAccountType] = useState<'client' | 'nurse'>('client');
+  
+  // Handle login form submission
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.info("Login functionality will be available soon. Please contact support for early access.", {
-      duration: 5000,
-    });
+    
+    try {
+      await login(loginEmail, loginPassword);
+      
+      // Note: Redirect is handled in UserContext after successful login
+    } catch (error) {
+      console.error('Login error:', error);
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  // Handle registration form submission
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.info("Registration functionality will be available soon. Please contact support for early access.", {
-      duration: 5000,
-    });
+    
+    // Validate passwords match
+    if (regPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+    
+    // Validate password strength (simple check)
+    if (regPassword.length < 8) {
+      toast.error('Password must be at least 8 characters long');
+      return;
+    }
+    
+    try {
+      await register({
+        email: regEmail,
+        firstName,
+        lastName,
+        password: regPassword,
+        role: accountType === 'nurse' ? UserRole.NURSE : UserRole.CLIENT
+      });
+      
+      // Note: Redirect is handled in UserContext after successful registration
+    } catch (error) {
+      console.error('Registration error:', error);
+    }
   };
 
   return (
@@ -55,6 +100,8 @@ const Login: React.FC = () => {
                         id="email" 
                         type="email" 
                         placeholder="your@email.com" 
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
                         required 
                       />
                     </div>
@@ -69,6 +116,8 @@ const Login: React.FC = () => {
                         id="password" 
                         type="password" 
                         placeholder="••••••••" 
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
                         required 
                       />
                     </div>
@@ -78,16 +127,74 @@ const Login: React.FC = () => {
                         type="submit"
                         variant="primary"
                         fullWidth
+                        isLoading={isLoading}
                         className="bg-purple-600 hover:bg-purple-700"
                       >
-                        Sign In
+                        {isLoading ? 'Signing in...' : 'Sign In'}
                       </Button>
+                    </div>
+                    
+                    <div className="text-center text-sm text-gray-500 mt-4">
+                      <p>Demo login credentials:</p>
+                      <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
+                        <div className="border border-gray-200 rounded p-2">
+                          <p className="font-semibold mb-1">Nurse Account</p>
+                          <p>Email: nurse@example.com</p>
+                          <p>Any password works</p>
+                        </div>
+                        <div className="border border-gray-200 rounded p-2">
+                          <p className="font-semibold mb-1">Client Account</p>
+                          <p>Email: client@example.com</p>
+                          <p>Any password works</p>
+                        </div>
+                      </div>
                     </div>
                   </form>
                 </TabsContent>
                 
                 <TabsContent value="register">
                   <form onSubmit={handleRegister} className="space-y-4">
+                    <div className="space-y-4">
+                      <Label>I am a:</Label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div
+                          className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                            accountType === 'nurse' 
+                              ? 'border-purple-500 bg-purple-50' 
+                              : 'border-gray-200 hover:border-purple-300'
+                          }`}
+                          onClick={() => setAccountType('nurse')}
+                        >
+                          <div className="text-center">
+                            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-purple-600">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                            </div>
+                            <p className="font-medium">Healthcare Professional</p>
+                          </div>
+                        </div>
+                        
+                        <div
+                          className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                            accountType === 'client' 
+                              ? 'border-client border-2 bg-client-muted/10' 
+                              : 'border-gray-200 hover:border-client/30'
+                          }`}
+                          onClick={() => setAccountType('client')}
+                        >
+                          <div className="text-center">
+                            <div className="w-12 h-12 bg-client-muted/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-client">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                              </svg>
+                            </div>
+                            <p className="font-medium">Care Seeker</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="firstName">First Name</Label>
@@ -95,6 +202,8 @@ const Login: React.FC = () => {
                           id="firstName" 
                           type="text"
                           placeholder="John" 
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
                           required 
                         />
                       </div>
@@ -104,6 +213,8 @@ const Login: React.FC = () => {
                           id="lastName" 
                           type="text"
                           placeholder="Doe" 
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
                           required 
                         />
                       </div>
@@ -115,6 +226,8 @@ const Login: React.FC = () => {
                         id="regEmail" 
                         type="email" 
                         placeholder="your@email.com" 
+                        value={regEmail}
+                        onChange={(e) => setRegEmail(e.target.value)}
                         required 
                       />
                     </div>
@@ -125,6 +238,8 @@ const Login: React.FC = () => {
                         id="regPassword" 
                         type="password" 
                         placeholder="••••••••" 
+                        value={regPassword}
+                        onChange={(e) => setRegPassword(e.target.value)}
                         required 
                       />
                     </div>
@@ -135,6 +250,8 @@ const Login: React.FC = () => {
                         id="confirmPassword" 
                         type="password" 
                         placeholder="••••••••" 
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         required 
                       />
                     </div>
@@ -144,10 +261,22 @@ const Login: React.FC = () => {
                         type="submit"
                         variant="primary"
                         fullWidth
+                        isLoading={isLoading}
                         className="bg-purple-600 hover:bg-purple-700"
                       >
-                        Create Account
+                        {isLoading ? 'Creating Account...' : 'Create Account'}
                       </Button>
+                    </div>
+                    
+                    <div className="text-xs text-gray-500 mt-4">
+                      By creating an account, you agree to our{' '}
+                      <Link to="/terms" className="text-purple-600 hover:text-purple-800">
+                        Terms of Service
+                      </Link>{' '}
+                      and{' '}
+                      <Link to="/privacy" className="text-purple-600 hover:text-purple-800">
+                        Privacy Policy
+                      </Link>
                     </div>
                   </form>
                 </TabsContent>
