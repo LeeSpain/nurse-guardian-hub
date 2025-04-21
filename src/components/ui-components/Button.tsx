@@ -71,7 +71,6 @@ const Button = <T extends ElementType = 'button'>({
           disabledClass,
           className
         )}
-        {...(props as Omit<LinkProps, keyof ButtonProps<typeof Link>>)}
       >
         {icon && iconPosition === 'left' && <span className="mr-2">{icon}</span>}
         {isLoading ? (
