@@ -4,6 +4,7 @@ import Footer from '../components/layout/Footer';
 import { Check } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
+import { useNavigate } from 'react-router-dom';
 
 const PricingPage: React.FC = () => {
   // Scroll to top when component mounts
@@ -11,9 +12,12 @@ const PricingPage: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const navigate = useNavigate();
+
   const plans = [
     {
       name: 'Basic',
+      id: 'basic',
       description: 'Essential features for independent nurses',
       price: '$29',
       billing: 'per month',
@@ -30,6 +34,7 @@ const PricingPage: React.FC = () => {
     },
     {
       name: 'Professional',
+      id: 'professional',
       description: 'Advanced tools for growing practices',
       price: '$79',
       billing: 'per month',
@@ -48,6 +53,7 @@ const PricingPage: React.FC = () => {
     },
     {
       name: 'Enterprise',
+      id: 'enterprise',
       description: 'Custom solutions for healthcare organizations',
       price: 'Custom',
       billing: 'pricing',
@@ -66,6 +72,7 @@ const PricingPage: React.FC = () => {
     },
     {
       name: 'Client Basic',
+      id: 'client-basic',
       description: 'Essential care monitoring for individuals',
       price: '$19',
       billing: 'per month',
@@ -82,6 +89,7 @@ const PricingPage: React.FC = () => {
     },
     {
       name: 'Client Premium',
+      id: 'client-premium',
       description: 'Enhanced care for families and caregivers',
       price: '$49',
       billing: 'per month',
@@ -98,6 +106,15 @@ const PricingPage: React.FC = () => {
       ]
     }
   ];
+
+  // Handle plan selection
+  const handlePlanSelection = (plan: any) => {
+    if (plan.type === "nurse") {
+      navigate(`/register/nurse?plan=${plan.id}`);
+    } else {
+      navigate(`/register/client?plan=${plan.id}`);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -180,16 +197,12 @@ const PricingPage: React.FC = () => {
                       
                       <div className="mt-auto">
                         <Button 
-                          as="link"
-                          to={plan.type === "nurse"
-                            ? `/register/nurse?plan=${plan.name.toLowerCase()}`
-                            : `/register/client?plan=${plan.name.toLowerCase().replace(' ', '-')}`
-                          }
-                          variant={plan.featured ? (plan.type === "nurse" ? 'nurse' : 'client') : 'outline'} 
+                          onClick={() => handlePlanSelection(plan)}
+                          variant={plan.featured ? 'nurse' : 'outline'} 
                           fullWidth
                           className={plan.featured
-                            ? (plan.type === "nurse" ? 'bg-purple-600 text-white' : '')
-                            : (plan.type === "nurse" ? 'border-purple-300 text-purple-700' : 'border-client-muted text-client')
+                            ? 'bg-purple-600 text-white'
+                            : 'border-purple-300 text-purple-700'
                           }
                         >
                           Join This Plan
@@ -259,11 +272,7 @@ const PricingPage: React.FC = () => {
                       
                       <div className="mt-auto">
                         <Button 
-                          as="link"
-                          to={plan.type === "nurse"
-                            ? `/register/nurse?plan=${plan.name.toLowerCase()}`
-                            : `/register/client?plan=${plan.name.toLowerCase().replace(' ', '-')}`
-                          }
+                          onClick={() => handlePlanSelection(plan)}
                           variant={plan.featured ? (plan.type === "nurse" ? 'nurse' : 'client') : 'outline'} 
                           fullWidth
                           className={plan.featured

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Check, X, Info, ArrowRight, Briefcase, Users, ChevronDown } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
@@ -5,12 +6,15 @@ import Button from '../components/ui-components/Button';
 import { Card, CardContent } from '@/components/ui/card';
 import GlassCard from '../components/ui-components/GlassCard';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { useNavigate } from 'react-router-dom';
 
 const NursePricingPage: React.FC = () => {
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const navigate = useNavigate();
 
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'career' | 'pricing'>('career');
@@ -153,6 +157,11 @@ const NursePricingPage: React.FC = () => {
       tooltip: 'Perfect for small nursing teams (up to 5 nurses) collaborating on client care under a unified system.'
     }
   ];
+
+  // Handle plan selection
+  const handlePlanSelection = (planId: string) => {
+    navigate(`/register/nurse?plan=${planId}`);
+  };
 
   return (
     <div className="bg-gradient-to-b from-white via-purple-50/30 to-white">
@@ -526,8 +535,7 @@ const NursePricingPage: React.FC = () => {
                       
                       <div className="mt-auto">
                         <Button
-                          as="link"
-                          to={`/register/nurse?plan=${plan.id}`}
+                          onClick={() => handlePlanSelection(plan.id)}
                           variant={plan.featured ? 'primary' : 'outline'}
                           fullWidth
                           size="md"

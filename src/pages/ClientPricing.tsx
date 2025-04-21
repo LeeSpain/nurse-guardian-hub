@@ -1,9 +1,11 @@
+
 import React, { useEffect } from 'react';
 import { Check, Award, Shield, Star } from 'lucide-react';
 import Transition from '../components/ui-components/Transition';
 import Button from '../components/ui-components/Button';
 import GlassCard from '../components/ui-components/GlassCard';
 import PageHero from '../components/ui-components/PageHero';
+import { Link } from 'react-router-dom';
 
 const ClientPricingPage: React.FC = () => {
   // Scroll to top when component mounts
@@ -14,6 +16,7 @@ const ClientPricingPage: React.FC = () => {
   const plans = [
     {
       name: 'Standard Plan',
+      id: 'standard',
       description: 'Individual care monitoring and support',
       price: '€50',
       billing: 'per month',
@@ -31,6 +34,7 @@ const ClientPricingPage: React.FC = () => {
     },
     {
       name: 'Family Plan',
+      id: 'family',
       description: 'Enhanced care for up to 4 family members',
       price: '€100',
       billing: 'per month',
@@ -116,10 +120,10 @@ const ClientPricingPage: React.FC = () => {
                       ))}
                     </ul>
                     
-                    {/* Update CTA to link to registration for client with selected plan */}
                     <Button 
-                      as="link"
-                      to={`/register/client?plan=${plan.id}`}
+                      onClick={() => {
+                        window.location.href = `/register/client?plan=${plan.id}`;
+                      }}
                       variant={plan.featured ? 'client' : 'outline'} 
                       fullWidth
                       className={plan.featured ? 'shadow-md' : 'border-client-muted text-client'}
