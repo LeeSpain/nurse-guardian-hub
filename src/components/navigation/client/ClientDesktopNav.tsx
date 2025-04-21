@@ -1,15 +1,58 @@
 
 import React from 'react';
-import { Home, CreditCard, Star, LifeBuoy } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 import ClientNavLink from './ClientNavLink';
+import { Home, FileText, Users, Calendar, User } from 'lucide-react';
+import { useUser } from '@/contexts/UserContext';
 
 const ClientDesktopNav: React.FC = () => {
+  const location = useLocation();
+  const { isAuthenticated } = useUser();
+  
   return (
-    <nav className="hidden md:flex items-center space-x-8">
-      <ClientNavLink to="/client" icon={Home}>Home</ClientNavLink>
-      <ClientNavLink to="/client/pricing" icon={CreditCard}>Pricing</ClientNavLink>
-      <ClientNavLink to="/client/testimonials" icon={Star}>Testimonials</ClientNavLink>
-      <ClientNavLink to="/client/support" icon={LifeBuoy}>Support</ClientNavLink>
+    <nav className="hidden md:flex items-center space-x-6">
+      <ClientNavLink 
+        to="/client/home" 
+        icon={<Home size={18} />}
+        active={location.pathname === '/client/home'}
+      >
+        Home
+      </ClientNavLink>
+      
+      <ClientNavLink 
+        to="/client/features" 
+        icon={<FileText size={18} />}
+        active={location.pathname === '/client/features'}
+      >
+        Features
+      </ClientNavLink>
+      
+      <ClientNavLink 
+        to="/client/testimonials" 
+        icon={<Users size={18} />}
+        active={location.pathname === '/client/testimonials'}
+      >
+        Testimonials
+      </ClientNavLink>
+
+      <ClientNavLink 
+        to="/client/pricing" 
+        icon={<Calendar size={18} />}
+        active={location.pathname === '/client/pricing'}
+      >
+        Pricing
+      </ClientNavLink>
+      
+      {isAuthenticated && (
+        <ClientNavLink 
+          to="/client/dashboard" 
+          icon={<User size={18} />}
+          active={location.pathname === '/client/dashboard'}
+        >
+          Dashboard
+        </ClientNavLink>
+      )}
     </nav>
   );
 };

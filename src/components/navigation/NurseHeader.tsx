@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, CreditCard, Shield, Home } from 'lucide-react';
+import { Menu, X, User, CreditCard, Shield, Home, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '../ui-components/Logo';
 import Button from '../ui-components/Button';
+import { useUser } from '@/contexts/UserContext';
 
 const NurseHeader: React.FC = () => {
+  const { user, isAuthenticated, logout } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -53,7 +55,7 @@ const NurseHeader: React.FC = () => {
               to="/nurse"
               className={cn(
                 "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center group",
-                isActivePath('/nurse') && !isActivePath('/nurse/pricing') && !isActivePath('/nurse/support') && "text-purple-700 font-semibold"
+                isActivePath('/nurse') && !isActivePath('/nurse/pricing') && !isActivePath('/nurse/support') && !isActivePath('/nurse/dashboard') && "text-purple-700 font-semibold"
               )}
             >
               <Home size={18} className="mr-1.5 group-hover:text-purple-600 transition-colors" />
@@ -79,18 +81,46 @@ const NurseHeader: React.FC = () => {
               <Shield size={18} className="mr-1.5 group-hover:text-purple-600 transition-colors" />
               Support
             </Link>
+            {isAuthenticated && (
+              <Link 
+                to="/nurse/dashboard"
+                className={cn(
+                  "text-gray-600 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center group",
+                  isActivePath('/nurse/dashboard') && "text-purple-700 font-semibold"
+                )}
+              >
+                <User size={18} className="mr-1.5 group-hover:text-purple-600 transition-colors" />
+                Dashboard
+              </Link>
+            )}
           </nav>
           
           <div className="hidden md:flex items-center space-x-6">
-            <Button 
-              variant="primary" 
-              size="sm"
-              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
-              to="/login"
-            >
-              <User size={16} className="mr-2" />
-              Login / Sign Up
-            </Button>
+            {isAuthenticated ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-gray-700">Hi, {user?.firstName || 'User'}</span>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="border-purple-200 text-purple-600 hover:bg-purple-50"
+                  onClick={logout}
+                >
+                  <LogOut size={16} className="mr-2" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                variant="primary" 
+                size="sm"
+                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
+                as={Link}
+                to="/login"
+              >
+                <User size={16} className="mr-2" />
+                Login / Sign Up
+              </Button>
+            )}
           </div>
           
           {/* Mobile menu button */}
@@ -132,7 +162,7 @@ const NurseHeader: React.FC = () => {
               to="/nurse"
               className={cn(
                 "block text-gray-600 hover:text-purple-700 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
-                isActivePath('/nurse') && !isActivePath('/nurse/pricing') && !isActivePath('/nurse/support') && "text-purple-700"
+                isActivePath('/nurse') && !isActivePath('/nurse/pricing') && !isActivePath('/nurse/support') && !isActivePath('/nurse/dashboard') && "text-purple-700"
               )}
               onClick={() => setIsMenuOpen(false)}
             >
@@ -151,6 +181,7 @@ const NurseHeader: React.FC = () => {
               <CreditCard size={20} className="mr-2" />
               Pricing
             </Link>
+            
             <Link
               to="/nurse/support"
               className={cn(
@@ -163,17 +194,52 @@ const NurseHeader: React.FC = () => {
               Support
             </Link>
             
-            <div className="pt-6">
-              <Button 
-                variant="primary" 
-                size="md"
-                fullWidth
-                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md"
-                to="/login"
+            {isAuthenticated && (
+              <Link
+                to="/nurse/dashboard"
+                className={cn(
+                  "block text-gray-600 hover:text-purple-700 px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
+                  isActivePath('/nurse/dashboard') && "text-purple-700"
+                )}
+                onClick={() => setIsMenuOpen(false)}
               >
-                <User size={18} className="mr-2" />
-                Login / Sign Up
-              </Button>
+                <User size={20} className="mr-2" />
+                Dashboard
+              </Link>
+            )}
+            
+            <div className="pt-6">
+              {isAuthenticated ? (
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-700">Signed in as <span className="font-medium">{user?.email}</span></p>
+                  <Button 
+                    variant="outline" 
+                    size="md"
+                    fullWidth
+                    className="border-purple-200 text-purple-600 hover:bg-purple-50"
+                    onClick={() => {
+                      logout();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <LogOut size={18} className="mr-2" />
+                    Sign out
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  variant="primary" 
+                  size="md"
+                  fullWidth
+                  className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md"
+                  as={Link}
+                  to="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <User size={18} className="mr-2" />
+                  Login / Sign Up
+                </Button>
+              )}
             </div>
           </div>
         </div>

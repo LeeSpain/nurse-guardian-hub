@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
@@ -13,6 +12,10 @@ const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const HIPAA = lazy(() => import('./pages/HIPAA'));
 const Login = lazy(() => import('./pages/Login'));
+
+// Dashboard pages
+const NurseDashboard = lazy(() => import('./pages/dashboard/NurseDashboard'));
+const ClientDashboard = lazy(() => import('./pages/dashboard/ClientDashboard'));
 
 const Nurse = lazy(() => import('./pages/Nurse'));
 const NurseFeatures = lazy(() => import('./pages/NurseFeatures'));
@@ -57,6 +60,7 @@ function App() {
             <Route path="features" element={<NurseFeatures />} />
             <Route path="pricing" element={<NursePricing />} />
             <Route path="support" element={<NurseSupport />} />
+            <Route path="dashboard" element={<NurseDashboard />} />
           </Route>
           
           {/* Client Routes */}
@@ -67,6 +71,7 @@ function App() {
             <Route path="pricing" element={<ClientPricing />} />
             <Route path="testimonials" element={<ClientTestimonials />} /> 
             <Route path="support" element={<ClientSupport />} /> 
+            <Route path="dashboard" element={<ClientDashboard />} />
           </Route>
           
           {/* Other Routes */}

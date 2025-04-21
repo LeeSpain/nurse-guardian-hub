@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/navigation/Header';
 import Footer from '../components/layout/Footer';
@@ -16,7 +16,7 @@ import { useUser, UserRole } from '../contexts/UserContext';
 import { toast } from 'sonner';
 
 const Login: React.FC = () => {
-  const { login, register, isLoading } = useUser();
+  const { user, login, register, isLoading, isAuthenticated } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -30,14 +30,25 @@ const Login: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [accountType, setAccountType] = useState<'client' | 'nurse'>('client');
   
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      // Redirect based on role
+      if (user.role === UserRole.NURSE) {
+        navigate('/nurse/dashboard');
+      } else if (user.role === UserRole.CLIENT) {
+        navigate('/client/dashboard');
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
+  
   // Handle login form submission
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
       await login(loginEmail, loginPassword);
-      
-      // Note: Redirect is handled in UserContext after successful login
+      // Navigation handled by the useEffect above
     } catch (error) {
       console.error('Login error:', error);
     }
@@ -68,7 +79,7 @@ const Login: React.FC = () => {
         role: accountType === 'nurse' ? UserRole.NURSE : UserRole.CLIENT
       });
       
-      // Note: Redirect is handled in UserContext after successful registration
+      // Redirect is handled by useEffect when authentication state changes
     } catch (error) {
       console.error('Registration error:', error);
     }
@@ -255,14 +266,24 @@ const Login: React.FC = () => {
                         required 
                       />
                     </div>
+
+                    {accountType === 'nurse' && (
+                      <div className="p-4 border border-purple-100 bg-purple-50 rounded-lg">
+                        <p className="text-purple-700 text-sm font-medium">
+                          Healthcare Professional Access
+                        </p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          After registration, you'll need to subscribe to a plan to access the full healthcare professional dashboard.
+                        </p>
+                      </div>
+                    )}
                     
                     <div className="pt-2">
                       <Button 
                         type="submit"
-                        variant="primary"
+                        variant={accountType === 'nurse' ? 'nurse' : 'client'}
                         fullWidth
                         isLoading={isLoading}
-                        className="bg-purple-600 hover:bg-purple-700"
                       >
                         {isLoading ? 'Creating Account...' : 'Create Account'}
                       </Button>
