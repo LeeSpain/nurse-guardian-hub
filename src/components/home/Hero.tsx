@@ -54,6 +54,12 @@ const Hero: React.FC = () => {
                     For Care Seekers
                   </Button>
                 </div>
+                <div className="mt-6">
+                  <Link to="/login" className="inline-flex items-center text-purple-600 hover:text-purple-800">
+                    Already have an account? Login
+                    <ArrowRight size={14} className="ml-1" />
+                  </Link>
+                </div>
               </Transition>
             </div>
             
@@ -69,6 +75,7 @@ const Hero: React.FC = () => {
                         alt="Nurse providing virtual healthcare consultation" 
                         className="w-full h-auto object-cover"
                         loading="eager"
+                        fetchPriority="high"
                         width="800"
                         height="520"
                       />

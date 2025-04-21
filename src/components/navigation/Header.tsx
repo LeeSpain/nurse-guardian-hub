@@ -22,8 +22,12 @@ const Header: React.FC = () => {
             </Link>
           </div>
           
-          {/* Desktop Navigation - No additional links */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
+            <Link to="/about" className="text-gray-600 hover:text-purple-600 transition-colors">About</Link>
+            <Link to="/features" className="text-gray-600 hover:text-purple-600 transition-colors">Features</Link>
+            <Link to="/pricing" className="text-gray-600 hover:text-purple-600 transition-colors">Pricing</Link>
+            
             <div className="flex items-center space-x-4">
               <Button 
                 variant="primary" 
@@ -43,6 +47,15 @@ const Header: React.FC = () => {
                 to="/client/home"
               >
                 For Care Seekers
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-gray-200 text-gray-700 hover:bg-gray-50"
+                as={Link}
+                to="/login"
+              >
+                Login
               </Button>
             </div>
           </div>
@@ -75,7 +88,30 @@ const Header: React.FC = () => {
           </button>
           
           <div className="pt-24 pb-6 px-6 space-y-6">
-            {/* Removed additional links - now only buttons */}
+            <div className="space-y-1">
+              <Link 
+                to="/about" 
+                className="block p-3 rounded-lg hover:bg-gray-50 text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link 
+                to="/features" 
+                className="block p-3 rounded-lg hover:bg-gray-50 text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Features
+              </Link>
+              <Link 
+                to="/pricing" 
+                className="block p-3 rounded-lg hover:bg-gray-50 text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Pricing
+              </Link>
+            </div>
+            
             <div className="pt-6 space-y-4">
               <Button 
                 variant="primary" 
@@ -99,6 +135,17 @@ const Header: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 For Care Seekers
+              </Button>
+              <Button 
+                variant="outline" 
+                size="md"
+                fullWidth
+                className="border-gray-200"
+                as={Link}
+                to="/login"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login / Sign Up
               </Button>
             </div>
           </div>

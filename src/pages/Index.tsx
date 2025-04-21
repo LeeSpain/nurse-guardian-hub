@@ -32,8 +32,9 @@ const SectionLoader = () => (
 const Index: React.FC = () => {
   const location = useLocation();
   
-  // Scroll to top when component mounts or route changes
+  // Scroll to top and optimize performance when component mounts or route changes
   useEffect(() => {
+    // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'instant' });
     
     // Add preload hints for critical resources
@@ -43,8 +44,15 @@ const Index: React.FC = () => {
     preloadHero.href = '/lovable-uploads/d215d01f-93d6-423a-994e-1cb106f5b3ae.png';
     document.head.appendChild(preloadHero);
     
+    // Add preconnect for external resources
+    const preconnectYT = document.createElement('link');
+    preconnectYT.rel = 'preconnect';
+    preconnectYT.href = 'https://www.youtube.com';
+    document.head.appendChild(preconnectYT);
+    
     return () => {
       document.head.removeChild(preloadHero);
+      document.head.removeChild(preconnectYT);
     };
   }, [location.pathname]);
 
@@ -59,7 +67,7 @@ const Index: React.FC = () => {
         {/* Hero is critical, load it eagerly */}
         <Hero />
         
-        {/* Lazy load below-the-fold content */}
+        {/* Lazy load below-the-fold content with suspense boundaries for each section */}
         <Suspense fallback={<SectionLoader />}>
           <Features />
         </Suspense>

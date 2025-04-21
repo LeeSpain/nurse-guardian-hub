@@ -50,6 +50,11 @@ const CallToAction: React.FC = () => {
                 </Button>
               </div>
             </Transition>
+            <div className="mt-6">
+              <Link to="/login" className="text-white/80 hover:text-white underline">
+                Already have an account? Log in
+              </Link>
+            </div>
           </div>
         </div>
       </div>

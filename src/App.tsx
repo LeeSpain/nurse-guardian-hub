@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
@@ -7,15 +8,22 @@ import { Skeleton } from '@/components/ui/skeleton';
 const Index = lazy(() => import('./pages/Index'));
 const Features = lazy(() => import('./pages/Features'));
 const Pricing = lazy(() => import('./pages/Pricing'));
+const About = lazy(() => import('./pages/About'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Login = lazy(() => import('./pages/Login'));
+
 const Nurse = lazy(() => import('./pages/Nurse'));
 const NurseFeatures = lazy(() => import('./pages/NurseFeatures'));
 const NursePricing = lazy(() => import('./pages/NursePricing'));
-const NurseSupport = lazy(() => import('./pages/NurseSupport')); // Added new import
+const NurseSupport = lazy(() => import('./pages/NurseSupport'));
+
 const Client = lazy(() => import('./pages/Client'));
-const ClientFeatures = lazy(() => import('./pages/ClientFeatures')); // New import
+const ClientFeatures = lazy(() => import('./pages/ClientFeatures'));
 const ClientPricing = lazy(() => import('./pages/ClientPricing'));
-const ClientTestimonials = lazy(() => import('./pages/ClientTestimonials')); // New import
-const ClientSupport = lazy(() => import('./pages/ClientSupport')); // New import
+const ClientTestimonials = lazy(() => import('./pages/ClientTestimonials'));
+const ClientSupport = lazy(() => import('./pages/ClientSupport'));
+
 const NotFound = lazy(() => import('./pages/NotFound'));
 const ClientLayout = lazy(() => import('./layouts/ClientLayout'));
 const NurseLayout = lazy(() => import('./layouts/NurseLayout'));
@@ -63,6 +71,10 @@ function App() {
           {/* Other Routes */}
           <Route path="/features" element={<Features />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/login" element={<Login />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>
