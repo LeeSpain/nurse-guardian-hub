@@ -14,7 +14,7 @@ const ClientDesktopNav: React.FC = () => {
     <nav className="hidden md:flex items-center space-x-6">
       <ClientNavLink 
         to="/client/home" 
-        icon={<Home size={18} />}
+        icon={Home}
         active={location.pathname === '/client/home'}
       >
         Home
@@ -22,7 +22,7 @@ const ClientDesktopNav: React.FC = () => {
       
       <ClientNavLink 
         to="/client/features" 
-        icon={<FileText size={18} />}
+        icon={FileText}
         active={location.pathname === '/client/features'}
       >
         Features
@@ -30,7 +30,7 @@ const ClientDesktopNav: React.FC = () => {
       
       <ClientNavLink 
         to="/client/testimonials" 
-        icon={<Users size={18} />}
+        icon={Users}
         active={location.pathname === '/client/testimonials'}
       >
         Testimonials
@@ -38,7 +38,7 @@ const ClientDesktopNav: React.FC = () => {
 
       <ClientNavLink 
         to="/client/pricing" 
-        icon={<Calendar size={18} />}
+        icon={Calendar}
         active={location.pathname === '/client/pricing'}
       >
         Pricing
@@ -47,7 +47,7 @@ const ClientDesktopNav: React.FC = () => {
       {isAuthenticated && (
         <ClientNavLink 
           to="/client/dashboard" 
-          icon={<User size={18} />}
+          icon={User}
           active={location.pathname === '/client/dashboard'}
         >
           Dashboard

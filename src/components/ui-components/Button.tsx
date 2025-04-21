@@ -1,6 +1,6 @@
 
 import React, { ReactNode, ElementType, ComponentPropsWithoutRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps<T extends ElementType = 'button'> {
@@ -71,7 +71,7 @@ const Button = <T extends ElementType = 'button'>({
           disabledClass,
           className
         )}
-        {...props}
+        {...(props as Omit<LinkProps, keyof ButtonProps<typeof Link>>)}
       >
         {icon && iconPosition === 'left' && <span className="mr-2">{icon}</span>}
         {isLoading ? (

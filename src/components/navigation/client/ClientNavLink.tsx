@@ -11,6 +11,7 @@ interface ClientNavLinkProps {
   isMobile?: boolean;
   onClick?: () => void;
   basePath?: string;
+  active?: boolean;
 }
 
 const ClientNavLink: React.FC<ClientNavLinkProps> = ({ 
@@ -19,15 +20,18 @@ const ClientNavLink: React.FC<ClientNavLinkProps> = ({
   children, 
   isMobile = false,
   onClick,
-  basePath = '/client'
+  basePath = '/client',
+  active
 }) => {
   const location = useLocation();
   
-  const isActivePath = (path: string) => {
+  const isActivePath = active !== undefined ? active : (path: string) => {
     if (path === basePath && (location.pathname === basePath || location.pathname === `${basePath}/`)) return true;
     if (path !== basePath && location.pathname.startsWith(path)) return true;
     return false;
   };
+
+  const isActive = typeof isActivePath === 'function' ? isActivePath(to) : isActivePath;
 
   if (isMobile) {
     return (
@@ -35,7 +39,7 @@ const ClientNavLink: React.FC<ClientNavLinkProps> = ({
         to={to}
         className={cn(
           "block text-gray-600 hover:text-client px-3 py-3 text-lg font-medium border-b border-gray-100 flex items-center",
-          isActivePath(to) && "text-client"
+          isActive && "text-client"
         )}
         onClick={onClick}
       >
@@ -50,7 +54,7 @@ const ClientNavLink: React.FC<ClientNavLinkProps> = ({
       to={to}
       className={cn(
         "text-gray-600 hover:text-client px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center group",
-        isActivePath(to) && "text-client font-semibold"
+        isActive && "text-client font-semibold"
       )}
     >
       <Icon size={18} className="mr-1.5 group-hover:text-client transition-colors" />
