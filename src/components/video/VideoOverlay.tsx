@@ -4,11 +4,19 @@ import { X } from 'lucide-react';
 
 interface VideoOverlayProps {
   videoId: string;
+  onClose?: () => void;
 }
 
-const VideoOverlay: React.FC<VideoOverlayProps> = ({ videoId }) => {
+const VideoOverlay: React.FC<VideoOverlayProps> = ({ videoId, onClose }) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+
+  const handleClose = () => {
+    setIsHidden(true);
+    if (onClose) {
+      onClose();
+    }
+  };
 
   if (isHidden) return null;
 
@@ -49,7 +57,7 @@ const VideoOverlay: React.FC<VideoOverlayProps> = ({ videoId }) => {
               </svg>
             </button>
             <button
-              onClick={() => setIsHidden(true)}
+              onClick={handleClose}
               className="text-white/80 hover:text-white"
               aria-label="Close video"
             >

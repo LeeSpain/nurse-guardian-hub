@@ -37,7 +37,7 @@ const ClientDesktopActions: React.FC = () => {
           size="sm"
           className="font-medium"
           as={Link}
-          to="/login"
+          to="/login?service=client"
         >
           <User size={16} className="mr-2" />
           Sign in

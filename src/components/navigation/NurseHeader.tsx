@@ -115,7 +115,7 @@ const NurseHeader: React.FC = () => {
                 size="sm"
                 className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
                 as={Link}
-                to="/login"
+                to="/login?service=nurse"
               >
                 <User size={16} className="mr-2" />
                 Login / Sign Up
@@ -233,7 +233,7 @@ const NurseHeader: React.FC = () => {
                   fullWidth
                   className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md"
                   as={Link}
-                  to="/login"
+                  to="/login?service=nurse"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <User size={18} className="mr-2" />

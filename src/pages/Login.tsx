@@ -1,7 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import Header from '../components/navigation/Header';
+import NurseHeader from '../components/navigation/NurseHeader';
+import ClientHeader from '../components/navigation/ClientHeader';
 import Footer from '../components/layout/Footer';
 import { 
   Tabs,
@@ -14,11 +16,15 @@ import { Label } from "@/components/ui/label";
 import Button from '../components/ui-components/Button';
 import { useUser, UserRole } from '../contexts/UserContext';
 import { toast } from 'sonner';
+import VideoOverlay from '../components/video/VideoOverlay';
 
 const Login: React.FC = () => {
   const { user, login, register, isLoading, isAuthenticated } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const serviceType = searchParams.get('service');
+  const [showTutorial, setShowTutorial] = useState(false);
   
   // Form states
   const [loginEmail, setLoginEmail] = useState('');
@@ -28,7 +34,7 @@ const Login: React.FC = () => {
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [accountType, setAccountType] = useState<'client' | 'nurse'>('client');
+  const [accountType, setAccountType] = useState<'client' | 'nurse'>(serviceType === 'nurse' ? 'nurse' : 'client');
   
   // Redirect if already authenticated
   useEffect(() => {
@@ -41,6 +47,14 @@ const Login: React.FC = () => {
       }
     }
   }, [isAuthenticated, user, navigate]);
+
+  // Set default tab based on the URL parameter
+  useEffect(() => {
+    // If there's a registration_success parameter, show tutorial
+    if (searchParams.get('registration_success') === 'true') {
+      setShowTutorial(true);
+    }
+  }, [searchParams]);
   
   // Handle login form submission
   const handleLogin = async (e: React.FormEvent) => {
@@ -85,16 +99,39 @@ const Login: React.FC = () => {
     }
   };
 
+  // Determine which header to display based on service type
+  const renderHeader = () => {
+    if (serviceType === 'nurse') {
+      return <NurseHeader />;
+    } else if (serviceType === 'client') {
+      return <ClientHeader />;
+    } else {
+      return <Header />;
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      {renderHeader()}
       <main className="flex-grow flex items-center justify-center py-12 bg-gray-50">
         <div className="w-full max-w-md mx-4">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="p-8">
               <div className="text-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Welcome to NurseSync</h1>
-                <p className="text-gray-600 mt-2">Sign in or create an account to get started</p>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {serviceType === 'nurse' 
+                    ? 'Professional Healthcare Access' 
+                    : serviceType === 'client' 
+                      ? 'Care Seeker Portal' 
+                      : 'Welcome to NurseSync'}
+                </h1>
+                <p className="text-gray-600 mt-2">
+                  {serviceType === 'nurse' 
+                    ? 'Sign in or create a professional account' 
+                    : serviceType === 'client' 
+                      ? 'Find the care you need today'
+                      : 'Sign in or create an account to get started'}
+                </p>
               </div>
               
               <Tabs defaultValue="login" className="w-full">
@@ -136,10 +173,10 @@ const Login: React.FC = () => {
                     <div className="pt-2">
                       <Button 
                         type="submit"
-                        variant="primary"
+                        variant={serviceType === 'client' ? 'client' : 'primary'}
                         fullWidth
                         isLoading={isLoading}
-                        className="bg-purple-600 hover:bg-purple-700"
+                        className={serviceType === 'client' ? '' : 'bg-purple-600 hover:bg-purple-700'}
                       >
                         {isLoading ? 'Signing in...' : 'Sign In'}
                       </Button>
@@ -166,44 +203,57 @@ const Login: React.FC = () => {
                 <TabsContent value="register">
                   <form onSubmit={handleRegister} className="space-y-4">
                     <div className="space-y-4">
-                      <Label>I am a:</Label>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div
-                          className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                            accountType === 'nurse' 
-                              ? 'border-purple-500 bg-purple-50' 
-                              : 'border-gray-200 hover:border-purple-300'
-                          }`}
-                          onClick={() => setAccountType('nurse')}
-                        >
-                          <div className="text-center">
-                            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-purple-600">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                              </svg>
+                      {!serviceType && (
+                        <>
+                          <Label>I am a:</Label>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div
+                              className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                                accountType === 'nurse' 
+                                  ? 'border-purple-500 bg-purple-50' 
+                                  : 'border-gray-200 hover:border-purple-300'
+                              }`}
+                              onClick={() => setAccountType('nurse')}
+                            >
+                              <div className="text-center">
+                                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-purple-600">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  </svg>
+                                </div>
+                                <p className="font-medium">Healthcare Professional</p>
+                              </div>
                             </div>
-                            <p className="font-medium">Healthcare Professional</p>
-                          </div>
-                        </div>
-                        
-                        <div
-                          className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                            accountType === 'client' 
-                              ? 'border-client border-2 bg-client-muted/10' 
-                              : 'border-gray-200 hover:border-client/30'
-                          }`}
-                          onClick={() => setAccountType('client')}
-                        >
-                          <div className="text-center">
-                            <div className="w-12 h-12 bg-client-muted/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-client">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                              </svg>
+                            
+                            <div
+                              className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                                accountType === 'client' 
+                                  ? 'border-client border-2 bg-client-muted/10' 
+                                  : 'border-gray-200 hover:border-client/30'
+                              }`}
+                              onClick={() => setAccountType('client')}
+                            >
+                              <div className="text-center">
+                                <div className="w-12 h-12 bg-client-muted/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-client">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                  </svg>
+                                </div>
+                                <p className="font-medium">Care Seeker</p>
+                              </div>
                             </div>
-                            <p className="font-medium">Care Seeker</p>
                           </div>
+                        </>
+                      )}
+                      {serviceType && (
+                        <div className="border rounded-lg p-4 bg-gray-50 text-center">
+                          <p className="font-medium">
+                            {serviceType === 'nurse' 
+                              ? 'Healthcare Professional Account' 
+                              : 'Care Seeker Account'}
+                          </p>
                         </div>
-                      </div>
+                      )}
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4">
@@ -267,7 +317,7 @@ const Login: React.FC = () => {
                       />
                     </div>
 
-                    {accountType === 'nurse' && (
+                    {(serviceType === 'nurse' || accountType === 'nurse') && (
                       <div className="p-4 border border-purple-100 bg-purple-50 rounded-lg">
                         <p className="text-purple-700 text-sm font-medium">
                           Healthcare Professional Access
@@ -281,7 +331,7 @@ const Login: React.FC = () => {
                     <div className="pt-2">
                       <Button 
                         type="submit"
-                        variant={accountType === 'nurse' ? 'nurse' : 'client'}
+                        variant={(serviceType === 'client' || accountType === 'client') ? 'client' : 'nurse'}
                         fullWidth
                         isLoading={isLoading}
                       >
@@ -307,6 +357,9 @@ const Login: React.FC = () => {
         </div>
       </main>
       <Footer />
+      {showTutorial && (
+        <VideoOverlay videoId="dQw4w9WgXcQ" onClose={() => setShowTutorial(false)} />
+      )}
     </div>
   );
 };
