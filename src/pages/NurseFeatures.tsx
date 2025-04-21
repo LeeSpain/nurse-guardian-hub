@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import Transition from '../components/ui-components/Transition';
 import { 
@@ -274,6 +273,7 @@ const NurseFeatures: React.FC = () => {
                   size="lg"
                   className="border-purple-200 text-purple-700"
                   to="/nurse/pricing"
+                  as={Link}
                 >
                   Compare All Plans
                   <ArrowRight size={18} className="ml-2" />
@@ -326,6 +326,7 @@ const NurseFeatures: React.FC = () => {
                   size="lg"
                   className="bg-white text-purple-700 hover:bg-gray-100"
                   to="/nurse/pricing"
+                  as={Link}
                 >
                   View Pricing Plans
                 </Button>
@@ -334,6 +335,7 @@ const NurseFeatures: React.FC = () => {
                   size="lg"
                   className="border-white/30 text-white hover:bg-white/10"
                   to="/contact"
+                  as={Link}
                 >
                   Schedule a Demo
                 </Button>
