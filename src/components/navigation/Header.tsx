@@ -145,7 +145,7 @@ const Header: React.FC = () => {
                 to="/login"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Login / Sign Up
+                Login
               </Button>
             </div>
           </div>
