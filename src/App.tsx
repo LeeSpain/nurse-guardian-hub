@@ -12,6 +12,7 @@ const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const HIPAA = lazy(() => import('./pages/HIPAA'));
 const Login = lazy(() => import('./pages/Login'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const NurseRegister = lazy(() => import('./pages/NurseRegister'));
 const ClientRegister = lazy(() => import('./pages/ClientRegister'));
 
@@ -84,6 +85,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/hipaa" element={<HIPAA />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register/nurse" element={<NurseRegister />} />
           <Route path="/register/client" element={<ClientRegister />} />
           
