@@ -34,13 +34,15 @@ interface AppointmentBookingModalProps {
   onClose: () => void;
   nurseId?: string;
   nurseName?: string;
+  nurseRate?: number;
 }
 
 const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = ({
   isOpen,
   onClose,
   nurseId: preSelectedNurseId,
-  nurseName
+  nurseName,
+  nurseRate
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
@@ -59,7 +61,7 @@ const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = ({
       address: '',
       description: '',
       specialInstructions: '',
-      hourlyRate: '75',
+      hourlyRate: nurseRate ? nurseRate.toString() : '75',
     },
   });
 

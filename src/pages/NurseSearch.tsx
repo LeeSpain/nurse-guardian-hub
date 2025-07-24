@@ -5,6 +5,7 @@ import { Search, Filter, MapPin, Star } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { useNurseProfiles } from '@/hooks/useNurseProfiles';
 import NurseSearchCard from '@/components/dashboard/NurseSearchCard';
+import AppointmentBookingModal from '@/components/appointments/AppointmentBookingModal';
 
 const NurseSearch: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
@@ -14,6 +15,8 @@ const NurseSearch: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [maxRate, setMaxRate] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedNurse, setSelectedNurse] = useState<{ id: string; name: string; rate?: number } | null>(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   if (isLoading) {
     return (
@@ -186,8 +189,12 @@ const NurseSearch: React.FC = () => {
                   key={nurse.id}
                   nurse={nurse}
                   onBookAppointment={(nurseId) => {
-                    // TODO: Navigate to booking page
-                    console.log('Book appointment with:', nurseId);
+                    setSelectedNurse({
+                      id: nurseId,
+                      name: `${nurse.first_name} ${nurse.last_name}`,
+                      rate: nurse.hourly_rate || 75
+                    });
+                    setShowBookingModal(true);
                   }}
                   onMessage={(nurseId) => {
                     // TODO: Navigate to messages
@@ -214,6 +221,18 @@ const NurseSearch: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Appointment Booking Modal */}
+      <AppointmentBookingModal
+        isOpen={showBookingModal}
+        onClose={() => {
+          setShowBookingModal(false);
+          setSelectedNurse(null);
+        }}
+        nurseId={selectedNurse?.id}
+        nurseName={selectedNurse?.name}
+        nurseRate={selectedNurse?.rate}
+      />
     </div>
   );
 };
