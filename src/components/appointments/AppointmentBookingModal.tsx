@@ -5,12 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Button from '@/components/ui-components/Button';
+import FileUploadZone from '@/components/ui-components/FileUploadZone';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAppointments } from '@/hooks/useAppointments';
-import { Calendar, Clock, MapPin, User, DollarSign } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, DollarSign, CreditCard, Paperclip } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const bookingSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -41,6 +43,8 @@ const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = ({
   nurseName
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showFileUpload, setShowFileUpload] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<{ url?: string; path?: string; name?: string }[]>([]);
   const { createAppointment } = useAppointments();
 
   const form = useForm<BookingFormData>({
@@ -67,7 +71,7 @@ const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = ({
       const durationMinutes = Math.round((endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60));
       const totalCost = (durationMinutes / 60) * parseFloat(data.hourlyRate);
 
-      await createAppointment({
+      const appointmentData = {
         title: data.title,
         nurse_id: data.nurseId,
         appointment_date: data.appointmentDate,
@@ -81,17 +85,48 @@ const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = ({
         duration_minutes: durationMinutes,
         total_cost: totalCost,
         status: 'pending'
+      };
+
+      // Process payment first
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke('create-appointment-payment', {
+        body: {
+          appointmentData,
+          amount: totalCost
+        }
       });
 
-      toast.success('Appointment booked successfully!');
-      form.reset();
-      onClose();
+      if (paymentError) {
+        throw new Error('Payment processing failed');
+      }
+
+      // Redirect to Stripe checkout
+      if (paymentData?.url) {
+        window.open(paymentData.url, '_blank');
+        toast.success('Redirecting to payment...');
+        form.reset();
+        setUploadedFiles([]);
+        onClose();
+      }
     } catch (error) {
       console.error('Booking error:', error);
-      toast.error('Failed to book appointment. Please try again.');
+      toast.error('Failed to process appointment booking. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleFileUploaded = (result: { url?: string; path?: string }) => {
+    if (result.path) {
+      setUploadedFiles(prev => [...prev, { 
+        ...result, 
+        name: result.path?.split('/').pop() 
+      }]);
+      toast.success('File uploaded successfully');
+    }
+  };
+
+  const removeUploadedFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const serviceTypes = [
@@ -308,6 +343,80 @@ const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = ({
               )}
             />
 
+            {/* File Upload Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-700">Attachments (Optional)</label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowFileUpload(!showFileUpload)}
+                  icon={<Paperclip className="w-4 h-4" />}
+                >
+                  Add Files
+                </Button>
+              </div>
+
+              {uploadedFiles.length > 0 && (
+                <div className="space-y-2">
+                  {uploadedFiles.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                      <span className="text-sm text-gray-600">📎 {file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeUploadedFile(index)}
+                        className="text-red-500 hover:text-red-700 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {showFileUpload && (
+                <FileUploadZone
+                  onFileUploaded={handleFileUploaded}
+                  options={{
+                    bucket: 'appointment-files',
+                    maxSizeBytes: 10 * 1024 * 1024, // 10MB
+                    allowedTypes: [
+                      'application/pdf',
+                      'image/jpeg',
+                      'image/png',
+                      'text/plain',
+                      'application/msword',
+                      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                    ]
+                  }}
+                  accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx"
+                  className="h-32"
+                />
+              )}
+            </div>
+
+            <div className="bg-teal-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <CreditCard className="w-5 h-5 text-teal-600" />
+                <h4 className="font-medium text-teal-800">Payment Information</h4>
+              </div>
+              <p className="text-sm text-teal-700">
+                Total Cost: <span className="font-semibold">${(() => {
+                  const startTime = form.watch('startTime') || '00:00';
+                  const endTime = form.watch('endTime') || '00:00';
+                  const hourlyRate = parseFloat(form.watch('hourlyRate') || '0');
+                  const startDate = new Date(`2000-01-01T${startTime}`);
+                  const endDate = new Date(`2000-01-01T${endTime}`);
+                  const hours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+                  return (hours * hourlyRate).toFixed(2);
+                })()}</span>
+              </p>
+              <p className="text-xs text-teal-600 mt-1">
+                Secure payment will be processed through Stripe after booking confirmation.
+              </p>
+            </div>
+
             <div className="flex justify-end gap-3 pt-4">
               <Button variant="outline" type="button" onClick={onClose}>
                 Cancel
@@ -316,9 +425,10 @@ const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = ({
                 variant="client" 
                 type="submit" 
                 disabled={isSubmitting}
-                className="min-w-[120px]"
+                className="min-w-[150px]"
+                icon={<CreditCard className="w-4 h-4" />}
               >
-                {isSubmitting ? 'Booking...' : 'Book Appointment'}
+                {isSubmitting ? 'Processing...' : 'Book & Pay'}
               </Button>
             </div>
           </form>

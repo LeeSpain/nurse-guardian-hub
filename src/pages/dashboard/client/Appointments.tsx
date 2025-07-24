@@ -5,6 +5,7 @@ import { Calendar, Clock, Plus, Video } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { useAppointments } from '@/hooks/useAppointments';
 import AppointmentCard from '@/components/dashboard/AppointmentCard';
+import PaymentStatusHandler from '@/components/appointments/PaymentStatusHandler';
 
 const Appointments: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
@@ -24,6 +25,7 @@ const Appointments: React.FC = () => {
   
   return (
     <div className="min-h-screen bg-gray-50 pt-24">
+      <PaymentStatusHandler />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
           <div>

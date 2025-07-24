@@ -48,11 +48,17 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
 
   const handleFileUploaded = async (result: { url?: string; path?: string }) => {
     if (result.path) {
-      // Send a message with file attachment
-      const fileMessage = `📎 File attached: ${result.path.split('/').pop()}`;
-      await sendMessage(recipientId, fileMessage, appointmentId);
-      setShowFileUpload(false);
-      onMessageSent?.();
+      // Send a message with file attachment info
+      const fileName = result.path.split('/').pop();
+      const fileMessage = `📎 Shared a file: ${fileName}`;
+      
+      try {
+        await sendMessage(recipientId, fileMessage, appointmentId);
+        setShowFileUpload(false);
+        onMessageSent?.();
+      } catch (error) {
+        console.error('Error sending file message:', error);
+      }
     }
   };
 
