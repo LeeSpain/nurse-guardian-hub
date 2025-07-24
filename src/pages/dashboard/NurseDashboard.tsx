@@ -98,6 +98,8 @@ const NurseDashboard: React.FC = () => {
             className="p-6 h-auto flex-col items-center justify-center text-center"
             icon={<Calendar size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
+            as={Link}
+            to="/nurse/calendar"
           >
             <div>
               <p className="font-semibold">Calendar</p>
@@ -112,6 +114,8 @@ const NurseDashboard: React.FC = () => {
             className="p-6 h-auto flex-col items-center justify-center text-center"
             icon={<Users size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
+            as={Link}
+            to="/nurse/clients"
           >
             <div>
               <p className="font-semibold">Clients</p>
@@ -126,6 +130,8 @@ const NurseDashboard: React.FC = () => {
             className="p-6 h-auto flex-col items-center justify-center text-center"
             icon={<CreditCard size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
+            as={Link}
+            to="/nurse/subscription"
           >
             <div>
               <p className="font-semibold">Subscription</p>
@@ -140,6 +146,8 @@ const NurseDashboard: React.FC = () => {
             className="p-6 h-auto flex-col items-center justify-center text-center"
             icon={<Settings size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
+            as={Link}
+            to="/nurse/settings"
           >
             <div>
               <p className="font-semibold">Settings</p>

@@ -20,6 +20,18 @@ const ClientRegister = lazy(() => import('./pages/ClientRegister'));
 const NurseDashboard = lazy(() => import('./pages/dashboard/NurseDashboard'));
 const ClientDashboard = lazy(() => import('./pages/dashboard/ClientDashboard'));
 
+// Nurse dashboard pages
+const NurseCalendar = lazy(() => import('./pages/dashboard/nurse/Calendar'));
+const NurseClients = lazy(() => import('./pages/dashboard/nurse/Clients'));
+const NurseSubscription = lazy(() => import('./pages/dashboard/nurse/Subscription'));
+const NurseSettings = lazy(() => import('./pages/dashboard/nurse/Settings'));
+
+// Client dashboard pages
+const ClientSavedProfessionals = lazy(() => import('./pages/dashboard/client/SavedProfessionals'));
+const ClientAppointments = lazy(() => import('./pages/dashboard/client/Appointments'));
+const ClientMessages = lazy(() => import('./pages/dashboard/client/Messages'));
+const ClientSettings = lazy(() => import('./pages/dashboard/client/Settings'));
+
 const Nurse = lazy(() => import('./pages/Nurse'));
 const NurseFeatures = lazy(() => import('./pages/NurseFeatures'));
 const NursePricing = lazy(() => import('./pages/NursePricing'));
@@ -64,6 +76,10 @@ function App() {
             <Route path="pricing" element={<NursePricing />} />
             <Route path="support" element={<NurseSupport />} />
             <Route path="dashboard" element={<NurseDashboard />} />
+            <Route path="calendar" element={<NurseCalendar />} />
+            <Route path="clients" element={<NurseClients />} />
+            <Route path="subscription" element={<NurseSubscription />} />
+            <Route path="settings" element={<NurseSettings />} />
           </Route>
           
           {/* Client Routes */}
@@ -75,6 +91,10 @@ function App() {
             <Route path="testimonials" element={<ClientTestimonials />} /> 
             <Route path="support" element={<ClientSupport />} /> 
             <Route path="dashboard" element={<ClientDashboard />} />
+            <Route path="saved-professionals" element={<ClientSavedProfessionals />} />
+            <Route path="appointments" element={<ClientAppointments />} />
+            <Route path="messages" element={<ClientMessages />} />
+            <Route path="settings" element={<ClientSettings />} />
           </Route>
           
           {/* Other Routes */}

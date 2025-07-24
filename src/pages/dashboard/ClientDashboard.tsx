@@ -67,6 +67,8 @@ const ClientDashboard: React.FC = () => {
             className="p-6 h-auto flex-col items-center justify-center text-center"
             icon={<Heart size={24} className="mb-2 text-teal-600" />}
             iconPosition="left"
+            as={Link}
+            to="/client/saved-professionals"
           >
             <div>
               <p className="font-semibold">Saved Professionals</p>
@@ -81,6 +83,8 @@ const ClientDashboard: React.FC = () => {
             className="p-6 h-auto flex-col items-center justify-center text-center"
             icon={<Calendar size={24} className="mb-2 text-teal-600" />}
             iconPosition="left"
+            as={Link}
+            to="/client/appointments"
           >
             <div>
               <p className="font-semibold">Appointments</p>
@@ -95,6 +99,8 @@ const ClientDashboard: React.FC = () => {
             className="p-6 h-auto flex-col items-center justify-center text-center"
             icon={<MessageSquare size={24} className="mb-2 text-teal-600" />}
             iconPosition="left"
+            as={Link}
+            to="/client/messages"
           >
             <div>
               <p className="font-semibold">Messages</p>
@@ -109,6 +115,8 @@ const ClientDashboard: React.FC = () => {
             className="p-6 h-auto flex-col items-center justify-center text-center"
             icon={<Settings size={24} className="mb-2 text-teal-600" />}
             iconPosition="left"
+            as={Link}
+            to="/client/settings"
           >
             <div>
               <p className="font-semibold">Settings</p>
