@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,10 +22,19 @@ export interface User {
   createdAt: Date;
 }
 
+// Subscription interface
+export interface Subscription {
+  subscribed: boolean;
+  subscription_tier?: string | null;
+  subscription_end?: string | null;
+  subscription_status?: string | null;
+}
+
 // User context interface
 interface UserContextType {
   user: User | null;
   session: Session | null;
+  subscription: Subscription | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ error?: string }>;
@@ -40,6 +48,9 @@ interface UserContextType {
   }) => Promise<{ error?: string }>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => Promise<{ error?: string }>;
+  checkSubscription: () => Promise<void>;
+  createCheckout: (planId: string) => Promise<{ error?: string; url?: string }>;
+  manageSubscription: () => Promise<{ error?: string; url?: string }>;
 }
 
 // Create context
@@ -49,6 +60,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -68,6 +80,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           }, 0);
         } else {
           setUser(null);
+          setSubscription(null);
         }
         
         setIsLoading(false);
@@ -102,9 +115,72 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
       
       setUser(userProfile);
+
+      // Check subscription status for nurses
+      if (userProfile.role === UserRole.NURSE) {
+        await checkSubscription();
+      }
     } catch (error) {
       console.error('Error fetching user profile:', error);
       setUser(null);
+    }
+  };
+
+  // Check subscription status
+  const checkSubscription = async (): Promise<void> => {
+    try {
+      if (!session) return;
+
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      
+      if (error) {
+        console.error('Error checking subscription:', error);
+        return;
+      }
+
+      setSubscription(data);
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+    }
+  };
+
+  // Create Stripe checkout session
+  const createCheckout = async (planId: string): Promise<{ error?: string; url?: string }> => {
+    try {
+      if (!session) {
+        return { error: 'User not authenticated' };
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { planId }
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return { url: data.url };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  };
+
+  // Manage subscription via customer portal
+  const manageSubscription = async (): Promise<{ error?: string; url?: string }> => {
+    try {
+      if (!session) {
+        return { error: 'User not authenticated' };
+      }
+
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return { url: data.url };
+    } catch (error: any) {
+      return { error: error.message };
     }
   };
 
@@ -167,7 +243,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             lastName: userData.lastName,
             first_name: userData.firstName,
             last_name: userData.lastName,
-            role: userData.role
+            role: userData.role,
+            specialties: userData.specialties
           }
         }
       });
@@ -200,6 +277,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       setUser(null);
       setSession(null);
+      setSubscription(null);
       toast.success('Logged out successfully');
       navigate('/');
     } catch (error) {
@@ -243,12 +321,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const contextValue: UserContextType = {
     user,
     session,
+    subscription,
     isAuthenticated,
     isLoading,
     login,
     register,
     logout,
-    updateUser
+    updateUser,
+    checkSubscription,
+    createCheckout,
+    manageSubscription
   };
 
   return (
@@ -320,5 +402,4 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   return <>{children}</>;
 };
-
 
