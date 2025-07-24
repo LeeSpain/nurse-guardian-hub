@@ -3,17 +3,19 @@ import React, { useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { toast } from 'sonner';
-import { Shield, Calendar, Users, Settings, CreditCard } from 'lucide-react';
+import { Shield, Calendar, Users, Settings, CreditCard, Star } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
+import { useNurseStats } from '@/hooks/useNurseStats';
 
 const NurseDashboard: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useUser();
+  const { user, isAuthenticated, isLoading, subscription } = useUser();
+  const { stats, loading: statsLoading } = useNurseStats();
   
-  // Check subscription status (mockup for now)
-  const hasActiveSubscription = user?.role === UserRole.NURSE;
+  // Check subscription status
+  const hasActiveSubscription = subscription?.subscribed || false;
   
   // If loading, show a loading state
-  if (isLoading) {
+  if (isLoading || statsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-16 h-16 border-4 border-t-purple-600 border-r-transparent border-b-purple-600 border-l-transparent rounded-full animate-spin"></div>
@@ -69,23 +71,56 @@ const NurseDashboard: React.FC = () => {
         </div>
         
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-gray-700 mb-2">Active Clients</h3>
-            <p className="text-3xl font-bold text-purple-700">0</p>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-gray-700">Active Clients</h3>
+              <Users className="w-5 h-5 text-purple-600" />
+            </div>
+            <p className="text-3xl font-bold text-purple-700">{stats.activeClients}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              {stats.totalAppointments} total appointments
+            </p>
           </div>
+          
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-gray-700 mb-2">Upcoming Sessions</h3>
-            <p className="text-3xl font-bold text-purple-700">0</p>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-gray-700">Upcoming Sessions</h3>
+              <Calendar className="w-5 h-5 text-purple-600" />
+            </div>
+            <p className="text-3xl font-bold text-purple-700">{stats.upcomingAppointments}</p>
+            <p className="text-sm text-gray-500 mt-1">This week</p>
           </div>
+          
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-gray-700 mb-2">Profile Completion</h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-gray-700">Monthly Earnings</h3>
+              <CreditCard className="w-5 h-5 text-purple-600" />
+            </div>
+            <p className="text-3xl font-bold text-purple-700">${stats.monthlyEarnings.toFixed(0)}</p>
+            <p className="text-sm text-gray-500 mt-1">This month</p>
+          </div>
+          
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-gray-700">Profile Completion</h3>
+              <Settings className="w-5 h-5 text-purple-600" />
+            </div>
             <div className="flex items-center">
               <div className="w-full bg-gray-200 rounded-full h-2.5">
-                <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: '65%' }}></div>
+                <div 
+                  className="bg-purple-600 h-2.5 rounded-full transition-all duration-300" 
+                  style={{ width: `${stats.profileCompletion}%` }}
+                ></div>
               </div>
-              <span className="ml-2 text-sm text-gray-600">65%</span>
+              <span className="ml-2 text-sm text-gray-600">{stats.profileCompletion}%</span>
             </div>
+            {stats.averageRating > 0 && (
+              <div className="flex items-center mt-2">
+                <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                <span className="ml-1 text-sm text-gray-600">{stats.averageRating}</span>
+              </div>
+            )}
           </div>
         </div>
         

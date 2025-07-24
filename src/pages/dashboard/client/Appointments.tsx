@@ -3,11 +3,14 @@ import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { Calendar, Clock, Plus, Video } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
+import { useAppointments } from '@/hooks/useAppointments';
+import AppointmentCard from '@/components/dashboard/AppointmentCard';
 
 const Appointments: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
+  const { upcomingAppointments, pastAppointments, loading: appointmentsLoading, updateAppointment } = useAppointments();
   
-  if (isLoading) {
+  if (isLoading || appointmentsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-16 h-16 border-4 border-t-teal-500 border-r-transparent border-b-teal-500 border-l-transparent rounded-full animate-spin"></div>
@@ -37,16 +40,27 @@ const Appointments: React.FC = () => {
           <h3 className="font-semibold text-gray-800 mb-4">Upcoming Appointments</h3>
           
           <div className="space-y-4">
-            <div className="flex items-center p-4 bg-teal-50 rounded-lg">
-              <Calendar className="text-teal-600 mr-3" size={20} />
-              <div className="flex-grow">
-                <p className="font-medium text-gray-800">No upcoming appointments</p>
-                <p className="text-sm text-gray-600">Schedule your first appointment</p>
+            {upcomingAppointments.length > 0 ? (
+              upcomingAppointments.map(appointment => (
+                <AppointmentCard
+                  key={appointment.id}
+                  appointment={appointment}
+                  userRole="client"
+                  onCancel={(id) => updateAppointment(id, { status: 'cancelled', cancellation_reason: 'Cancelled by client' })}
+                />
+              ))
+            ) : (
+              <div className="flex items-center p-4 bg-teal-50 rounded-lg">
+                <Calendar className="text-teal-600 mr-3" size={20} />
+                <div className="flex-grow">
+                  <p className="font-medium text-gray-800">No upcoming appointments</p>
+                  <p className="text-sm text-gray-600">Schedule your first appointment</p>
+                </div>
+                <Button variant="outline" size="sm">
+                  Find Provider
+                </Button>
               </div>
-              <Button variant="outline" size="sm">
-                Find Provider
-              </Button>
-            </div>
+            )}
           </div>
         </div>
         
@@ -55,13 +69,23 @@ const Appointments: React.FC = () => {
           <h3 className="font-semibold text-gray-800 mb-4">Past Appointments</h3>
           
           <div className="space-y-4">
-            <div className="flex items-center p-4 bg-gray-50 rounded-lg">
-              <Clock className="text-gray-400 mr-3" size={20} />
-              <div className="flex-grow">
-                <p className="font-medium text-gray-800">No appointment history</p>
-                <p className="text-sm text-gray-600">Your appointment history will appear here</p>
+            {pastAppointments.length > 0 ? (
+              pastAppointments.map(appointment => (
+                <AppointmentCard
+                  key={appointment.id}
+                  appointment={appointment}
+                  userRole="client"
+                />
+              ))
+            ) : (
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+                <Clock className="text-gray-400 mr-3" size={20} />
+                <div className="flex-grow">
+                  <p className="font-medium text-gray-800">No appointment history</p>
+                  <p className="text-sm text-gray-600">Your appointment history will appear here</p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
         

@@ -32,6 +32,8 @@ const ClientAppointments = lazy(() => import('./pages/dashboard/client/Appointme
 const ClientMessages = lazy(() => import('./pages/dashboard/client/Messages'));
 const ClientSettings = lazy(() => import('./pages/dashboard/client/Settings'));
 
+const NurseSearch = lazy(() => import('./pages/NurseSearch'));
+
 const Nurse = lazy(() => import('./pages/Nurse'));
 const NurseFeatures = lazy(() => import('./pages/NurseFeatures'));
 const NursePricing = lazy(() => import('./pages/NursePricing'));
@@ -95,6 +97,7 @@ function App() {
             <Route path="appointments" element={<ClientAppointments />} />
             <Route path="messages" element={<ClientMessages />} />
             <Route path="settings" element={<ClientSettings />} />
+            <Route path="search" element={<NurseSearch />} />
           </Route>
           
           {/* Other Routes */}

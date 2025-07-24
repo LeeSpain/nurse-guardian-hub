@@ -52,7 +52,7 @@ const ClientDashboard: React.FC = () => {
                 />
               </div>
             </div>
-            <Button variant="client" size="md">
+            <Button variant="client" size="md" as={Link} to="/client/search">
               Search
             </Button>
           </div>

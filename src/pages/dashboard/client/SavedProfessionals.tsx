@@ -3,11 +3,14 @@ import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { Heart, Search, Star, MapPin } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
+import { useSavedProfessionals } from '@/hooks/useSavedProfessionals';
+import NurseSearchCard from '@/components/dashboard/NurseSearchCard';
 
 const SavedProfessionals: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
+  const { savedProfessionals, loading: savedLoading } = useSavedProfessionals();
   
-  if (isLoading) {
+  if (isLoading || savedLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-16 h-16 border-4 border-t-teal-500 border-r-transparent border-b-teal-500 border-l-transparent rounded-full animate-spin"></div>
@@ -48,19 +51,53 @@ const SavedProfessionals: React.FC = () => {
         
         {/* Saved Professionals List */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="font-semibold text-gray-800 mb-4">Your Saved Professionals</h3>
+          <h3 className="font-semibold text-gray-800 mb-4">Your Saved Professionals ({savedProfessionals.length})</h3>
           
           <div className="space-y-4">
-            <div className="flex items-center p-4 bg-teal-50 rounded-lg">
-              <Heart className="text-teal-600 mr-3" size={20} />
-              <div className="flex-grow">
-                <p className="font-medium text-gray-800">No saved professionals yet</p>
-                <p className="text-sm text-gray-600">Start exploring and save your favorite healthcare providers</p>
+            {savedProfessionals.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {savedProfessionals.map(saved => (
+                  <div key={saved.id} className="relative">
+                    <NurseSearchCard
+                      nurse={{
+                        user_id: saved.nurse_id,
+                        ...saved.nurse_profile,
+                        id: saved.nurse_id,
+                        profile_id: '',
+                        license_number: '',
+                        license_state: '',
+                        license_expiry: '',
+                        years_experience: 0,
+                        specialties: saved.nurse_profile?.specialties || [],
+                        certifications: [],
+                        insurance_verified: false,
+                        is_background_checked: false,
+                        created_at: '',
+                        updated_at: ''
+                      } as any}
+                    />
+                    {saved.notes && (
+                      <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">
+                          <strong>Notes:</strong> {saved.notes}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-              <Button variant="outline" size="sm">
-                Browse Professionals
-              </Button>
-            </div>
+            ) : (
+              <div className="flex items-center p-4 bg-teal-50 rounded-lg">
+                <Heart className="text-teal-600 mr-3" size={20} />
+                <div className="flex-grow">
+                  <p className="font-medium text-gray-800">No saved professionals yet</p>
+                  <p className="text-sm text-gray-600">Start exploring and save your favorite healthcare providers</p>
+                </div>
+                <Button variant="outline" size="sm">
+                  Browse Professionals
+                </Button>
+              </div>
+            )}
           </div>
         </div>
         
