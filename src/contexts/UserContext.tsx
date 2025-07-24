@@ -1,14 +1,16 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 
-// User roles
+// Define user roles
 export enum UserRole {
-  GUEST = 'GUEST',
-  NURSE = 'NURSE',
-  CLIENT = 'CLIENT',
-  ADMIN = 'ADMIN'
+  GUEST = 'guest',
+  NURSE = 'nurse',
+  CLIENT = 'client',
+  ADMIN = 'admin'
 }
 
 // User interface
@@ -18,214 +20,230 @@ export interface User {
   firstName: string;
   lastName: string;
   role: UserRole;
-  avatar?: string;
-  specialties?: string[];
-  verified?: boolean;
+  createdAt: Date;
 }
 
-// Auth context interface
+// User context interface
 interface UserContextType {
   user: User | null;
+  session: Session | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (userData: Partial<User> & { password: string }) => Promise<void>;
-  logout: () => void;
-  updateUser: (userData: Partial<User>) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ error?: string }>;
+  register: (userData: { 
+    email: string; 
+    password: string; 
+    firstName: string; 
+    lastName: string; 
+    role: UserRole;
+    specialties?: string[];
+  }) => Promise<{ error?: string }>;
+  logout: () => Promise<void>;
+  updateUser: (userData: Partial<User>) => Promise<{ error?: string }>;
 }
 
 // Create context
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// Mock user data (replace with actual API calls when connected to backend)
-const MOCK_USERS: User[] = [
-  {
-    id: '1',
-    email: 'nurse@example.com',
-    firstName: 'Sarah',
-    lastName: 'Johnson',
-    role: UserRole.NURSE,
-    avatar: 'https://randomuser.me/api/portraits/women/32.jpg',
-    specialties: ['Home Care', 'Elderly Care', 'Wound Care'],
-    verified: true
-  },
-  {
-    id: '2',
-    email: 'client@example.com',
-    firstName: 'James',
-    lastName: 'Wilson',
-    role: UserRole.CLIENT,
-    avatar: 'https://randomuser.me/api/portraits/men/29.jpg'
-  }
-];
-
-// Provider component
-export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// User provider component
+export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // Check for existing session on mount
+  const isAuthenticated = !!session && !!user;
+
+  // Initialize auth state
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Check for stored token in localStorage
-        const token = localStorage.getItem('authToken');
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
         
-        if (token) {
-          // In a real app, validate token with backend
-          // For demo, just get user from localStorage if exists
-          const storedUser = localStorage.getItem('user');
-          
-          if (storedUser) {
-            setUser(JSON.parse(storedUser));
-          }
+        if (session?.user) {
+          // Fetch user profile data
+          setTimeout(async () => {
+            await fetchUserProfile(session.user);
+          }, 0);
+        } else {
+          setUser(null);
         }
-      } catch (error) {
-        console.error('Authentication error:', error);
-        // Clear any invalid auth data
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-      } finally {
+        
         setIsLoading(false);
       }
-    };
-    
-    checkAuth();
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) {
+        fetchUserProfile(session.user);
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  // Mock login function (replace with real API call)
-  const login = async (email: string, password: string): Promise<void> => {
-    setIsLoading(true);
-    
+  // Fetch user profile from metadata or database
+  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const metadata = supabaseUser.user_metadata || {};
       
-      // Find matching user by email (case insensitive)
-      const matchedUser = MOCK_USERS.find(u => 
-        u.email.toLowerCase() === email.toLowerCase()
-      );
+      const userProfile: User = {
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        firstName: metadata.firstName || metadata.first_name || '',
+        lastName: metadata.lastName || metadata.last_name || '',
+        role: metadata.role || UserRole.CLIENT,
+        createdAt: new Date(supabaseUser.created_at)
+      };
       
-      if (matchedUser) {
-        // In a real app, validate password with backend
-        // For demo, any password works
-        
-        // Store auth token in localStorage
-        localStorage.setItem('authToken', 'mock-jwt-token');
-        localStorage.setItem('user', JSON.stringify(matchedUser));
-        
-        setUser(matchedUser);
-        
-        // Redirect based on user role
-        if (matchedUser.role === UserRole.NURSE) {
-          navigate('/nurse');
-        } else if (matchedUser.role === UserRole.CLIENT) {
-          navigate('/client/home');
-        }
-        
-        toast.success(`Welcome back, ${matchedUser.firstName}!`);
-      } else {
-        toast.error('Invalid email or password');
-      }
+      setUser(userProfile);
     } catch (error) {
-      console.error('Login error:', error);
-      toast.error('Login failed. Please try again.');
+      console.error('Error fetching user profile:', error);
+      setUser(null);
+    }
+  };
+
+  // Login function
+  const login = async (email: string, password: string): Promise<{ error?: string }> => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      if (data.user) {
+        // Success - user state will be updated by onAuthStateChange
+        toast.success('Successfully logged in!');
+        
+        // Navigate based on role
+        const role = data.user.user_metadata?.role || UserRole.CLIENT;
+        setTimeout(() => {
+          if (role === UserRole.NURSE) {
+            navigate('/nurse/dashboard');
+          } else {
+            navigate('/client/dashboard');
+          }
+        }, 100);
+      }
+
+      return {};
+    } catch (error: any) {
+      return { error: error.message };
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Mock registration function (replace with real API call)
-  const register = async (userData: Partial<User> & { password: string }): Promise<void> => {
-    setIsLoading(true);
-    
+  // Register function
+  const register = async (userData: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    role: UserRole;
+    specialties?: string[];
+  }): Promise<{ error?: string }> => {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Check if email already exists
-      const emailExists = MOCK_USERS.some(u => 
-        u.email.toLowerCase() === userData.email?.toLowerCase()
-      );
-      
-      if (emailExists) {
-        toast.error('Email already in use. Please try another.');
-        return;
+      setIsLoading(true);
+      const redirectUrl = `${window.location.origin}/`;
+
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            first_name: userData.firstName,
+            last_name: userData.lastName,
+            role: userData.role
+          }
+        }
+      });
+
+      if (error) {
+        return { error: error.message };
       }
-      
-      // Create new user (in a real app, this would be done server-side)
-      const newUser: User = {
-        id: `mock-${Date.now()}`,
-        email: userData.email || '',
-        firstName: userData.firstName || '',
-        lastName: userData.lastName || '',
-        role: userData.role || UserRole.CLIENT,
-        avatar: userData.avatar,
-        verified: false
-      };
-      
-      // Store auth data
-      localStorage.setItem('authToken', 'mock-jwt-token');
-      localStorage.setItem('user', JSON.stringify(newUser));
-      
-      setUser(newUser);
-      
-      // Redirect based on user role
-      if (newUser.role === UserRole.NURSE) {
-        navigate('/nurse');
-      } else if (newUser.role === UserRole.CLIENT) {
-        navigate('/client/home');
+
+      if (data.user) {
+        toast.success('Registration successful! Please check your email to verify your account.');
+        navigate('/login');
       }
-      
-      toast.success('Account created successfully!');
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast.error('Registration failed. Please try again.');
+
+      return {};
+    } catch (error: any) {
+      return { error: error.message };
     } finally {
       setIsLoading(false);
     }
   };
 
   // Logout function
-  const logout = (): void => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    setUser(null);
-    navigate('/');
-    toast.success('Logged out successfully');
-  };
-
-  // Update user function
-  const updateUser = async (userData: Partial<User>): Promise<void> => {
-    if (!user) return;
-    
-    setIsLoading(true);
-    
+  const logout = async (): Promise<void> => {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast.error('Error logging out');
+        return;
+      }
       
-      // Update user data
-      const updatedUser = { ...user, ...userData };
-      
-      // Update localStorage
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      
-      setUser(updatedUser);
-      toast.success('Profile updated successfully');
+      setUser(null);
+      setSession(null);
+      toast.success('Logged out successfully');
+      navigate('/');
     } catch (error) {
-      console.error('Update user error:', error);
-      toast.error('Failed to update profile');
-    } finally {
-      setIsLoading(false);
+      toast.error('Error logging out');
     }
   };
 
-  const value = {
+  // Update user function
+  const updateUser = async (userData: Partial<User>): Promise<{ error?: string }> => {
+    try {
+      if (!session?.user) {
+        return { error: 'No authenticated user' };
+      }
+
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          first_name: userData.firstName,
+          last_name: userData.lastName,
+          role: userData.role
+        }
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      // Update local user state
+      if (user) {
+        setUser({ ...user, ...userData });
+      }
+
+      toast.success('Profile updated successfully');
+      return {};
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  };
+
+  const contextValue: UserContextType = {
     user,
-    isAuthenticated: !!user,
+    session,
+    isAuthenticated,
     isLoading,
     login,
     register,
@@ -234,63 +252,60 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <UserContext.Provider value={value}>
+    <UserContext.Provider value={contextValue}>
       {children}
     </UserContext.Provider>
   );
 };
 
-// Custom hook for using user context
+// Custom hook to use user context
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
-  
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useUser must be used within a UserProvider');
   }
-  
   return context;
 };
 
-// Auth guard component
+// Protected route component
 interface ProtectedRouteProps {
-  children: React.ReactNode;
-  allowedRoles?: UserRole[];
+  children: ReactNode;
+  requiredRole?: UserRole;
+  redirectTo?: string;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
-  allowedRoles 
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  requiredRole,
+  redirectTo = '/login'
 }) => {
-  const { user, isAuthenticated, isLoading } = useUser();
+  const { isAuthenticated, user, isLoading } = useUser();
   const navigate = useNavigate();
-  const location = useLocation();
-  
+
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      navigate('/login', { state: { from: location } });
-    } else if (!isLoading && isAuthenticated && allowedRoles) {
-      // Check if user has required role
-      const hasRole = user && allowedRoles.includes(user.role);
-      
-      if (!hasRole) {
-        toast.error('You do not have permission to access this page');
-        
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        navigate(redirectTo);
+        return;
+      }
+
+      if (requiredRole && user?.role !== requiredRole) {
         // Redirect based on user role
         if (user?.role === UserRole.NURSE) {
-          navigate('/nurse');
+          navigate('/nurse/dashboard');
         } else if (user?.role === UserRole.CLIENT) {
-          navigate('/client/home');
+          navigate('/client/dashboard');
         } else {
           navigate('/');
         }
       }
     }
-  }, [isLoading, isAuthenticated, user, allowedRoles, navigate, location]);
+  }, [isAuthenticated, user, isLoading, requiredRole, navigate, redirectTo]);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-16 h-16 border-4 border-t-purple-600 border-r-transparent border-b-purple-600 border-l-transparent rounded-full animate-spin" />
+        <div className="w-16 h-16 border-4 border-t-blue-500 border-r-transparent border-b-blue-500 border-l-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -299,10 +314,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return null;
   }
 
-  // Check role if specified
-  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+  if (requiredRole && user?.role !== requiredRole) {
     return null;
   }
 
   return <>{children}</>;
 };
+
+
