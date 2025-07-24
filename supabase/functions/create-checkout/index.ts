@@ -36,68 +36,74 @@ serve(async (req) => {
     logStep("Authorization header found");
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    const user = userData.user;
+    const { data } = await supabaseClient.auth.getUser(token);
+    const user = data.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // Parse request body to get plan information
-    const { planId, priceId } = await req.json();
-    logStep("Plan information received", { planId, priceId });
+    // Parse request body to get plan ID
+    const { planId } = await req.json();
+    logStep("Plan ID received", { planId });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
-    // Check if customer already exists
+    // Check if customer exists
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
-      logStep("Found existing customer", { customerId });
+      logStep("Existing customer found", { customerId });
     } else {
-      // Create new customer
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          user_id: user.id,
-        },
-      });
-      customerId = customer.id;
-      logStep("Created new customer", { customerId });
+      logStep("No existing customer found");
     }
 
-    // Define pricing based on plan
-    const pricingPlans = {
-      "nurse-basic": { amount: 999, name: "Basic Plan - Nurse" }, // $9.99
-      "nurse-growth": { amount: 1999, name: "Growth Plan - Nurse" }, // $19.99
-      "nurse-professional": { amount: 4999, name: "Professional Plan - Nurse" }, // $49.99
-      "nurse-team": { amount: 9999, name: "Team Plan - Nurse" }, // $99.99
+    // Define subscription plans
+    const plans = {
+      basic: {
+        price: 2999, // $29.99
+        name: "Basic Plan",
+        features: ["Up to 10 clients", "Basic scheduling", "Email support"]
+      },
+      premium: {
+        price: 4999, // $49.99
+        name: "Premium Plan", 
+        features: ["Up to 50 clients", "Advanced scheduling", "Priority support", "Analytics"]
+      },
+      enterprise: {
+        price: 9999, // $99.99
+        name: "Enterprise Plan",
+        features: ["Unlimited clients", "Full features", "24/7 support", "Custom integrations"]
+      }
     };
 
-    const plan = pricingPlans[planId as keyof typeof pricingPlans];
-    if (!plan) throw new Error(`Invalid plan: ${planId}`);
+    const selectedPlan = plans[planId as keyof typeof plans];
+    if (!selectedPlan) {
+      throw new Error("Invalid plan ID");
+    }
+    logStep("Plan selected", { planId, plan: selectedPlan });
 
-    logStep("Creating checkout session", { plan });
-
+    const origin = req.headers.get("origin") || "http://localhost:3000";
+    
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
+      customer_email: customerId ? undefined : user.email,
       line_items: [
         {
           price_data: {
             currency: "usd",
             product_data: { 
-              name: plan.name,
-              description: `Healthcare Professional Subscription - ${plan.name}`,
+              name: selectedPlan.name,
+              description: selectedPlan.features.join(", ")
             },
-            unit_amount: plan.amount,
+            unit_amount: selectedPlan.price,
             recurring: { interval: "month" },
           },
           quantity: 1,
         },
       ],
       mode: "subscription",
-      success_url: `${req.headers.get("origin")}/nurse/subscription?success=true`,
-      cancel_url: `${req.headers.get("origin")}/nurse/pricing?cancelled=true`,
+      success_url: `${origin}/nurse/subscription?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/nurse/subscription?cancelled=true`,
       metadata: {
         user_id: user.id,
         plan_id: planId,
@@ -106,7 +112,7 @@ serve(async (req) => {
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });

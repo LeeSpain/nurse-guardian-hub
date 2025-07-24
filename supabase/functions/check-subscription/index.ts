@@ -57,7 +57,6 @@ serve(async (req) => {
         subscribed: false,
         subscription_tier: null,
         subscription_end: null,
-        subscription_status: null,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'email' });
       return new Response(JSON.stringify({ subscribed: false }), {
@@ -77,30 +76,21 @@ serve(async (req) => {
     const hasActiveSub = subscriptions.data.length > 0;
     let subscriptionTier = null;
     let subscriptionEnd = null;
-    let subscriptionId = null;
-    let subscriptionStatus = null;
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
-      subscriptionId = subscription.id;
-      subscriptionStatus = subscription.status;
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
-      
       // Determine subscription tier from price
       const priceId = subscription.items.data[0].price.id;
       const price = await stripe.prices.retrieve(priceId);
       const amount = price.unit_amount || 0;
-      
-      // Pricing tiers based on amount (in cents)
-      if (amount <= 999) { // $9.99 or less
+      if (amount <= 999) {
         subscriptionTier = "Basic";
-      } else if (amount <= 2999) { // $29.99 or less  
-        subscriptionTier = "Growth";
-      } else if (amount <= 4999) { // $49.99 or less
-        subscriptionTier = "Professional";
-      } else { // $50+ 
-        subscriptionTier = "Team";
+      } else if (amount <= 1999) {
+        subscriptionTier = "Premium";
+      } else {
+        subscriptionTier = "Enterprise";
       }
       logStep("Determined subscription tier", { priceId, amount, subscriptionTier });
     } else {
@@ -114,8 +104,6 @@ serve(async (req) => {
       subscribed: hasActiveSub,
       subscription_tier: subscriptionTier,
       subscription_end: subscriptionEnd,
-      stripe_subscription_id: subscriptionId,
-      subscription_status: subscriptionStatus,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'email' });
 
@@ -123,8 +111,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       subscription_tier: subscriptionTier,
-      subscription_end: subscriptionEnd,
-      subscription_status: subscriptionStatus
+      subscription_end: subscriptionEnd
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
