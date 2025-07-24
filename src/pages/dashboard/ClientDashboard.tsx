@@ -3,14 +3,20 @@ import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { toast } from 'sonner';
-import { Search, Calendar, MessageSquare, Settings, Heart } from 'lucide-react';
+import { Search, Calendar, MessageSquare, Settings, Heart, Users, Clock } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
+import { useAppointments } from '@/hooks/useAppointments';
+import { useSavedProfessionals } from '@/hooks/useSavedProfessionals';
+import { useMessages } from '@/hooks/useMessages';
 
 const ClientDashboard: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
+  const { upcomingAppointments, loading: appointmentsLoading } = useAppointments();
+  const { savedProfessionals, loading: savedLoading } = useSavedProfessionals();
+  const { conversations, loading: messagesLoading } = useMessages();
   
   // If loading, show a loading state
-  if (isLoading) {
+  if (isLoading || appointmentsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-16 h-16 border-4 border-t-teal-500 border-r-transparent border-b-teal-500 border-l-transparent rounded-full animate-spin"></div>
@@ -57,6 +63,65 @@ const ClientDashboard: React.FC = () => {
             </Button>
           </div>
         </div>
+        
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-gray-700">Upcoming Appointments</h3>
+              <Calendar className="w-5 h-5 text-teal-600" />
+            </div>
+            <p className="text-3xl font-bold text-teal-700">{upcomingAppointments.length}</p>
+            <p className="text-sm text-gray-500 mt-1">This week</p>
+          </div>
+          
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-gray-700">Saved Professionals</h3>
+              <Heart className="w-5 h-5 text-teal-600" />
+            </div>
+            <p className="text-3xl font-bold text-teal-700">{savedProfessionals.length}</p>
+            <p className="text-sm text-gray-500 mt-1">Healthcare providers</p>
+          </div>
+          
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-gray-700">Messages</h3>
+              <MessageSquare className="w-5 h-5 text-teal-600" />
+            </div>
+            <p className="text-3xl font-bold text-teal-700">{conversations.length}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              {conversations.reduce((sum, conv) => sum + conv.unread_count, 0)} unread
+            </p>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        {upcomingAppointments.length > 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+            <h3 className="font-semibold text-gray-800 mb-4">Upcoming Appointments</h3>
+            <div className="space-y-3">
+              {upcomingAppointments.slice(0, 3).map((appointment) => (
+                <div key={appointment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-teal-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-800">{appointment.title}</p>
+                      <p className="text-sm text-gray-600">
+                        {new Date(appointment.appointment_date).toLocaleDateString()} at {appointment.start_time}
+                      </p>
+                    </div>
+                  </div>
+                  <Button variant="outline" size="sm" as={Link} to="/client/appointments">
+                    View Details
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         {/* Dashboard Features */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

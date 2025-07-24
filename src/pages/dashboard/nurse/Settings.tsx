@@ -1,13 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { User, Bell, Shield, Globe } from 'lucide-react';
+import { User, Bell, Shield, Save } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
+import ProfileImageUploader from '@/components/ui-components/ProfileImageUploader';
+import { useProfile } from '@/hooks/useProfile';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
+  const { profile, loading: profileLoading, updateProfile, updateProfileImage } = useProfile();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    zip_code: ''
+  });
+
+  React.useEffect(() => {
+    if (profile) {
+      setFormData({
+        first_name: profile.first_name || '',
+        last_name: profile.last_name || '',
+        phone: profile.phone || '',
+        address: profile.address || '',
+        city: profile.city || '',
+        state: profile.state || '',
+        zip_code: profile.zip_code || ''
+      });
+    }
+  }, [profile]);
   
-  if (isLoading) {
+  if (isLoading || profileLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-16 h-16 border-4 border-t-purple-600 border-r-transparent border-b-purple-600 border-l-transparent rounded-full animate-spin"></div>
@@ -18,6 +48,15 @@ const Settings: React.FC = () => {
   if (!isAuthenticated || user?.role !== UserRole.NURSE) {
     return <Navigate to="/login" />;
   }
+
+  const handleSave = async () => {
+    await updateProfile(formData);
+    setIsEditing(false);
+  };
+
+  const handleImageUpload = (url: string) => {
+    updateProfileImage(url);
+  };
   
   return (
     <div className="min-h-screen bg-gray-50 pt-24">
@@ -29,45 +68,106 @@ const Settings: React.FC = () => {
         
         {/* Profile Settings */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-          <div className="flex items-center mb-4">
-            <User className="text-purple-600 mr-3" size={20} />
-            <h3 className="font-semibold text-gray-800">Profile Information</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <User className="text-purple-600 mr-3" size={20} />
+              <h3 className="font-semibold text-gray-800">Profile Information</h3>
+            </div>
+            <Button 
+              variant={isEditing ? "nurse" : "outline"} 
+              size="sm"
+              onClick={isEditing ? handleSave : () => setIsEditing(true)}
+              icon={isEditing ? <Save size={16} /> : undefined}
+            >
+              {isEditing ? 'Save Changes' : 'Edit Profile'}
+            </Button>
+          </div>
+
+          <div className="mb-6">
+            <Label className="block text-sm font-medium text-gray-700 mb-2">Profile Picture</Label>
+            <ProfileImageUploader
+              currentImageUrl={profile?.profile_image_url}
+              onImageUpdated={handleImageUpload}
+            />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-              <input 
+              <Label className="block text-sm font-medium text-gray-700 mb-2">First Name</Label>
+              <Input
                 type="text" 
-                value={user?.firstName || ''} 
-                className="w-full py-2 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                readOnly
+                value={formData.first_name} 
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                disabled={!isEditing}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-              <input 
+              <Label className="block text-sm font-medium text-gray-700 mb-2">Last Name</Label>
+              <Input
                 type="text" 
-                value={user?.lastName || ''} 
-                className="w-full py-2 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                readOnly
+                value={formData.last_name} 
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                disabled={!isEditing}
+              />
+            </div>
+            <div>
+              <Label className="block text-sm font-medium text-gray-700 mb-2">Phone</Label>
+              <Input
+                type="tel" 
+                value={formData.phone} 
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                disabled={!isEditing}
+                placeholder="(555) 123-4567"
+              />
+            </div>
+            <div>
+              <Label className="block text-sm font-medium text-gray-700 mb-2">Email</Label>
+              <Input
+                type="email" 
+                value={profile?.email || ''} 
+                disabled
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <input 
-                type="email" 
-                value={user?.email || ''} 
-                className="w-full py-2 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                readOnly
+              <Label className="block text-sm font-medium text-gray-700 mb-2">Address</Label>
+              <Input
+                type="text" 
+                value={formData.address} 
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                disabled={!isEditing}
+                placeholder="123 Main St"
               />
             </div>
-          </div>
-          
-          <div className="mt-4">
-            <Button variant="nurse" size="sm">
-              Edit Profile
-            </Button>
+            <div>
+              <Label className="block text-sm font-medium text-gray-700 mb-2">City</Label>
+              <Input
+                type="text" 
+                value={formData.city} 
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                disabled={!isEditing}
+                placeholder="City"
+              />
+            </div>
+            <div>
+              <Label className="block text-sm font-medium text-gray-700 mb-2">State</Label>
+              <Input
+                type="text" 
+                value={formData.state} 
+                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                disabled={!isEditing}
+                placeholder="State"
+              />
+            </div>
+            <div>
+              <Label className="block text-sm font-medium text-gray-700 mb-2">Zip Code</Label>
+              <Input
+                type="text" 
+                value={formData.zip_code} 
+                onChange={(e) => setFormData({ ...formData, zip_code: e.target.value })}
+                disabled={!isEditing}
+                placeholder="12345"
+              />
+            </div>
           </div>
         </div>
         
@@ -81,15 +181,15 @@ const Settings: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-gray-700">Email notifications</span>
-              <input type="checkbox" className="rounded" defaultChecked />
+              <Switch defaultChecked />
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-700">SMS notifications</span>
-              <input type="checkbox" className="rounded" />
+              <Switch />
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-700">Push notifications</span>
-              <input type="checkbox" className="rounded" defaultChecked />
+              <Switch defaultChecked />
             </div>
           </div>
         </div>
