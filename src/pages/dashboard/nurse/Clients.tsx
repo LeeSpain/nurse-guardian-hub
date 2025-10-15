@@ -131,8 +131,8 @@ const Clients: React.FC = () => {
                   <TableRow key={client.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src={client.avatar_url || undefined} />
+                         <Avatar>
+                          <AvatarImage src={client.profile_image_url || undefined} />
                           <AvatarFallback>
                             {getInitials(client.first_name, client.last_name)}
                           </AvatarFallback>
