@@ -3,6 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useOrganization } from '@/hooks/useOrganization';
 
+export type ClientStatus = 'active' | 'potential' | 'on-hold' | 'discharged' | 'archived';
+
 export interface Client {
   id: string;
   organization_id: string;
@@ -67,7 +69,7 @@ export interface Client {
   // Administrative
   start_date: string;
   end_date: string | null;
-  status: string | null;
+  status: ClientStatus | null;
   social_services_reference: string | null;
   insurance_provider: string | null;
   insurance_policy_number: string | null;
@@ -114,6 +116,7 @@ export const useClients = () => {
 
           return {
             ...client,
+            status: (client.status as ClientStatus) || 'active',
             appointmentCount: count || 0,
           };
         })

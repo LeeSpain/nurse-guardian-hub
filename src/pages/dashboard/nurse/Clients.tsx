@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { Users, Search, Plus, MoreVertical, Calendar, Mail, Phone } from 'lucide-react';
+import { Users, Search, Plus, MoreVertical, Calendar, Mail, Phone, RefreshCw } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,16 +19,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useClients } from '@/hooks/useClients';
+import { useClients, ClientStatus } from '@/hooks/useClients';
 import { AddClientModal } from '@/components/clients/AddClientModal';
 
 const Clients: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
-  const { clients, loading: clientsLoading, createClient } = useClients();
+  const { clients, loading: clientsLoading, createClient, updateClient } = useClients();
   const [searchTerm, setSearchTerm] = useState('');
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<ClientStatus | 'all'>('all');
   const navigate = useNavigate();
   
   if (isLoading) {
@@ -51,8 +53,39 @@ const Clients: React.FC = () => {
     const fullName = `${client.first_name || ''} ${client.last_name || ''}`.toLowerCase();
     const email = (client.email || '').toLowerCase();
     const search = searchTerm.toLowerCase();
-    return fullName.includes(search) || email.includes(search);
+    const matchesSearch = fullName.includes(search) || email.includes(search);
+    const matchesStatus = statusFilter === 'all' || client.status === statusFilter;
+    return matchesSearch && matchesStatus;
   });
+
+  const getStatusCounts = () => {
+    return {
+      all: clients.length,
+      active: clients.filter(c => c.status === 'active').length,
+      potential: clients.filter(c => c.status === 'potential').length,
+      'on-hold': clients.filter(c => c.status === 'on-hold').length,
+      discharged: clients.filter(c => c.status === 'discharged').length,
+      archived: clients.filter(c => c.status === 'archived').length,
+    };
+  };
+
+  const statusCounts = getStatusCounts();
+
+  const getStatusBadgeVariant = (status: ClientStatus | null): 'default' | 'secondary' | 'outline' => {
+    switch (status) {
+      case 'active': return 'default';
+      case 'potential': return 'secondary';
+      default: return 'outline';
+    }
+  };
+
+  const handleStatusChange = async (clientId: string, newStatus: ClientStatus) => {
+    try {
+      await updateClient(clientId, { status: newStatus });
+    } catch (error) {
+      // Error handled in hook
+    }
+  };
   
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -71,8 +104,53 @@ const Clients: React.FC = () => {
         </Button>
       </div>
       
-      {/* Search Bar */}
+      {/* Status Filter Tabs */}
       <Card className="p-6">
+        <div className="flex gap-2 mb-4 flex-wrap">
+          <Button 
+            variant={statusFilter === 'all' ? 'nurse' : 'outline'}
+            onClick={() => setStatusFilter('all')}
+            size="sm"
+          >
+            All <Badge variant="secondary" className="ml-2">{statusCounts.all}</Badge>
+          </Button>
+          <Button 
+            variant={statusFilter === 'active' ? 'nurse' : 'outline'}
+            onClick={() => setStatusFilter('active')}
+            size="sm"
+          >
+            Active <Badge variant="secondary" className="ml-2">{statusCounts.active}</Badge>
+          </Button>
+          <Button 
+            variant={statusFilter === 'potential' ? 'nurse' : 'outline'}
+            onClick={() => setStatusFilter('potential')}
+            size="sm"
+          >
+            Potential <Badge variant="secondary" className="ml-2">{statusCounts.potential}</Badge>
+          </Button>
+          <Button 
+            variant={statusFilter === 'on-hold' ? 'nurse' : 'outline'}
+            onClick={() => setStatusFilter('on-hold')}
+            size="sm"
+          >
+            On Hold <Badge variant="secondary" className="ml-2">{statusCounts['on-hold']}</Badge>
+          </Button>
+          <Button 
+            variant={statusFilter === 'discharged' ? 'nurse' : 'outline'}
+            onClick={() => setStatusFilter('discharged')}
+            size="sm"
+          >
+            Discharged <Badge variant="secondary" className="ml-2">{statusCounts.discharged}</Badge>
+          </Button>
+          <Button 
+            variant={statusFilter === 'archived' ? 'nurse' : 'outline'}
+            onClick={() => setStatusFilter('archived')}
+            size="sm"
+          >
+            Archived <Badge variant="secondary" className="ml-2">{statusCounts.archived}</Badge>
+          </Button>
+        </div>
+
         <div className="relative">
           <Search className="absolute left-3 top-3 text-muted-foreground h-5 w-5" />
           <Input 
@@ -118,13 +196,14 @@ const Clients: React.FC = () => {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Appointments</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
+              <TableRow>
+                <TableHead>Client</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Appointments</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredClients.map((client) => (
@@ -152,18 +231,23 @@ const Clients: React.FC = () => {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {client.city && client.state ? (
-                        <p className="text-sm">{client.city}, {client.state}</p>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">Not specified</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {client.appointmentCount || 0} appointments
-                      </Badge>
-                    </TableCell>
+                     <TableCell>
+                       {client.city && client.state ? (
+                         <p className="text-sm">{client.city}, {client.state}</p>
+                       ) : (
+                         <span className="text-sm text-muted-foreground">Not specified</span>
+                       )}
+                     </TableCell>
+                     <TableCell>
+                       <Badge variant={getStatusBadgeVariant(client.status)}>
+                         {client.status || 'active'}
+                       </Badge>
+                     </TableCell>
+                     <TableCell>
+                       <Badge variant="outline">
+                         {client.appointmentCount || 0} appointments
+                       </Badge>
+                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -184,6 +268,32 @@ const Clients: React.FC = () => {
                             <Phone className="mr-2" size={16} />
                             Call
                           </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <RefreshCw className="mr-2" size={16} />
+                                Change Status
+                              </DropdownMenuItem>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent side="right" className="bg-background">
+                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'active')}>
+                                Active
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'potential')}>
+                                Potential
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'on-hold')}>
+                                On Hold
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'discharged')}>
+                                Discharged
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'archived')}>
+                                Archived
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

@@ -125,7 +125,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
       insurance_expiry: formData.get('insurance_expiry') as string || null,
       
       notes: formData.get('notes') as string || null,
-      status: 'active',
+      status: formData.get('status') as string || 'potential',
     };
 
     try {
@@ -558,9 +558,25 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   <Input id="start_date" name="start_date" type="date" required />
                 </div>
                 <div>
-                  <Label htmlFor="social_services_reference">Social Services Reference</Label>
-                  <Input id="social_services_reference" name="social_services_reference" maxLength={100} />
+                  <Label htmlFor="status">Client Status</Label>
+                  <Select name="status" defaultValue="potential">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="potential">Potential</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="on-hold">On Hold</SelectItem>
+                      <SelectItem value="discharged">Discharged</SelectItem>
+                      <SelectItem value="archived">Archived</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+              </div>
+
+              <div>
+                <Label htmlFor="social_services_reference">Social Services Reference</Label>
+                <Input id="social_services_reference" name="social_services_reference" maxLength={100} />
               </div>
 
               <div className="border-t pt-4 mt-4">
