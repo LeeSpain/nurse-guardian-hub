@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ProtectedRoute, UserRole } from '@/contexts/UserContext';
 
 // Lazy load components for better performance
 const Index = lazy(() => import('./pages/Index'));
@@ -77,11 +78,31 @@ function App() {
             <Route path="features" element={<NurseFeatures />} />
             <Route path="pricing" element={<NursePricing />} />
             <Route path="support" element={<NurseSupport />} />
-            <Route path="dashboard" element={<NurseDashboard />} />
-            <Route path="calendar" element={<NurseCalendar />} />
-            <Route path="clients" element={<NurseClients />} />
-            <Route path="subscription" element={<NurseSubscription />} />
-            <Route path="settings" element={<NurseSettings />} />
+            <Route path="dashboard" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="calendar" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseCalendar />
+              </ProtectedRoute>
+            } />
+            <Route path="clients" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseClients />
+              </ProtectedRoute>
+            } />
+            <Route path="subscription" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseSubscription />
+              </ProtectedRoute>
+            } />
+            <Route path="settings" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseSettings />
+              </ProtectedRoute>
+            } />
           </Route>
           
           {/* Client Routes */}

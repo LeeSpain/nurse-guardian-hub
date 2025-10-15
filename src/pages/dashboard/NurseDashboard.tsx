@@ -8,14 +8,11 @@ import Button from '@/components/ui-components/Button';
 import { useNurseStats } from '@/hooks/useNurseStats';
 
 const NurseDashboard: React.FC = () => {
-  const { user, isAuthenticated, isLoading, subscription } = useUser();
+  const { user, isAuthenticated, isLoading, subscription, subscriptionLoading } = useUser();
   const { stats, loading: statsLoading } = useNurseStats();
   
-  // Check subscription status
-  const hasActiveSubscription = subscription?.subscribed || false;
-  
-  // If loading, show a loading state
-  if (isLoading || statsLoading) {
+  // If auth is loading, show spinner
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-16 h-16 border-4 border-t-purple-600 border-r-transparent border-b-purple-600 border-l-transparent rounded-full animate-spin"></div>
@@ -35,7 +32,17 @@ const NurseDashboard: React.FC = () => {
     return <Navigate to="/client/home" />;
   }
   
+  // If subscription is still loading, show spinner
+  if (subscriptionLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-16 h-16 border-4 border-t-purple-600 border-r-transparent border-b-purple-600 border-l-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+  
   // If no active subscription, show payment required screen
+  const hasActiveSubscription = subscription?.subscribed || false;
   if (!hasActiveSubscription) {
     return (
       <div className="min-h-screen bg-gray-50 pt-24">
@@ -72,12 +79,33 @@ const NurseDashboard: React.FC = () => {
         
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gray-700">Active Clients</h3>
-              <Users className="w-5 h-5 text-purple-600" />
-            </div>
-            <p className="text-3xl font-bold text-purple-700">{stats.activeClients}</p>
+          {statsLoading ? (
+            <>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold text-gray-700">Active Clients</h3>
+                  <Users className="w-5 h-5 text-purple-600" />
+                </div>
+                <p className="text-3xl font-bold text-purple-700">{stats.activeClients}</p>
             <p className="text-sm text-gray-500 mt-1">
               {stats.totalAppointments} total appointments
             </p>
@@ -122,6 +150,8 @@ const NurseDashboard: React.FC = () => {
               </div>
             )}
           </div>
+            </>
+          )}
         </div>
         
         {/* Dashboard Features */}

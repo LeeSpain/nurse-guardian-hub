@@ -20,7 +20,7 @@ export const useNurseStats = () => {
     totalAppointments: 0,
     averageRating: 0
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { user } = useUser();
 
   const calculateProfileCompletion = async (userId: string) => {
@@ -65,7 +65,10 @@ export const useNurseStats = () => {
   };
 
   const fetchStats = async () => {
-    if (!user) return;
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -132,8 +135,12 @@ export const useNurseStats = () => {
   };
 
   useEffect(() => {
-    fetchStats();
-  }, [user]);
+    if (user?.id) {
+      fetchStats();
+    } else {
+      setLoading(false);
+    }
+  }, [user?.id]);
 
   return {
     stats,

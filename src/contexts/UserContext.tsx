@@ -35,6 +35,7 @@ interface UserContextType {
   user: User | null;
   session: Session | null;
   subscription: Subscription | null;
+  subscriptionLoading: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ error?: string }>;
@@ -61,6 +62,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -70,17 +72,18 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         
         if (session?.user) {
           // Fetch user profile data
-          setTimeout(async () => {
-            await fetchUserProfile(session.user);
+          setTimeout(() => {
+            fetchUserProfile(session.user);
           }, 0);
         } else {
           setUser(null);
           setSubscription(null);
+          setSubscriptionLoading(false);
         }
         
         setIsLoading(false);
@@ -118,7 +121,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       // Check subscription status for nurses
       if (userProfile.role === UserRole.NURSE) {
-        await checkSubscription();
+        setSubscriptionLoading(true);
+        setTimeout(() => {
+          checkSubscription();
+        }, 0);
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -129,13 +135,15 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Check subscription status
   const checkSubscription = async (): Promise<void> => {
     try {
-      if (!session) return;
+      if (!session) {
+        setSubscriptionLoading(false);
+        return;
+      }
 
       const { data, error } = await supabase.functions.invoke('check-subscription');
       
       if (error) {
         console.error('Error checking subscription:', error);
-        // Set default subscription data when check fails
         setSubscription({ subscribed: false });
         return;
       }
@@ -143,8 +151,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setSubscription(data);
     } catch (error) {
       console.error('Error checking subscription:', error);
-      // Set default subscription data on error
       setSubscription({ subscribed: false });
+    } finally {
+      setSubscriptionLoading(false);
     }
   };
 
@@ -326,6 +335,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     user,
     session,
     subscription,
+    subscriptionLoading,
     isAuthenticated,
     isLoading,
     login,
