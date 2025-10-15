@@ -138,7 +138,7 @@ const Settings: React.FC = () => {
         </div>
         
         {/* Profile Settings */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <User className="text-purple-600 mr-3" size={20} />
@@ -243,7 +243,7 @@ const Settings: React.FC = () => {
         </div>
 
         {/* Organization Details */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <Building2 className="text-purple-600 mr-3" size={20} />
@@ -417,23 +417,23 @@ const Settings: React.FC = () => {
         </div>
         
         {/* Notification Settings */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6 mb-6">
           <div className="flex items-center mb-4">
             <Bell className="text-purple-600 mr-3" size={20} />
-            <h3 className="font-semibold text-gray-800 dark:text-gray-100">Notifications</h3>
+            <h3 className="font-semibold text-foreground">Notifications</h3>
           </div>
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-gray-700 dark:text-gray-300">Email notifications</span>
+              <span className="text-foreground">Email notifications</span>
               <Switch defaultChecked />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-700 dark:text-gray-300">SMS notifications</span>
+              <span className="text-foreground">SMS notifications</span>
               <Switch />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-700 dark:text-gray-300">Push notifications</span>
+              <span className="text-foreground">Push notifications</span>
               <Switch defaultChecked />
             </div>
           </div>

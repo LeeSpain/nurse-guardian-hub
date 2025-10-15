@@ -54,17 +54,17 @@ const Messages: React.FC = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6 mb-8">
           <div className="flex gap-4">
             <div className="flex-grow">
               <div className="relative">
-                <Search className="absolute left-3 top-3 text-gray-400 h-5 w-5" />
+                <Search className="absolute left-3 top-3 text-muted-foreground h-5 w-5" />
                 <input 
                   type="text" 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search conversations by client..." 
-                  className="pl-10 w-full py-2 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="pl-10 w-full py-2 px-4 border border-border bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -74,8 +74,8 @@ const Messages: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Conversations List */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h3 className="font-semibold text-gray-800 mb-4">Conversations</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="font-semibold text-foreground mb-4">Conversations</h3>
               
               {messagesLoading ? (
                 <div className="text-center py-8">
@@ -83,9 +83,9 @@ const Messages: React.FC = () => {
                 </div>
               ) : filteredConversations.length === 0 ? (
                 <div className="text-center py-8">
-                  <MessageSquare className="text-gray-400 mx-auto mb-3" size={40} />
-                  <p className="text-gray-600">No conversations yet</p>
-                  <p className="text-sm text-gray-500">
+                  <MessageSquare className="text-muted-foreground mx-auto mb-3" size={40} />
+                  <p className="text-muted-foreground">No conversations yet</p>
+                  <p className="text-sm text-muted-foreground">
                     {searchTerm ? 'No conversations match your search' : 'Start messaging with your clients'}
                   </p>
                 </div>
@@ -97,22 +97,22 @@ const Messages: React.FC = () => {
                       onClick={() => setSelectedConversation(conversation.id)}
                       className={`p-3 rounded-lg cursor-pointer transition-colors ${
                         selectedConversation === conversation.id 
-                          ? 'bg-purple-50 border border-purple-200' 
-                          : 'hover:bg-gray-50 border border-transparent'
+                          ? 'bg-purple-50 dark:bg-purple-500/15 border border-purple-200 dark:border-purple-500/30' 
+                          : 'hover:bg-muted border border-transparent'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                          <User size={20} className="text-purple-600" />
+                        <div className="w-10 h-10 bg-purple-100 dark:bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                          <User size={20} className="text-purple-600 dark:text-purple-400" />
                         </div>
                         <div className="flex-grow min-w-0">
-                          <p className="font-medium text-gray-800 truncate">Client</p>
+                          <p className="font-medium text-foreground truncate">Client</p>
                           {conversation.last_message && (
                             <>
-                              <p className="text-sm text-gray-600 truncate">
+                              <p className="text-sm text-muted-foreground truncate">
                                 {conversation.last_message.content}
                               </p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-muted-foreground">
                                 {formatDistanceToNow(new Date(conversation.last_message.created_at), { addSuffix: true })}
                               </p>
                             </>
@@ -133,25 +133,25 @@ const Messages: React.FC = () => {
 
           {/* Chat Area */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               {selectedConversation ? (
                 <div>
-                  <div className="flex items-center gap-3 pb-4 border-b border-gray-200 mb-4">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                      <User size={20} className="text-purple-600" />
+                  <div className="flex items-center gap-3 pb-4 border-b border-border mb-4">
+                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-500/20 rounded-full flex items-center justify-center">
+                      <User size={20} className="text-purple-600 dark:text-purple-400" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-800">Client</h3>
-                      <p className="text-sm text-gray-500">HIPAA-compliant messaging</p>
+                      <h3 className="font-semibold text-foreground">Client</h3>
+                      <p className="text-sm text-muted-foreground">HIPAA-compliant messaging</p>
                     </div>
                   </div>
                   
                   {/* Messages */}
-                  <div className="h-96 border border-gray-200 rounded-lg p-4 mb-4 overflow-y-auto bg-gray-50">
-                    <div className="text-center text-gray-500 py-8">
-                      <MessageSquare className="text-gray-400 mx-auto mb-3" size={40} />
+                  <div className="h-96 border border-border rounded-lg p-4 mb-4 overflow-y-auto bg-muted">
+                    <div className="text-center text-muted-foreground py-8">
+                      <MessageSquare className="text-muted-foreground mx-auto mb-3" size={40} />
                       <p>Messages will appear here</p>
-                      <p className="text-sm text-gray-400 mt-2">All messages are encrypted and HIPAA-compliant</p>
+                      <p className="text-sm text-muted-foreground mt-2">All messages are encrypted and HIPAA-compliant</p>
                     </div>
                   </div>
 
@@ -164,10 +164,10 @@ const Messages: React.FC = () => {
                 </div>
               ) : (
                 <div className="text-center py-16">
-                  <MessageSquare className="text-gray-400 mx-auto mb-4" size={60} />
-                  <h3 className="text-lg font-medium text-gray-800 mb-2">Select a conversation</h3>
-                  <p className="text-gray-600">Choose a conversation from the left to start messaging</p>
-                  <p className="text-sm text-gray-500 mt-2">All messages are HIPAA-compliant and secure</p>
+                  <MessageSquare className="text-muted-foreground mx-auto mb-4" size={60} />
+                  <h3 className="text-lg font-medium text-foreground mb-2">Select a conversation</h3>
+                  <p className="text-muted-foreground">Choose a conversation from the left to start messaging</p>
+                  <p className="text-sm text-muted-foreground mt-2">All messages are HIPAA-compliant and secure</p>
                 </div>
               )}
             </div>

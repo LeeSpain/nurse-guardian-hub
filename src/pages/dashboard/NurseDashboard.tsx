@@ -107,13 +107,13 @@ const NurseDashboard: React.FC = () => {
             )}
             <p className="text-muted-foreground mt-1">Healthcare Professional Dashboard</p>
           </div>
-          <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100">
+          <div className="flex items-center gap-3 bg-card px-4 py-3 rounded-xl shadow-sm border border-border">
             <Clock className="w-5 h-5 text-purple-600" />
             <div className="text-right">
-              <p className="text-sm font-semibold text-gray-800">
+              <p className="text-sm font-semibold text-foreground">
                 {format(currentTime, 'h:mm a')}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 {format(currentTime, 'EEEE, MMMM d, yyyy')}
               </p>
             </div>
@@ -125,72 +125,72 @@ const NurseDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {statsLoading ? (
             <>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              <div className="bg-card p-6 rounded-xl shadow-sm border border-border animate-pulse">
+                <div className="h-4 bg-muted rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-muted rounded w-1/3"></div>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              <div className="bg-card p-6 rounded-xl shadow-sm border border-border animate-pulse">
+                <div className="h-4 bg-muted rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-muted rounded w-1/3"></div>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              <div className="bg-card p-6 rounded-xl shadow-sm border border-border animate-pulse">
+                <div className="h-4 bg-muted rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-muted rounded w-1/3"></div>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              <div className="bg-card p-6 rounded-xl shadow-sm border border-border animate-pulse">
+                <div className="h-4 bg-muted rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-muted rounded w-1/3"></div>
               </div>
             </>
           ) : (
             <>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+              <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-gray-700">Active Clients</h3>
+                  <h3 className="font-semibold text-foreground">Active Clients</h3>
                   <Users className="w-5 h-5 text-purple-600" />
                 </div>
                 <p className="text-3xl font-bold text-purple-700">{stats.activeClients}</p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {stats.totalAppointments} total appointments
             </p>
           </div>
           
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gray-700">Upcoming Sessions</h3>
+              <h3 className="font-semibold text-foreground">Upcoming Sessions</h3>
               <Calendar className="w-5 h-5 text-purple-600" />
             </div>
             <p className="text-3xl font-bold text-purple-700">{stats.upcomingAppointments}</p>
-            <p className="text-sm text-gray-500 mt-1">This week</p>
+            <p className="text-sm text-muted-foreground mt-1">This week</p>
           </div>
           
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gray-700">Monthly Earnings</h3>
+              <h3 className="font-semibold text-foreground">Monthly Earnings</h3>
               <CreditCard className="w-5 h-5 text-purple-600" />
             </div>
             <p className="text-3xl font-bold text-purple-700">${stats.monthlyEarnings.toFixed(0)}</p>
-            <p className="text-sm text-gray-500 mt-1">This month</p>
+            <p className="text-sm text-muted-foreground mt-1">This month</p>
           </div>
           
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gray-700">Profile Completion</h3>
+              <h3 className="font-semibold text-foreground">Profile Completion</h3>
               <Settings className="w-5 h-5 text-purple-600" />
             </div>
             <div className="flex items-center">
-              <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div className="w-full bg-muted rounded-full h-2.5">
                 <div 
                   className="bg-purple-600 h-2.5 rounded-full transition-all duration-300" 
                   style={{ width: `${stats.profileCompletion}%` }}
                 ></div>
               </div>
-              <span className="ml-2 text-sm text-gray-600">{stats.profileCompletion}%</span>
+              <span className="ml-2 text-sm text-muted-foreground">{stats.profileCompletion}%</span>
             </div>
             {stats.averageRating > 0 && (
               <div className="flex items-center mt-2">
                 <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                <span className="ml-1 text-sm text-gray-600">{stats.averageRating}</span>
+                <span className="ml-1 text-sm text-muted-foreground">{stats.averageRating}</span>
               </div>
             )}
           </div>
@@ -200,9 +200,9 @@ const NurseDashboard: React.FC = () => {
         
         {/* Today's Rota Widget */}
         <div className="mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800">Today's Rota</h2>
+              <h2 className="text-lg font-semibold text-foreground">Today's Rota</h2>
               <Link to="/nurse/dashboard/shifts" className="text-sm text-purple-600 hover:text-purple-700">
                 View All
               </Link>
@@ -210,15 +210,15 @@ const NurseDashboard: React.FC = () => {
             {shiftsLoading ? (
               <div className="space-y-3">
                 {[1, 2].map(i => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg animate-pulse">
+                  <div key={i} className="flex items-center justify-between p-3 bg-muted rounded-lg animate-pulse">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                      <div className="w-10 h-10 bg-muted rounded-full"></div>
                       <div>
-                        <div className="h-4 bg-gray-200 rounded w-24 mb-1"></div>
-                        <div className="h-3 bg-gray-200 rounded w-20"></div>
+                        <div className="h-4 bg-muted rounded w-24 mb-1"></div>
+                        <div className="h-3 bg-muted rounded w-20"></div>
                       </div>
                     </div>
-                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                    <div className="h-4 bg-muted rounded w-16"></div>
                   </div>
                 ))}
               </div>
@@ -243,26 +243,26 @@ const NurseDashboard: React.FC = () => {
                   }
                   
                   return (
-                    <div key={shift.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={shift.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                          <Users size={20} className="text-purple-600" />
+                        <div className="w-10 h-10 bg-purple-100 dark:bg-purple-500/20 rounded-full flex items-center justify-center">
+                          <Users size={20} className="text-purple-600 dark:text-purple-400" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm">{shift.staff_name}</p>
-                          <p className="text-xs text-gray-500">{shift.client_name}</p>
+                          <p className="font-medium text-sm text-foreground">{shift.staff_name}</p>
+                          <p className="text-xs text-muted-foreground">{shift.client_name}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-medium">{shift.start_time} - {shift.end_time}</p>
+                        <p className="text-sm font-medium text-foreground">{shift.start_time} - {shift.end_time}</p>
                         <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${
                           displayStatus === 'active' || displayStatus === 'in_progress' 
-                            ? 'bg-green-100 text-green-800' 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300' 
                             : displayStatus === 'completed' 
-                            ? 'bg-gray-100 text-gray-800'
+                            ? 'bg-gray-100 text-gray-800 dark:bg-gray-500/20 dark:text-gray-200'
                             : displayStatus === 'cancelled'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-blue-100 text-blue-800'
+                            ? 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300'
+                            : 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300'
                         }`}>
                           {displayStatus}
                         </span>
@@ -272,7 +272,7 @@ const NurseDashboard: React.FC = () => {
                 })}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">No shifts scheduled for today</p>
                 <Link to="/nurse/dashboard/shifts" className="text-sm text-purple-600 hover:text-purple-700 mt-2 inline-block">
@@ -285,68 +285,68 @@ const NurseDashboard: React.FC = () => {
 
         {/* Quick Actions Grid */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               to="/nurse/dashboard/care-logs"
-              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all group"
+              className="bg-card p-6 rounded-xl shadow-sm border border-border hover:shadow-md hover:border-purple-200 dark:hover:border-purple-400 transition-all group"
             >
               <FileText size={24} className="text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
-              <p className="font-semibold text-gray-800">Care Logs</p>
-              <p className="text-xs text-gray-500 mt-1">Document client care</p>
+              <p className="font-semibold text-foreground">Care Logs</p>
+              <p className="text-xs text-muted-foreground mt-1">Document client care</p>
             </Link>
 
             <Link
               to="/nurse/dashboard/staff"
-              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all group"
+              className="bg-card p-6 rounded-xl shadow-sm border border-border hover:shadow-md hover:border-purple-200 dark:hover:border-purple-400 transition-all group"
             >
               <Users size={24} className="text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
-              <p className="font-semibold text-gray-800">Staff</p>
-              <p className="text-xs text-gray-500 mt-1">Manage your team</p>
+              <p className="font-semibold text-foreground">Staff</p>
+              <p className="text-xs text-muted-foreground mt-1">Manage your team</p>
             </Link>
 
             <Link
               to="/nurse/dashboard/care-plans"
-              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all group"
+              className="bg-card p-6 rounded-xl shadow-sm border border-border hover:shadow-md hover:border-purple-200 dark:hover:border-purple-400 transition-all group"
             >
               <FileText size={24} className="text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
-              <p className="font-semibold text-gray-800">Care Plans</p>
-              <p className="text-xs text-gray-500 mt-1">Review and update</p>
+              <p className="font-semibold text-foreground">Care Plans</p>
+              <p className="text-xs text-muted-foreground mt-1">Review and update</p>
             </Link>
 
             <Link
               to="/nurse/dashboard/analytics"
-              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all group"
+              className="bg-card p-6 rounded-xl shadow-sm border border-border hover:shadow-md hover:border-purple-200 dark:hover:border-purple-400 transition-all group"
             >
               <Activity size={24} className="text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
-              <p className="font-semibold text-gray-800">Analytics</p>
-              <p className="text-xs text-gray-500 mt-1">View insights</p>
+              <p className="font-semibold text-foreground">Analytics</p>
+              <p className="text-xs text-muted-foreground mt-1">View insights</p>
             </Link>
           </div>
         </div>
 
         {/* Compliance Alerts */}
         <div className="mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
             <div className="flex items-center gap-2 mb-4">
               <Shield className="w-5 h-5 text-purple-600" />
-              <h2 className="text-lg font-semibold text-gray-800">Compliance Dashboard</h2>
+              <h2 className="text-lg font-semibold text-foreground">Compliance Dashboard</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                <span className="text-sm font-medium">Staff DBS Checks</span>
-                <span className="text-green-600 font-semibold">✓ Current</span>
+              <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-500/20 border border-green-200 dark:border-green-500/30 rounded-lg">
+                <span className="text-sm font-medium text-foreground">Staff DBS Checks</span>
+                <span className="text-green-600 dark:text-green-400 font-semibold">✓ Current</span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                <span className="text-sm font-medium">Training Certificates</span>
-                <span className="text-green-600 font-semibold">✓ Up to Date</span>
+              <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-500/20 border border-green-200 dark:border-green-500/30 rounded-lg">
+                <span className="text-sm font-medium text-foreground">Training Certificates</span>
+                <span className="text-green-600 dark:text-green-400 font-semibold">✓ Up to Date</span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-500/20 border border-yellow-200 dark:border-yellow-500/30 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <AlertCircle size={16} className="text-yellow-600" />
-                  <span className="text-sm font-medium">Insurance Renewal</span>
+                  <AlertCircle size={16} className="text-yellow-600 dark:text-yellow-400" />
+                  <span className="text-sm font-medium text-foreground">Insurance Renewal</span>
                 </div>
-                <span className="text-yellow-600 font-semibold">14 days</span>
+                <span className="text-yellow-600 dark:text-yellow-400 font-semibold">14 days</span>
               </div>
             </div>
           </div>

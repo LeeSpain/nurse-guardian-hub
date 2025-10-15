@@ -125,11 +125,11 @@
   }
 
   .glass-panel {
-    @apply bg-white bg-opacity-70 backdrop-blur-md border border-white border-opacity-10 shadow-subtle;
+    @apply bg-card/70 backdrop-blur-md border border-border shadow-subtle;
   }
 
   .glass-card {
-    @apply bg-white bg-opacity-50 backdrop-blur-sm border border-gray-100 shadow-card;
+    @apply bg-card/80 backdrop-blur-sm border border-border shadow-card;
   }
   
   .split-gradient {

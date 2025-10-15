@@ -42,7 +42,7 @@ const NurseSubscription: React.FC = () => {
         </div>
 
         {/* Current Subscription Status */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-gray-800">Current Subscription</h3>
             <Button
@@ -105,8 +105,8 @@ const NurseSubscription: React.FC = () => {
 
         {/* Subscription Benefits */}
         {subscription?.subscribed && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-            <h3 className="font-semibold text-gray-800 mb-4">Your Plan Benefits</h3>
+          <div className="bg-card rounded-xl shadow-sm border border-border p-6 mb-8">
+            <h3 className="font-semibold text-foreground mb-4">Your Plan Benefits</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center p-4 bg-purple-50 rounded-lg">
@@ -137,8 +137,8 @@ const NurseSubscription: React.FC = () => {
         )}
 
         {/* Available Plans */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="font-semibold text-gray-800 mb-4">Available Plans</h3>
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+          <h3 className="font-semibold text-foreground mb-4">Available Plans</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="border border-gray-200 rounded-lg p-4">
