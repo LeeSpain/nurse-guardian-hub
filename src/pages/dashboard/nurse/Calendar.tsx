@@ -160,12 +160,6 @@ const Calendar: React.FC = () => {
             </Card>
           </div>
         </div>
-        
-        <div className="mt-6">
-          <Button variant="outline" as={Link} to="/nurse/dashboard">
-            Back to Dashboard
-          </Button>
-        </div>
       </div>
     </div>
   );

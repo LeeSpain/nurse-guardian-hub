@@ -24,6 +24,7 @@ const ClientDashboard = lazy(() => import('./pages/dashboard/ClientDashboard'));
 // Nurse dashboard pages
 const NurseCalendar = lazy(() => import('./pages/dashboard/nurse/Calendar'));
 const NurseClients = lazy(() => import('./pages/dashboard/nurse/Clients'));
+const NurseMessages = lazy(() => import('./pages/dashboard/nurse/Messages'));
 const NurseSubscription = lazy(() => import('./pages/dashboard/nurse/Subscription'));
 const NurseSettings = lazy(() => import('./pages/dashboard/nurse/Settings'));
 
@@ -49,6 +50,7 @@ const ClientSupport = lazy(() => import('./pages/ClientSupport'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const ClientLayout = lazy(() => import('./layouts/ClientLayout'));
 const NurseLayout = lazy(() => import('./layouts/NurseLayout'));
+const NurseDashboardLayout = lazy(() => import('./layouts/NurseDashboardLayout'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -72,13 +74,17 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           
-          {/* Nurse Routes */}
+          {/* Nurse Public Routes */}
           <Route path="/nurse" element={<NurseLayout />}>
             <Route index element={<Nurse />} />
             <Route path="features" element={<NurseFeatures />} />
             <Route path="pricing" element={<NursePricing />} />
             <Route path="support" element={<NurseSupport />} />
-            <Route path="dashboard" element={
+          </Route>
+          
+          {/* Nurse Dashboard Routes */}
+          <Route path="/nurse/dashboard" element={<NurseDashboardLayout />}>
+            <Route index element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseDashboard />
               </ProtectedRoute>
@@ -91,6 +97,11 @@ function App() {
             <Route path="clients" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseClients />
+              </ProtectedRoute>
+            } />
+            <Route path="messages" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseMessages />
               </ProtectedRoute>
             } />
             <Route path="subscription" element={

@@ -90,7 +90,7 @@ const NurseHeader: React.FC = () => {
                 )}
               >
                 <User size={18} className="mr-1.5 group-hover:text-purple-600 transition-colors" />
-                Dashboard
+                Go to Dashboard
               </Link>
             )}
           </nav>
@@ -204,7 +204,7 @@ const NurseHeader: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <User size={20} className="mr-2" />
-                Dashboard
+                Go to Dashboard
               </Link>
             )}
             

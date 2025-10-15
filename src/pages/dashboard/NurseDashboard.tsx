@@ -171,7 +171,7 @@ const NurseDashboard: React.FC = () => {
             icon={<Calendar size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
             as={Link}
-            to="/nurse/calendar"
+            to="/nurse/dashboard/calendar"
           >
             <div>
               <p className="font-semibold">Calendar</p>
@@ -187,7 +187,7 @@ const NurseDashboard: React.FC = () => {
             icon={<Users size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
             as={Link}
-            to="/nurse/clients"
+            to="/nurse/dashboard/clients"
           >
             <div>
               <p className="font-semibold">Clients</p>
@@ -203,7 +203,7 @@ const NurseDashboard: React.FC = () => {
             icon={<CreditCard size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
             as={Link}
-            to="/nurse/subscription"
+            to="/nurse/dashboard/subscription"
           >
             <div>
               <p className="font-semibold">Subscription</p>
@@ -219,7 +219,7 @@ const NurseDashboard: React.FC = () => {
             icon={<Settings size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
             as={Link}
-            to="/nurse/settings"
+            to="/nurse/dashboard/settings"
           >
             <div>
               <p className="font-semibold">Settings</p>
