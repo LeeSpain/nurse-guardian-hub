@@ -38,7 +38,7 @@ import {
 
 const Staff: React.FC = () => {
   const { user, isAuthenticated, isLoading: userLoading } = useUser();
-  const { organization, loading: orgLoading } = useOrganization();
+  const { organization, loading: orgLoading, createOrganization } = useOrganization();
   const { staff, loading: staffLoading, createStaff, deleteStaff } = useStaff(organization?.id);
   const [searchTerm, setSearchTerm] = useState('');
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -109,11 +109,22 @@ const Staff: React.FC = () => {
   if (!organization) {
     return (
       <div className="container mx-auto p-6">
-        <Card className="p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">No Organization Found</h2>
-          <p className="text-muted-foreground mb-6">
+        <Card className="p-8 text-center space-y-4">
+          <h2 className="text-2xl font-bold">No Organization Found</h2>
+          <p className="text-muted-foreground">
             You need to create or join an organization to manage staff.
           </p>
+          <Button
+            variant="nurse"
+            onClick={async () => {
+              await createOrganization({
+                name: `${user?.firstName || 'My'}'s Practice`,
+                email: user?.email || null,
+              });
+            }}
+          >
+            Create Organization
+          </Button>
         </Card>
       </div>
     );
