@@ -112,7 +112,7 @@ const ClientRegister: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <ClientHeader />
-      <main className="flex-grow py-12 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+      <main className="flex-grow py-12 pt-32 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
         <div className="max-w-2xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="p-8">
