@@ -64,7 +64,7 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				nurse: {
-					DEFAULT: '270 50% 60%', /* Purple color for Nurse branding */
+					DEFAULT: 'hsl(var(--nurse))',
 					foreground: 'hsl(var(--nurse-foreground))',
 					muted: 'hsl(var(--nurse-muted))',
 					'muted-foreground': 'hsl(var(--nurse-muted-foreground))',

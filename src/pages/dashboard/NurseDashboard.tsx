@@ -19,6 +19,13 @@ const NurseDashboard: React.FC = () => {
   const { shifts: todayShifts, loading: shiftsLoading } = useTodayShifts();
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  // Auto-check subscription on mount
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkSubscription();
+    }
+  }, [isAuthenticated, checkSubscription]);
+
   // Update time every minute
   useEffect(() => {
     const timer = setInterval(() => {
@@ -61,14 +68,14 @@ const NurseDashboard: React.FC = () => {
   const hasActiveSubscription = subscription?.subscribed || false;
   if (!hasActiveSubscription) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-24">
+      <div className="min-h-screen bg-background pt-24">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-3xl font-bold text-purple-700">Subscription Required</h1>
-            <p className="mt-4 text-lg text-gray-700">
+            <h1 className="text-3xl font-bold text-foreground">Subscription Required</h1>
+            <p className="mt-4 text-lg text-muted-foreground">
               You need an active subscription to access the healthcare professional dashboard.
             </p>
-            <div className="mt-8 flex items-center justify-center gap-4">
+            <div className="mt-8">
               <Button 
                 variant="nurse" 
                 size="lg"
@@ -77,13 +84,6 @@ const NurseDashboard: React.FC = () => {
                 className="mx-auto"
               >
                 View Subscription Plans
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => checkSubscription()}
-              >
-                Refresh Status
               </Button>
             </div>
           </div>
