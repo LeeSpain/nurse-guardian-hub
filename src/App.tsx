@@ -58,6 +58,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 const ClientLayout = lazy(() => import('./layouts/ClientLayout'));
 const NurseLayout = lazy(() => import('./layouts/NurseLayout'));
 const NurseDashboardLayout = lazy(() => import('./layouts/NurseDashboardLayout'));
+const StaffOnboarding = lazy(() => import('./pages/StaffOnboarding'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -185,6 +186,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register/nurse" element={<NurseRegister />} />
           <Route path="/register/client" element={<ClientRegister />} />
+          <Route path="/staff/onboard" element={<StaffOnboarding />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

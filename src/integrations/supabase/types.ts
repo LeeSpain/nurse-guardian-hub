@@ -1463,6 +1463,66 @@ export type Database = {
           },
         ]
       }
+      staff_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string | null
+          email: string
+          expires_at: string
+          first_name: string | null
+          id: string
+          invited_by: string | null
+          job_title: string | null
+          last_name: string | null
+          organization_id: string
+          status: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string | null
+          email: string
+          expires_at: string
+          first_name?: string | null
+          id?: string
+          invited_by?: string | null
+          job_title?: string | null
+          last_name?: string | null
+          organization_id: string
+          status?: string
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          first_name?: string | null
+          id?: string
+          invited_by?: string | null
+          job_title?: string | null
+          last_name?: string | null
+          organization_id?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff_members: {
         Row: {
           address: string | null
@@ -1488,6 +1548,7 @@ export type Database = {
           id: string
           insurance_expiry: string | null
           insurance_policy_number: string | null
+          invitation_id: string | null
           is_active: boolean | null
           job_title: string | null
           last_name: string | null
@@ -1536,6 +1597,7 @@ export type Database = {
           id?: string
           insurance_expiry?: string | null
           insurance_policy_number?: string | null
+          invitation_id?: string | null
           is_active?: boolean | null
           job_title?: string | null
           last_name?: string | null
@@ -1584,6 +1646,7 @@ export type Database = {
           id?: string
           insurance_expiry?: string | null
           insurance_policy_number?: string | null
+          invitation_id?: string | null
           is_active?: boolean | null
           job_title?: string | null
           last_name?: string | null
@@ -1609,6 +1672,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "staff_members_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "staff_invitations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "staff_members_organization_id_fkey"
             columns: ["organization_id"]

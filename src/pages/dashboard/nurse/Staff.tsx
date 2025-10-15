@@ -25,6 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useStaff } from '@/hooks/useStaff';
 import { useOrganization } from '@/hooks/useOrganization';
 import { AddStaffModal } from '@/components/staff/AddStaffModal';
+import { InviteStaffModal } from '@/components/staff/InviteStaffModal';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,6 +43,7 @@ const Staff: React.FC = () => {
   const { staff, loading: staffLoading, createStaff, deleteStaff } = useStaff(organization?.id);
   const [searchTerm, setSearchTerm] = useState('');
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [staffToDelete, setStaffToDelete] = useState<string | null>(null);
 
@@ -166,13 +168,22 @@ const Staff: React.FC = () => {
           <p className="text-muted-foreground">Manage your team members</p>
         </div>
         
-        <Button 
-          variant="nurse" 
-          icon={<Plus size={16} />}
-          onClick={() => setAddModalOpen(true)}
-        >
-          Add Staff Member
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            icon={<Mail size={16} />}
+            onClick={() => setInviteModalOpen(true)}
+          >
+            Invite Staff
+          </Button>
+          <Button 
+            variant="nurse" 
+            icon={<Plus size={16} />}
+            onClick={() => setAddModalOpen(true)}
+          >
+            Add Staff Member
+          </Button>
+        </div>
       </div>
 
       {/* Quick Stats */}
@@ -349,6 +360,12 @@ const Staff: React.FC = () => {
         open={addModalOpen}
         onOpenChange={setAddModalOpen}
         onSuccess={createStaff}
+        organizationId={organization.id}
+      />
+
+      <InviteStaffModal
+        open={inviteModalOpen}
+        onOpenChange={setInviteModalOpen}
         organizationId={organization.id}
       />
 
