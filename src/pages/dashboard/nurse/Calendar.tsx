@@ -109,6 +109,54 @@ const Calendar: React.FC = () => {
   const handleCreateAppointment = async () => {
     setIsSaving(true);
     try {
+      let clientId = appointmentForm.clientId;
+
+      // If new client, create profile first
+      if (isNewClient) {
+        // Create auth user and profile for the new client
+        const { data: { user: newAuthUser }, error: signUpError } = await supabase.auth.signUp({
+          email: appointmentForm.clientEmail,
+          password: Math.random().toString(36).slice(-8) + 'Aa1!', // Random temp password
+          options: {
+            data: {
+              first_name: appointmentForm.clientFirstName,
+              last_name: appointmentForm.clientLastName,
+              role: 'client',
+            }
+          }
+        });
+
+        if (signUpError) {
+          toast.error('Failed to create client: ' + signUpError.message);
+          return;
+        }
+
+        if (!newAuthUser) {
+          toast.error('Failed to create client profile');
+          return;
+        }
+
+        clientId = newAuthUser.id;
+
+        // Update the profile with additional info
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            phone: appointmentForm.clientPhone,
+            address: appointmentForm.clientAddress,
+          })
+          .eq('id', clientId);
+
+        if (profileError) {
+          console.error('Error updating client profile:', profileError);
+        }
+      }
+
+      if (!clientId) {
+        toast.error('Please select a client or create a new one');
+        return;
+      }
+
       // Calculate total cost
       const durationHours = parseInt(appointmentForm.duration) / 60;
       const totalCost = durationHours * parseFloat(appointmentForm.hourlyRate);
@@ -116,7 +164,7 @@ const Calendar: React.FC = () => {
       // Prepare appointment data
       const appointmentData = {
         nurse_id: user.id,
-        client_id: appointmentForm.clientId || user.id, // Temporary - will be replaced with actual client
+        client_id: clientId,
         appointment_date: format(appointmentDate, 'yyyy-MM-dd'),
         start_time: appointmentForm.startTime,
         end_time: appointmentForm.endTime,
