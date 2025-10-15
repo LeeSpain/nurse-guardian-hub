@@ -313,6 +313,63 @@ export type Database = {
           },
         ]
       }
+      client_notes: {
+        Row: {
+          attachments: Json | null
+          client_id: string
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          is_confidential: boolean | null
+          note_type: string
+          organization_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          client_id: string
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_confidential?: boolean | null
+          note_type: string
+          organization_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          client_id?: string
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_confidential?: boolean | null
+          note_type?: string
+          organization_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_notes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_staff_assignments: {
         Row: {
           assigned_at: string | null
@@ -374,6 +431,215 @@ export type Database = {
             columns: ["staff_member_id"]
             isOneToOne: false
             referencedRelation: "staff_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          address: string | null
+          allergies: string | null
+          care_level: string | null
+          city: string | null
+          communication_needs: string | null
+          consent_date: string | null
+          consent_for_care: boolean | null
+          created_at: string | null
+          created_by: string | null
+          cultural_requirements: string | null
+          current_medications: Json | null
+          date_of_birth: string
+          dietary_requirements: string | null
+          email: string | null
+          emergency_contact_1_email: string | null
+          emergency_contact_1_name: string | null
+          emergency_contact_1_phone: string | null
+          emergency_contact_1_relationship: string | null
+          emergency_contact_2_email: string | null
+          emergency_contact_2_name: string | null
+          emergency_contact_2_phone: string | null
+          emergency_contact_2_relationship: string | null
+          end_date: string | null
+          first_name: string
+          funding_source: string | null
+          gender: string | null
+          gp_address: string | null
+          gp_name: string | null
+          gp_phone: string | null
+          gp_practice: string | null
+          hospital_number: string | null
+          id: string
+          incident_history: Json | null
+          insurance_expiry: string | null
+          insurance_policy_number: string | null
+          insurance_provider: string | null
+          last_name: string
+          lasting_power_of_attorney: string | null
+          lpa_contact_details: string | null
+          medical_history: string | null
+          mental_capacity_assessment_date: string | null
+          mental_capacity_status: string | null
+          mobility_status: string | null
+          next_of_kin_address: string | null
+          next_of_kin_email: string | null
+          next_of_kin_name: string | null
+          next_of_kin_phone: string | null
+          next_of_kin_relationship: string | null
+          nhs_number: string | null
+          notes: string | null
+          organization_id: string
+          phone: string | null
+          postal_code: string | null
+          preferred_language: string | null
+          profile_image_url: string | null
+          religious_requirements: string | null
+          risk_factors: string | null
+          risk_level: string | null
+          safeguarding_concerns: string | null
+          social_services_reference: string | null
+          start_date: string
+          state: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          allergies?: string | null
+          care_level?: string | null
+          city?: string | null
+          communication_needs?: string | null
+          consent_date?: string | null
+          consent_for_care?: boolean | null
+          created_at?: string | null
+          created_by?: string | null
+          cultural_requirements?: string | null
+          current_medications?: Json | null
+          date_of_birth: string
+          dietary_requirements?: string | null
+          email?: string | null
+          emergency_contact_1_email?: string | null
+          emergency_contact_1_name?: string | null
+          emergency_contact_1_phone?: string | null
+          emergency_contact_1_relationship?: string | null
+          emergency_contact_2_email?: string | null
+          emergency_contact_2_name?: string | null
+          emergency_contact_2_phone?: string | null
+          emergency_contact_2_relationship?: string | null
+          end_date?: string | null
+          first_name: string
+          funding_source?: string | null
+          gender?: string | null
+          gp_address?: string | null
+          gp_name?: string | null
+          gp_phone?: string | null
+          gp_practice?: string | null
+          hospital_number?: string | null
+          id?: string
+          incident_history?: Json | null
+          insurance_expiry?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          last_name: string
+          lasting_power_of_attorney?: string | null
+          lpa_contact_details?: string | null
+          medical_history?: string | null
+          mental_capacity_assessment_date?: string | null
+          mental_capacity_status?: string | null
+          mobility_status?: string | null
+          next_of_kin_address?: string | null
+          next_of_kin_email?: string | null
+          next_of_kin_name?: string | null
+          next_of_kin_phone?: string | null
+          next_of_kin_relationship?: string | null
+          nhs_number?: string | null
+          notes?: string | null
+          organization_id: string
+          phone?: string | null
+          postal_code?: string | null
+          preferred_language?: string | null
+          profile_image_url?: string | null
+          religious_requirements?: string | null
+          risk_factors?: string | null
+          risk_level?: string | null
+          safeguarding_concerns?: string | null
+          social_services_reference?: string | null
+          start_date: string
+          state?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          allergies?: string | null
+          care_level?: string | null
+          city?: string | null
+          communication_needs?: string | null
+          consent_date?: string | null
+          consent_for_care?: boolean | null
+          created_at?: string | null
+          created_by?: string | null
+          cultural_requirements?: string | null
+          current_medications?: Json | null
+          date_of_birth?: string
+          dietary_requirements?: string | null
+          email?: string | null
+          emergency_contact_1_email?: string | null
+          emergency_contact_1_name?: string | null
+          emergency_contact_1_phone?: string | null
+          emergency_contact_1_relationship?: string | null
+          emergency_contact_2_email?: string | null
+          emergency_contact_2_name?: string | null
+          emergency_contact_2_phone?: string | null
+          emergency_contact_2_relationship?: string | null
+          end_date?: string | null
+          first_name?: string
+          funding_source?: string | null
+          gender?: string | null
+          gp_address?: string | null
+          gp_name?: string | null
+          gp_phone?: string | null
+          gp_practice?: string | null
+          hospital_number?: string | null
+          id?: string
+          incident_history?: Json | null
+          insurance_expiry?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          last_name?: string
+          lasting_power_of_attorney?: string | null
+          lpa_contact_details?: string | null
+          medical_history?: string | null
+          mental_capacity_assessment_date?: string | null
+          mental_capacity_status?: string | null
+          mobility_status?: string | null
+          next_of_kin_address?: string | null
+          next_of_kin_email?: string | null
+          next_of_kin_name?: string | null
+          next_of_kin_phone?: string | null
+          next_of_kin_relationship?: string | null
+          nhs_number?: string | null
+          notes?: string | null
+          organization_id?: string
+          phone?: string | null
+          postal_code?: string | null
+          preferred_language?: string | null
+          profile_image_url?: string | null
+          religious_requirements?: string | null
+          risk_factors?: string | null
+          risk_level?: string | null
+          safeguarding_concerns?: string | null
+          social_services_reference?: string | null
+          start_date?: string
+          state?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_organizations"
             referencedColumns: ["id"]
           },
         ]
