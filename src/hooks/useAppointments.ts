@@ -7,6 +7,7 @@ export interface Appointment {
   id: string;
   client_id: string;
   nurse_id: string;
+  staff_member_id?: string | null;
   title: string;
   description?: string;
   appointment_date: string;

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { useAppointments } from '@/hooks/useAppointments';
+import { useStaff } from '@/hooks/useStaff';
+import { useOrganization } from '@/hooks/useOrganization';
 import { format, startOfWeek, addDays, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, isToday, isBefore, startOfDay } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { ChevronLeft, ChevronRight, Plus, Clock, MapPin, User, Calendar as CalendarIcon, Grid3x3, List, LayoutGrid, X, UserPlus, Trash2, MoreVertical } from 'lucide-react';
@@ -22,6 +24,8 @@ import { toast } from 'sonner';
 const Calendar: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
   const { appointments, loading } = useAppointments();
+  const { organization, loading: orgLoading } = useOrganization();
+  const { staff, loading: staffLoading } = useStaff(organization?.id);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
@@ -74,7 +78,7 @@ const Calendar: React.FC = () => {
     fetchClients();
   }, []);
   
-  if (isLoading || loading) {
+  if (isLoading || loading || orgLoading || staffLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-16 h-16 border-4 border-t-primary border-r-transparent border-b-primary border-l-transparent rounded-full animate-spin"></div>
@@ -199,6 +203,7 @@ const Calendar: React.FC = () => {
       const appointmentData = {
         nurse_id: user.id,
         client_id: clientId,
+        staff_member_id: appointmentForm.staffId || null,
         appointment_date: format(appointmentDate, 'yyyy-MM-dd'),
         start_time: appointmentForm.startTime,
         end_time: appointmentForm.endTime,
@@ -523,6 +528,17 @@ const Calendar: React.FC = () => {
                               {appointment.address}
                             </div>
                           )}
+                          {appointment.staff_member_id && staff.length > 0 && (
+                            <div className="flex items-center gap-2">
+                              <User size={14} />
+                              {(() => {
+                                const assignedStaff = staff.find(s => s.id === appointment.staff_member_id);
+                                return assignedStaff 
+                                  ? `${assignedStaff.profile?.first_name} ${assignedStaff.profile?.last_name}`
+                                  : 'Staff assigned';
+                              })()}
+                            </div>
+                          )}
                         </div>
                         {appointment.description && (
                           <p className="text-sm text-muted-foreground mt-2">
@@ -595,6 +611,17 @@ const Calendar: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <MapPin size={12} />
                       {appointment.address}
+                    </div>
+                  )}
+                  {appointment.staff_member_id && staff.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <User size={12} />
+                      {(() => {
+                        const assignedStaff = staff.find(s => s.id === appointment.staff_member_id);
+                        return assignedStaff 
+                          ? `${assignedStaff.profile?.first_name} ${assignedStaff.profile?.last_name}`
+                          : 'Staff assigned';
+                      })()}
                     </div>
                   )}
                 </div>
@@ -715,18 +742,31 @@ const Calendar: React.FC = () => {
 
             {/* Staff Assignment */}
             <div className="space-y-2">
-              <Label htmlFor="staff-select" className="text-base font-semibold">Assign Staff *</Label>
+              <Label htmlFor="staff-select" className="text-base font-semibold">Assign Staff (Optional)</Label>
               <Select value={appointmentForm.staffId} onValueChange={(v) => setAppointmentForm({...appointmentForm, staffId: v})}>
                 <SelectTrigger id="staff-select">
                   <SelectValue placeholder="Select staff member" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="staff1">Sarah Johnson - Senior RN</SelectItem>
-                  <SelectItem value="staff2">Mike Williams - LPN</SelectItem>
-                  <SelectItem value="staff3">Emily Brown - CNA</SelectItem>
-                  <SelectItem value="staff4">David Martinez - RN</SelectItem>
+                  {staffLoading ? (
+                    <SelectItem value="loading" disabled>Loading staff...</SelectItem>
+                  ) : staff.length === 0 ? (
+                    <SelectItem value="no-staff" disabled>No staff members available</SelectItem>
+                  ) : (
+                    <>
+                      <SelectItem value="">No staff assigned</SelectItem>
+                      {staff.map((member) => (
+                        <SelectItem key={member.id} value={member.id}>
+                          {member.profile?.first_name} {member.profile?.last_name} - {member.job_title}
+                        </SelectItem>
+                      ))}
+                    </>
+                  )}
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">
+                {staff.length === 0 && !staffLoading && 'Add staff members from the Staff page to assign them to appointments'}
+              </p>
             </div>
 
             {/* Appointment Details */}
