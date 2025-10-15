@@ -1420,6 +1420,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_org_owner: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "owner" | "manager" | "staff_nurse" | "care_assistant" | "admin"
