@@ -7,8 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import Button from '@/components/ui-components/Button';
+import ProfileImageUploader from '@/components/ui-components/ProfileImageUploader';
+import FileUploadZone from '@/components/ui-components/FileUploadZone';
 import { useToast } from '@/hooks/use-toast';
-import { User, Briefcase, FileCheck, Shield, Phone, GraduationCap } from 'lucide-react';
+import { User, Briefcase, FileCheck, Shield, Phone, GraduationCap, FileText } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AddStaffModalProps {
   open: boolean;
@@ -24,7 +27,36 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
   organizationId,
 }) => {
   const [loading, setLoading] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [attachments, setAttachments] = useState<Array<{name: string, url: string, type: string}>>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const { toast } = useToast();
+
+  const handleProfileImageUpload = async (url: string) => {
+    setProfileImageUrl(url);
+  };
+
+  const handleFileUpload = async (result: { url?: string; path?: string }) => {
+    if (result.url) {
+      const fileName = result.path?.split('/').pop() || 'document';
+      const fileType = fileName.split('.').pop() || 'file';
+      
+      setAttachments([...attachments, {
+        name: fileName,
+        url: result.url,
+        type: fileType
+      }]);
+      
+      toast({
+        title: "Success",
+        description: "File uploaded successfully",
+      });
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments(attachments.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,6 +77,10 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
       state: formData.get('state') as string || null,
       postal_code: formData.get('postal_code') as string || null,
       national_id_number: formData.get('national_id_number') as string || null,
+      
+      // Profile Image & Attachments
+      profile_image_url: profileImageUrl,
+      attachments: attachments,
       
       // Employment Details
       job_title: formData.get('job_title') as string,
@@ -86,6 +122,8 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
       await onSuccess(data);
       onOpenChange(false);
       e.currentTarget.reset();
+      setProfileImageUrl(null);
+      setAttachments([]);
     } catch (error) {
       // Error handled in hook
     } finally {
@@ -102,7 +140,7 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <Tabs defaultValue="personal" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="personal" className="text-xs">
                 <User className="w-4 h-4 mr-1" />
                 Personal
@@ -123,10 +161,22 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                 <Phone className="w-4 h-4 mr-1" />
                 Emergency
               </TabsTrigger>
+              <TabsTrigger value="documents" className="text-xs">
+                <FileText className="w-4 h-4 mr-1" />
+                Documents
+              </TabsTrigger>
             </TabsList>
 
             {/* Personal Information Tab */}
             <TabsContent value="personal" className="space-y-4 mt-4">
+              <div className="mb-6">
+                <Label className="block text-sm font-medium text-foreground mb-3">Profile Picture</Label>
+                <ProfileImageUploader
+                  currentImageUrl={profileImageUrl}
+                  onImageUpdated={handleProfileImageUpload}
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="first_name">First Name *</Label>
@@ -466,6 +516,64 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
                   />
                 </div>
               </div>
+            </TabsContent>
+
+            {/* Documents Tab */}
+            <TabsContent value="documents" className="space-y-4 mt-4">
+              <div>
+                <Label className="block text-sm font-medium text-foreground mb-3">
+                  Upload Documents & Certificates
+                </Label>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Upload licenses, certifications, DBS checks, insurance documents, references, etc.
+                </p>
+                <FileUploadZone
+                  onFileUploaded={handleFileUpload}
+                  options={{
+                    bucket: 'profile-images',
+                    folder: 'staff-documents',
+                    maxSizeBytes: 10 * 1024 * 1024, // 10MB
+                    allowedTypes: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png']
+                  }}
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  multiple={false}
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Upload one file at a time. Supported formats: PDF, DOC, DOCX, JPG, PNG (Max 10MB)
+                </p>
+              </div>
+
+              {attachments.length > 0 && (
+                <div className="mt-4">
+                  <Label className="block text-sm font-medium text-foreground mb-2">
+                    Uploaded Documents ({attachments.length})
+                  </Label>
+                  <div className="space-y-2">
+                    {attachments.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 bg-muted rounded-lg border border-border"
+                      >
+                        <div className="flex items-center gap-3">
+                          <FileText className="w-5 h-5 text-purple-600" />
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{file.name}</p>
+                            <p className="text-xs text-muted-foreground">{file.type}</p>
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeAttachment(index)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </TabsContent>
 
             {/* Emergency Contact Tab */}

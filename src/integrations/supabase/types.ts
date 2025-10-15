@@ -1466,6 +1466,7 @@ export type Database = {
       staff_members: {
         Row: {
           address: string | null
+          attachments: Json | null
           background_check_date: string | null
           background_check_expiry: string | null
           background_check_status: string | null
@@ -1502,6 +1503,7 @@ export type Database = {
           professional_indemnity_insurance: boolean | null
           professional_references: Json | null
           profile_id: string | null
+          profile_image_url: string | null
           qualifications: Json | null
           right_to_work_document_type: string | null
           right_to_work_expiry: string | null
@@ -1512,6 +1514,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          attachments?: Json | null
           background_check_date?: string | null
           background_check_expiry?: string | null
           background_check_status?: string | null
@@ -1548,6 +1551,7 @@ export type Database = {
           professional_indemnity_insurance?: boolean | null
           professional_references?: Json | null
           profile_id?: string | null
+          profile_image_url?: string | null
           qualifications?: Json | null
           right_to_work_document_type?: string | null
           right_to_work_expiry?: string | null
@@ -1558,6 +1562,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          attachments?: Json | null
           background_check_date?: string | null
           background_check_expiry?: string | null
           background_check_status?: string | null
@@ -1594,6 +1599,7 @@ export type Database = {
           professional_indemnity_insurance?: boolean | null
           professional_references?: Json | null
           profile_id?: string | null
+          profile_image_url?: string | null
           qualifications?: Json | null
           right_to_work_document_type?: string | null
           right_to_work_expiry?: string | null

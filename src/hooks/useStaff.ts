@@ -17,6 +17,8 @@ export interface StaffMember {
   state: string | null;
   postal_code: string | null;
   national_id_number: string | null;
+  profile_image_url: string | null;
+  attachments: any;
   // Employment Details
   job_title: string | null;
   employment_type: string | null;
