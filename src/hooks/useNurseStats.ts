@@ -110,8 +110,7 @@ export const useNurseStats = () => {
       const { data: reviews } = await supabase
         .from('reviews')
         .select('rating')
-        .eq('reviewed_id', user.id)
-        .eq('is_public', true);
+        .eq('nurse_id', user.id);
 
       const averageRating = reviews && reviews.length > 0
         ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
