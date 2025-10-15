@@ -77,12 +77,11 @@ const NurseDashboard: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Welcome back, {user.firstName}!</h1>
-          <p className="text-purple-600">Healthcare Professional Dashboard</p>
-        </div>
+    <div className="container mx-auto p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-foreground">Welcome back, {user.firstName}!</h1>
+        <p className="text-muted-foreground">Healthcare Professional Dashboard</p>
+      </div>
         
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -344,7 +343,6 @@ const NurseDashboard: React.FC = () => {
           </p>
         </div>
       </div>
-    </div>
   );
 };
 

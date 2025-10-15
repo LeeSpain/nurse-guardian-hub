@@ -20,8 +20,7 @@ const Clients: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
-      <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto p-6 space-y-6">
         <div className="mb-6 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Clients</h1>
@@ -69,7 +68,6 @@ const Clients: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

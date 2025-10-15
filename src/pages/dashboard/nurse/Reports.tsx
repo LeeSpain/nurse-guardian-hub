@@ -89,8 +89,7 @@ const Reports: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto p-6 space-y-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Reports</h1>
           <p className="text-muted-foreground">Generate and export comprehensive business reports</p>
@@ -215,7 +214,6 @@ const Reports: React.FC = () => {
           </Card>
         </div>
       </div>
-    </div>
   );
 };
 

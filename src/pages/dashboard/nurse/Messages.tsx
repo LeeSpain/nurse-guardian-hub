@@ -33,8 +33,7 @@ const Messages: React.FC = () => {
   );
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto p-6 space-y-6">
         <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Messages</h1>
@@ -181,7 +180,6 @@ const Messages: React.FC = () => {
           </Button>
         </div>
       </div>
-    </div>
   );
 };
 
