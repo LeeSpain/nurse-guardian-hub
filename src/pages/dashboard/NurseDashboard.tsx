@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { toast } from 'sonner';
-import { Shield, Calendar, Users, Settings, CreditCard, Star } from 'lucide-react';
+import { Shield, Calendar, Users, Settings, CreditCard, Star, FileText, Activity, AlertCircle, Clock } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { useNurseStats } from '@/hooks/useNurseStats';
 
@@ -161,7 +161,114 @@ const NurseDashboard: React.FC = () => {
           )}
         </div>
         
-        {/* Dashboard Features */}
+        {/* Today's Rota Widget */}
+        <div className="mb-8">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-800">Today's Rota</h2>
+              <Link to="/nurse/dashboard/shifts" className="text-sm text-purple-600 hover:text-purple-700">
+                View All
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {[
+                { staff: 'Sarah Johnson', client: 'Mrs. Thompson', time: '09:00 - 17:00', status: 'active' },
+                { staff: 'Michael Chen', client: 'Mr. Davis', time: '14:00 - 22:00', status: 'upcoming' },
+              ].map((shift, idx) => (
+                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                      <Users size={20} className="text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{shift.staff}</p>
+                      <p className="text-xs text-gray-500">{shift.client}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">{shift.time}</p>
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${
+                      shift.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {shift.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions Grid */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link
+              to="/nurse/dashboard/care-logs"
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all group"
+            >
+              <FileText size={24} className="text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
+              <p className="font-semibold text-gray-800">Care Logs</p>
+              <p className="text-xs text-gray-500 mt-1">Document client care</p>
+            </Link>
+
+            <Link
+              to="/nurse/dashboard/staff"
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all group"
+            >
+              <Users size={24} className="text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
+              <p className="font-semibold text-gray-800">Staff</p>
+              <p className="text-xs text-gray-500 mt-1">Manage your team</p>
+            </Link>
+
+            <Link
+              to="/nurse/dashboard/care-plans"
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all group"
+            >
+              <FileText size={24} className="text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
+              <p className="font-semibold text-gray-800">Care Plans</p>
+              <p className="text-xs text-gray-500 mt-1">Review and update</p>
+            </Link>
+
+            <Link
+              to="/nurse/dashboard/analytics"
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all group"
+            >
+              <Activity size={24} className="text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
+              <p className="font-semibold text-gray-800">Analytics</p>
+              <p className="text-xs text-gray-500 mt-1">View insights</p>
+            </Link>
+          </div>
+        </div>
+
+        {/* Compliance Alerts */}
+        <div className="mb-8">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center gap-2 mb-4">
+              <Shield className="w-5 h-5 text-purple-600" />
+              <h2 className="text-lg font-semibold text-gray-800">Compliance Dashboard</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                <span className="text-sm font-medium">Staff DBS Checks</span>
+                <span className="text-green-600 font-semibold">✓ Current</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                <span className="text-sm font-medium">Training Certificates</span>
+                <span className="text-green-600 font-semibold">✓ Up to Date</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertCircle size={16} className="text-yellow-600" />
+                  <span className="text-sm font-medium">Insurance Renewal</span>
+                </div>
+                <span className="text-yellow-600 font-semibold">14 days</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Dashboard Navigation Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Button
             variant="outline" 
@@ -175,7 +282,7 @@ const NurseDashboard: React.FC = () => {
           >
             <div>
               <p className="font-semibold">Calendar</p>
-              <p className="text-xs text-gray-500 mt-1">Manage your schedule</p>
+              <p className="text-xs text-gray-500 mt-1">Manage schedule</p>
             </div>
           </Button>
           
@@ -184,14 +291,14 @@ const NurseDashboard: React.FC = () => {
             size="lg"
             fullWidth
             className="p-6 h-auto flex-col items-center justify-center text-center"
-            icon={<Users size={24} className="mb-2 text-purple-600" />}
+            icon={<Clock size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
             as={Link}
-            to="/nurse/dashboard/clients"
+            to="/nurse/dashboard/shifts"
           >
             <div>
-              <p className="font-semibold">Clients</p>
-              <p className="text-xs text-gray-500 mt-1">View your clients</p>
+              <p className="font-semibold">Shifts</p>
+              <p className="text-xs text-gray-500 mt-1">View rotas</p>
             </div>
           </Button>
           
@@ -200,14 +307,14 @@ const NurseDashboard: React.FC = () => {
             size="lg"
             fullWidth
             className="p-6 h-auto flex-col items-center justify-center text-center"
-            icon={<CreditCard size={24} className="mb-2 text-purple-600" />}
+            icon={<FileText size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
             as={Link}
-            to="/nurse/dashboard/subscription"
+            to="/nurse/dashboard/reports"
           >
             <div>
-              <p className="font-semibold">Subscription</p>
-              <p className="text-xs text-gray-500 mt-1">Manage your plan</p>
+              <p className="font-semibold">Reports</p>
+              <p className="text-xs text-gray-500 mt-1">Generate reports</p>
             </div>
           </Button>
           
@@ -223,7 +330,7 @@ const NurseDashboard: React.FC = () => {
           >
             <div>
               <p className="font-semibold">Settings</p>
-              <p className="text-xs text-gray-500 mt-1">Update your profile</p>
+              <p className="text-xs text-gray-500 mt-1">Update profile</p>
             </div>
           </Button>
         </div>

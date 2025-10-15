@@ -28,6 +28,8 @@ const NurseClients = lazy(() => import('./pages/dashboard/nurse/Clients'));
 const NurseShifts = lazy(() => import('./pages/dashboard/nurse/Shifts'));
 const NurseCarePlans = lazy(() => import('./pages/dashboard/nurse/CarePlans'));
 const NurseCareLogs = lazy(() => import('./pages/dashboard/nurse/CareLogs'));
+const NurseAnalytics = lazy(() => import('./pages/dashboard/nurse/Analytics'));
+const NurseReports = lazy(() => import('./pages/dashboard/nurse/Reports'));
 const NurseMessages = lazy(() => import('./pages/dashboard/nurse/Messages'));
 const NurseSubscription = lazy(() => import('./pages/dashboard/nurse/Subscription'));
 const NurseSettings = lazy(() => import('./pages/dashboard/nurse/Settings'));
@@ -121,6 +123,16 @@ function App() {
             <Route path="care-logs" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseCareLogs />
+              </ProtectedRoute>
+            } />
+            <Route path="analytics" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseAnalytics />
+              </ProtectedRoute>
+            } />
+            <Route path="reports" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseReports />
               </ProtectedRoute>
             } />
             <Route path="messages" element={
