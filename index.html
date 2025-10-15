@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -25,6 +24,16 @@
     <!-- DNS prefetching -->
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://randomuser.me" />
+    
+    <!-- Dark mode script to prevent flash -->
+    <script>
+      try {
+        const theme = localStorage.getItem('theme') || 'light';
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    </script>
   </head>
 
   <body>

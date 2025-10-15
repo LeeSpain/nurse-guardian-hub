@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { User, Bell, Shield, Save, CreditCard, Building2 } from 'lucide-react';
+import { User, Bell, Shield, Save, CreditCard, Building2, Moon, Sun } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import ProfileImageUploader from '@/components/ui-components/ProfileImageUploader';
 import { useProfile } from '@/hooks/useProfile';
@@ -11,12 +11,14 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
+import { useTheme } from 'next-themes';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
   const { profile, loading: profileLoading, updateProfile, updateProfileImage } = useProfile();
   const { organization, loading: orgLoading, createOrganization, updateOrganization, refetch } = useOrganization();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingOrg, setIsEditingOrg] = useState(false);
   const [showCreateOrg, setShowCreateOrg] = useState(false);
@@ -415,24 +417,90 @@ const Settings: React.FC = () => {
         </div>
         
         {/* Notification Settings */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6">
           <div className="flex items-center mb-4">
             <Bell className="text-purple-600 mr-3" size={20} />
-            <h3 className="font-semibold text-gray-800">Notifications</h3>
+            <h3 className="font-semibold text-gray-800 dark:text-gray-100">Notifications</h3>
           </div>
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">Email notifications</span>
+              <span className="text-gray-700 dark:text-gray-300">Email notifications</span>
               <Switch defaultChecked />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">SMS notifications</span>
+              <span className="text-gray-700 dark:text-gray-300">SMS notifications</span>
               <Switch />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">Push notifications</span>
+              <span className="text-gray-700 dark:text-gray-300">Push notifications</span>
               <Switch defaultChecked />
+            </div>
+          </div>
+        </div>
+
+        {/* Appearance Settings */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6">
+          <div className="flex items-center mb-4">
+            {theme === 'dark' ? (
+              <Moon className="text-purple-600 mr-3" size={20} />
+            ) : (
+              <Sun className="text-purple-600 mr-3" size={20} />
+            )}
+            <div>
+              <h3 className="font-semibold text-gray-800 dark:text-gray-100">Appearance</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Customize how your dashboard looks</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">Dark Mode</span>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Switch between light and dark theme</p>
+              </div>
+              <Switch 
+                checked={theme === 'dark'} 
+                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={() => setTheme('light')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  theme === 'light' 
+                    ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20' 
+                    : 'border-gray-200 dark:border-gray-700 hover:border-purple-400'
+                }`}
+              >
+                <Sun className="w-6 h-6 mx-auto mb-2 text-gray-700 dark:text-gray-300" />
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Light</p>
+              </button>
+              <button
+                onClick={() => setTheme('dark')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  theme === 'dark' 
+                    ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20' 
+                    : 'border-gray-200 dark:border-gray-700 hover:border-purple-400'
+                }`}
+              >
+                <Moon className="w-6 h-6 mx-auto mb-2 text-gray-700 dark:text-gray-300" />
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Dark</p>
+              </button>
+              <button
+                onClick={() => setTheme('system')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  theme === 'system' 
+                    ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20' 
+                    : 'border-gray-200 dark:border-gray-700 hover:border-purple-400'
+                }`}
+              >
+                <div className="w-6 h-6 mx-auto mb-2 flex">
+                  <Sun className="w-3 h-6 text-gray-700 dark:text-gray-300" />
+                  <Moon className="w-3 h-6 text-gray-700 dark:text-gray-300" />
+                </div>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">System</p>
+              </button>
             </div>
           </div>
         </div>
