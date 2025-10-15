@@ -313,6 +313,66 @@ export type Database = {
           },
         ]
       }
+      client_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string | null
+          email: string
+          expires_at: string
+          first_name: string | null
+          id: string
+          invited_by: string | null
+          invited_by_name: string | null
+          last_name: string | null
+          organization_id: string
+          status: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string | null
+          email: string
+          expires_at: string
+          first_name?: string | null
+          id?: string
+          invited_by?: string | null
+          invited_by_name?: string | null
+          last_name?: string | null
+          organization_id: string
+          status?: string
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          first_name?: string | null
+          id?: string
+          invited_by?: string | null
+          invited_by_name?: string | null
+          last_name?: string | null
+          organization_id?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_notes: {
         Row: {
           attachments: Json | null
@@ -473,6 +533,7 @@ export type Database = {
           insurance_expiry: string | null
           insurance_policy_number: string | null
           insurance_provider: string | null
+          invitation_id: string | null
           last_name: string
           lasting_power_of_attorney: string | null
           lpa_contact_details: string | null
@@ -539,6 +600,7 @@ export type Database = {
           insurance_expiry?: string | null
           insurance_policy_number?: string | null
           insurance_provider?: string | null
+          invitation_id?: string | null
           last_name: string
           lasting_power_of_attorney?: string | null
           lpa_contact_details?: string | null
@@ -605,6 +667,7 @@ export type Database = {
           insurance_expiry?: string | null
           insurance_policy_number?: string | null
           insurance_provider?: string | null
+          invitation_id?: string | null
           last_name?: string
           lasting_power_of_attorney?: string | null
           lpa_contact_details?: string | null
@@ -635,6 +698,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "clients_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "client_invitations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "clients_organization_id_fkey"
             columns: ["organization_id"]

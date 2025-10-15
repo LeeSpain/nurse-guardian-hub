@@ -24,12 +24,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useClients, ClientStatus } from '@/hooks/useClients';
 import { AddClientModal } from '@/components/clients/AddClientModal';
+import { InviteClientModal } from '@/components/clients/InviteClientModal';
 
 const Clients: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
-  const { clients, loading: clientsLoading, createClient, updateClient } = useClients();
+  const { clients, loading: clientsLoading, createClient, updateClient, refetch } = useClients();
   const [searchTerm, setSearchTerm] = useState('');
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<ClientStatus | 'all'>('all');
   const navigate = useNavigate();
   
@@ -94,14 +96,24 @@ const Clients: React.FC = () => {
           <h1 className="text-2xl font-bold text-foreground">Clients</h1>
           <p className="text-muted-foreground">Manage your client relationships</p>
         </div>
-        <Button 
-          variant="nurse" 
-          size="md" 
-          icon={<Plus size={16} />}
-          onClick={() => setAddModalOpen(true)}
-        >
-          Add Client
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="md"
+            onClick={() => setInviteModalOpen(true)}
+          >
+            <Mail size={16} className="mr-2" />
+            Invite Client
+          </Button>
+          <Button 
+            variant="nurse" 
+            size="md" 
+            icon={<Plus size={16} />}
+            onClick={() => setAddModalOpen(true)}
+          >
+            Add Client
+          </Button>
+        </div>
       </div>
       
       {/* Status Filter Tabs */}
@@ -309,6 +321,12 @@ const Clients: React.FC = () => {
         open={addModalOpen}
         onOpenChange={setAddModalOpen}
         onSuccess={createClient}
+      />
+
+      <InviteClientModal
+        open={inviteModalOpen}
+        onOpenChange={setInviteModalOpen}
+        onSuccess={refetch}
       />
     </div>
   );
