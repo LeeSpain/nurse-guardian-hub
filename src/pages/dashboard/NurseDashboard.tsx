@@ -8,7 +8,7 @@ import Button from '@/components/ui-components/Button';
 import { useNurseStats } from '@/hooks/useNurseStats';
 
 const NurseDashboard: React.FC = () => {
-  const { user, isAuthenticated, isLoading, subscription, subscriptionLoading } = useUser();
+  const { user, isAuthenticated, isLoading, subscription, subscriptionLoading, checkSubscription } = useUser();
   const { stats, loading: statsLoading } = useNurseStats();
   
   // If auth is loading, show spinner
@@ -52,7 +52,7 @@ const NurseDashboard: React.FC = () => {
             <p className="mt-4 text-lg text-gray-700">
               You need an active subscription to access the healthcare professional dashboard.
             </p>
-            <div className="mt-8">
+            <div className="mt-8 flex items-center justify-center gap-4">
               <Button 
                 variant="nurse" 
                 size="lg"
@@ -61,6 +61,13 @@ const NurseDashboard: React.FC = () => {
                 className="mx-auto"
               >
                 View Subscription Plans
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => checkSubscription()}
+              >
+                Refresh Status
               </Button>
             </div>
           </div>
