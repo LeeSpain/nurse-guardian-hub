@@ -8,6 +8,7 @@ import Button from '@/components/ui-components/Button';
 import { useNurseStats } from '@/hooks/useNurseStats';
 import { useProfile } from '@/hooks/useProfile';
 import { useOrganization } from '@/hooks/useOrganization';
+import { useTodayShifts } from '@/hooks/useTodayShifts';
 import { format } from 'date-fns';
 
 const NurseDashboard: React.FC = () => {
@@ -15,6 +16,7 @@ const NurseDashboard: React.FC = () => {
   const { stats, loading: statsLoading } = useNurseStats();
   const { profile } = useProfile();
   const { organization } = useOrganization();
+  const { shifts: todayShifts, loading: shiftsLoading } = useTodayShifts();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Update time every minute
@@ -205,32 +207,79 @@ const NurseDashboard: React.FC = () => {
                 View All
               </Link>
             </div>
-            <div className="space-y-3">
-              {[
-                { staff: 'Sarah Johnson', client: 'Mrs. Thompson', time: '09:00 - 17:00', status: 'active' },
-                { staff: 'Michael Chen', client: 'Mr. Davis', time: '14:00 - 22:00', status: 'upcoming' },
-              ].map((shift, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                      <Users size={20} className="text-purple-600" />
+            {shiftsLoading ? (
+              <div className="space-y-3">
+                {[1, 2].map(i => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg animate-pulse">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                      <div>
+                        <div className="h-4 bg-gray-200 rounded w-24 mb-1"></div>
+                        <div className="h-3 bg-gray-200 rounded w-20"></div>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-sm">{shift.staff}</p>
-                      <p className="text-xs text-gray-500">{shift.client}</p>
+                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                  </div>
+                ))}
+              </div>
+            ) : todayShifts.length > 0 ? (
+              <div className="space-y-3">
+                {todayShifts.map((shift) => {
+                  const now = new Date();
+                  const [startHour, startMin] = shift.start_time.split(':').map(Number);
+                  const [endHour, endMin] = shift.end_time.split(':').map(Number);
+                  const shiftStart = new Date(now);
+                  shiftStart.setHours(startHour, startMin, 0);
+                  const shiftEnd = new Date(now);
+                  shiftEnd.setHours(endHour, endMin, 0);
+                  
+                  const isActive = now >= shiftStart && now <= shiftEnd;
+                  const isPast = now > shiftEnd;
+                  const isUpcoming = now < shiftStart;
+                  
+                  let displayStatus = shift.status;
+                  if (shift.status === 'scheduled') {
+                    displayStatus = isActive ? 'active' : isUpcoming ? 'upcoming' : 'completed';
+                  }
+                  
+                  return (
+                    <div key={shift.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                          <Users size={20} className="text-purple-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">{shift.staff_name}</p>
+                          <p className="text-xs text-gray-500">{shift.client_name}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">{shift.start_time} - {shift.end_time}</p>
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${
+                          displayStatus === 'active' || displayStatus === 'in_progress' 
+                            ? 'bg-green-100 text-green-800' 
+                            : displayStatus === 'completed' 
+                            ? 'bg-gray-100 text-gray-800'
+                            : displayStatus === 'cancelled'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {displayStatus}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">{shift.time}</p>
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${
-                      shift.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                    }`}>
-                      {shift.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No shifts scheduled for today</p>
+                <Link to="/nurse/dashboard/shifts" className="text-sm text-purple-600 hover:text-purple-700 mt-2 inline-block">
+                  Create a shift
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
