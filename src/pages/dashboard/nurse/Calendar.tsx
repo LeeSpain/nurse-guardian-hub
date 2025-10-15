@@ -4,12 +4,14 @@ import { useUser, UserRole } from '@/contexts/UserContext';
 import { useAppointments } from '@/hooks/useAppointments';
 import { format, startOfWeek, addDays, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, isToday, isBefore, startOfDay } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
-import { ChevronLeft, ChevronRight, Plus, Clock, MapPin, User, Calendar as CalendarIcon, Grid3x3, List, LayoutGrid, X, UserPlus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Clock, MapPin, User, Calendar as CalendarIcon, Grid3x3, List, LayoutGrid, X, UserPlus, Trash2, MoreVertical } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,6 +29,8 @@ const Calendar: React.FC = () => {
   const [appointmentDate, setAppointmentDate] = useState<Date>(new Date());
   const [isNewClient, setIsNewClient] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<string | null>(null);
   
   // Form state
   const [appointmentForm, setAppointmentForm] = useState({
@@ -257,6 +261,36 @@ const Calendar: React.FC = () => {
     setSelectedDate(new Date());
   };
 
+  const handleDeleteAppointment = async () => {
+    if (!appointmentToDelete) return;
+    
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .delete()
+        .eq('id', appointmentToDelete);
+
+      if (error) {
+        console.error('Error deleting appointment:', error);
+        toast.error('Failed to delete appointment');
+        return;
+      }
+
+      toast.success('Appointment deleted successfully');
+      setDeleteDialogOpen(false);
+      setAppointmentToDelete(null);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error deleting appointment:', error);
+      toast.error('Failed to delete appointment');
+    }
+  };
+
+  const confirmDelete = (appointmentId: string) => {
+    setAppointmentToDelete(appointmentId);
+    setDeleteDialogOpen(true);
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
@@ -447,7 +481,7 @@ const Calendar: React.FC = () => {
             <div className="space-y-3">
               {selectedDayAppointments.length > 0 ? (
                 selectedDayAppointments.map((appointment) => (
-                  <Card key={appointment.id} className="p-4 hover:shadow-lg transition-all cursor-pointer">
+                  <Card key={appointment.id} className="p-4 hover:shadow-lg transition-all">
                     <div className="flex items-start gap-4">
                       <div className={cn("w-2 h-full rounded-full", getStatusColor(appointment.status))} />
                       <div className="flex-1 space-y-2">
@@ -458,8 +492,24 @@ const Calendar: React.FC = () => {
                               {appointment.status}
                             </Badge>
                           </div>
-                          <div className="text-right">
+                          <div className="flex items-center gap-2">
                             <p className="font-medium text-primary">${appointment.total_cost}</p>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <MoreVertical size={16} />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem 
+                                  className="text-destructive focus:text-destructive"
+                                  onClick={() => confirmDelete(appointment.id)}
+                                >
+                                  <Trash2 size={14} className="mr-2" />
+                                  Delete Appointment
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
@@ -506,13 +556,31 @@ const Calendar: React.FC = () => {
             upcomingAppointments.map((appointment) => (
               <div
                 key={appointment.id}
-                className="p-3 border rounded-lg hover:border-primary/50 transition-colors cursor-pointer"
+                className="p-3 border rounded-lg hover:border-primary/50 transition-colors"
               >
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="font-medium text-sm">{appointment.title}</h4>
-                  <Badge variant="secondary" className="text-xs">
-                    {appointment.status}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {appointment.status}
+                    </Badge>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                          <MoreVertical size={14} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem 
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => confirmDelete(appointment.id)}
+                        >
+                          <Trash2 size={14} className="mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
                 <div className="space-y-1 text-xs text-muted-foreground">
                   <div className="flex items-center gap-2">
@@ -785,6 +853,24 @@ const Calendar: React.FC = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Appointment</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this appointment? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteAppointment} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
