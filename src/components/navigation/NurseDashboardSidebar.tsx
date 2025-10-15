@@ -1,0 +1,147 @@
+import React from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { 
+  LayoutDashboard, Calendar, Users, Clock, FileText, 
+  ClipboardList, MessageSquare, Settings, BarChart3, 
+  FileBarChart, LogOut, Bell, DollarSign, UserCircle
+} from 'lucide-react';
+import { useUser } from '@/contexts/UserContext';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarHeader,
+  SidebarFooter,
+  useSidebar,
+} from '@/components/ui/sidebar';
+import Logo from '@/components/ui-components/Logo';
+import Button from '@/components/ui-components/Button';
+
+const NurseDashboardSidebar: React.FC = () => {
+  const location = useLocation();
+  const { user, logout, subscription } = useUser();
+  const { state } = useSidebar();
+  const collapsed = state === 'collapsed';
+
+  const navItems = [
+    { path: '/nurse/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/nurse/dashboard/calendar', label: 'Calendar', icon: Calendar },
+    { path: '/nurse/dashboard/staff', label: 'Staff', icon: Users },
+    { path: '/nurse/dashboard/clients', label: 'Clients', icon: UserCircle },
+    { path: '/nurse/dashboard/shifts', label: 'Shifts', icon: Clock },
+    { path: '/nurse/dashboard/care-plans', label: 'Care Plans', icon: FileText },
+    { path: '/nurse/dashboard/care-logs', label: 'Care Logs', icon: ClipboardList },
+    { path: '/nurse/dashboard/messages', label: 'Messages', icon: MessageSquare },
+  ];
+
+  const managementItems = [
+    { path: '/nurse/dashboard/billing', label: 'Billing & Invoices', icon: DollarSign },
+    { path: '/nurse/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/nurse/dashboard/reports', label: 'Reports', icon: FileBarChart },
+  ];
+
+  const isActive = (path: string) => location.pathname === path;
+
+  return (
+    <Sidebar collapsible="icon" className="border-r">
+      <SidebarHeader className="border-b px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Logo size="small" />
+          {!collapsed && <span className="font-semibold text-foreground">HealthCare Pro</span>}
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent>
+        {/* Main Navigation */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton asChild isActive={isActive(item.path)}>
+                    <NavLink to={item.path}>
+                      <item.icon className="h-4 w-4" />
+                      {!collapsed && <span>{item.label}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Management */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {managementItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton asChild isActive={isActive(item.path)}>
+                    <NavLink to={item.path}>
+                      <item.icon className="h-4 w-4" />
+                      {!collapsed && <span>{item.label}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="border-t p-4">
+        {!collapsed && (
+          <div className="mb-3 px-2">
+            <p className="text-sm font-medium text-foreground truncate">
+              {user?.firstName || 'Healthcare Professional'}
+            </p>
+            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+            {subscription && (
+              <p className="text-xs text-primary font-medium mt-1">
+                {subscription.subscription_tier} Plan
+              </p>
+            )}
+          </div>
+        )}
+        
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <button className="w-full justify-start">
+                <Bell className="h-4 w-4" />
+                {!collapsed && <span>Notifications</span>}
+              </button>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={isActive('/nurse/dashboard/settings')}>
+              <NavLink to="/nurse/dashboard/settings">
+                <Settings className="h-4 w-4" />
+                {!collapsed && <span>Settings</span>}
+              </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <button onClick={logout} className="w-full justify-start text-destructive hover:text-destructive">
+                <LogOut className="h-4 w-4" />
+                {!collapsed && <span>Logout</span>}
+              </button>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
+  );
+};
+
+export default NurseDashboardSidebar;

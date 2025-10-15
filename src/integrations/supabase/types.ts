@@ -303,6 +303,122 @@ export type Database = {
           },
         ]
       }
+      invoice_line_items: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          rate: number
+          staff_shift_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          quantity: number
+          rate: number
+          staff_shift_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          rate?: number
+          staff_shift_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_line_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_staff_shift_id_fkey"
+            columns: ["staff_shift_id"]
+            isOneToOne: false
+            referencedRelation: "staff_shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          billing_period_end: string
+          billing_period_start: string
+          client_id: string
+          created_at: string
+          created_by: string | null
+          due_date: string
+          id: string
+          invoice_number: string
+          notes: string | null
+          organization_id: string
+          paid_date: string | null
+          status: string
+          stripe_invoice_id: string | null
+          stripe_payment_intent: string | null
+          total_amount: number
+          total_hours: number
+          updated_at: string
+        }
+        Insert: {
+          billing_period_end: string
+          billing_period_start: string
+          client_id: string
+          created_at?: string
+          created_by?: string | null
+          due_date: string
+          id?: string
+          invoice_number: string
+          notes?: string | null
+          organization_id: string
+          paid_date?: string | null
+          status?: string
+          stripe_invoice_id?: string | null
+          stripe_payment_intent?: string | null
+          total_amount: number
+          total_hours: number
+          updated_at?: string
+        }
+        Update: {
+          billing_period_end?: string
+          billing_period_start?: string
+          client_id?: string
+          created_at?: string
+          created_by?: string | null
+          due_date?: string
+          id?: string
+          invoice_number?: string
+          notes?: string | null
+          organization_id?: string
+          paid_date?: string | null
+          status?: string
+          stripe_invoice_id?: string | null
+          stripe_payment_intent?: string | null
+          total_amount?: number
+          total_hours?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medication_administrations: {
         Row: {
           actual_time: string | null
@@ -697,6 +813,47 @@ export type Database = {
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          invoice_id: string
+          payment_method: string
+          processed_at: string | null
+          status: string
+          stripe_payment_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          invoice_id: string
+          payment_method: string
+          processed_at?: string | null
+          status?: string
+          stripe_payment_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          invoice_id?: string
+          payment_method?: string
+          processed_at?: string | null
+          status?: string
+          stripe_payment_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
             referencedColumns: ["id"]
           },
         ]

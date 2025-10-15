@@ -30,6 +30,7 @@ const NurseCarePlans = lazy(() => import('./pages/dashboard/nurse/CarePlans'));
 const NurseCareLogs = lazy(() => import('./pages/dashboard/nurse/CareLogs'));
 const NurseAnalytics = lazy(() => import('./pages/dashboard/nurse/Analytics'));
 const NurseReports = lazy(() => import('./pages/dashboard/nurse/Reports'));
+const NurseBilling = lazy(() => import('./pages/dashboard/nurse/Billing'));
 const NurseMessages = lazy(() => import('./pages/dashboard/nurse/Messages'));
 const NurseSubscription = lazy(() => import('./pages/dashboard/nurse/Subscription'));
 const NurseSettings = lazy(() => import('./pages/dashboard/nurse/Settings'));
@@ -138,6 +139,11 @@ function App() {
             <Route path="messages" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseMessages />
+              </ProtectedRoute>
+            } />
+            <Route path="billing" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseBilling />
               </ProtectedRoute>
             } />
             <Route path="subscription" element={
