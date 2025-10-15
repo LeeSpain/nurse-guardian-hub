@@ -95,14 +95,6 @@ const NurseRegister: React.FC = () => {
     }
   };
 
-  const toggleSpecialty = (specialty: string) => {
-    const currentSpecialties = form.getValues('specialties');
-    const newSpecialties = currentSpecialties.includes(specialty)
-      ? currentSpecialties.filter(s => s !== specialty)
-      : [...currentSpecialties, specialty];
-    form.setValue('specialties', newSpecialties);
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <NurseHeader />
@@ -215,25 +207,41 @@ const NurseRegister: React.FC = () => {
                   <FormField
                     control={form.control}
                     name="specialties"
-                    render={() => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel>Areas of Expertise (Select all that apply)</FormLabel>
                         <div className="grid grid-cols-2 gap-3 mt-2">
-                          {specialtyOptions.map((specialty) => (
-                            <div
-                              key={specialty}
-                              className="flex items-center space-x-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer"
-                              onClick={() => toggleSpecialty(specialty)}
-                            >
-                              <Checkbox
-                                checked={form.watch('specialties').includes(specialty)}
-                                onChange={() => toggleSpecialty(specialty)}
-                              />
-                              <Label className="text-sm cursor-pointer flex-1">
-                                {specialty}
-                              </Label>
-                            </div>
-                          ))}
+                          {specialtyOptions.map((specialty) => {
+                            const isChecked = field.value.includes(specialty);
+                            return (
+                              <div
+                                key={specialty}
+                                className="flex items-center space-x-2 p-2 rounded-lg border border-gray-200 hover:bg-gray-50"
+                              >
+                                <Checkbox
+                                  checked={isChecked}
+                                  onCheckedChange={(checked) => {
+                                    const newSpecialties = checked
+                                      ? [...field.value, specialty]
+                                      : field.value.filter(s => s !== specialty);
+                                    field.onChange(newSpecialties);
+                                  }}
+                                />
+                                <Label 
+                                  className="text-sm flex-1 cursor-pointer"
+                                  onClick={() => {
+                                    const isCurrentlyChecked = field.value.includes(specialty);
+                                    const newSpecialties = isCurrentlyChecked
+                                      ? field.value.filter(s => s !== specialty)
+                                      : [...field.value, specialty];
+                                    field.onChange(newSpecialties);
+                                  }}
+                                >
+                                  {specialty}
+                                </Label>
+                              </div>
+                            );
+                          })}
                         </div>
                         <FormMessage />
                       </FormItem>
