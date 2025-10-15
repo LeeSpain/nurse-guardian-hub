@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { useAppointments } from '@/hooks/useAppointments';
@@ -46,6 +46,29 @@ const Calendar: React.FC = () => {
     clientPhone: '',
     clientAddress: '',
   });
+  const [clients, setClients] = useState<any[]>([]);
+  const [clientsLoading, setClientsLoading] = useState(false);
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        setClientsLoading(true);
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, first_name, last_name, address, email')
+          .eq('user_role', 'client')
+          .order('created_at', { ascending: false });
+        if (error) {
+          console.error('Failed to load clients:', error);
+          toast.error('Failed to load clients');
+        } else {
+          setClients(data || []);
+        }
+      } finally {
+        setClientsLoading(false);
+      }
+    };
+    fetchClients();
+  }, []);
   
   if (isLoading || loading) {
     return (
@@ -155,6 +178,13 @@ const Calendar: React.FC = () => {
       if (!clientId) {
         toast.error('Please select a client or create a new one');
         return;
+      }
+      if (!isNewClient) {
+        const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+        if (!uuidRegex.test(clientId)) {
+          toast.error('Please select a valid client from the list');
+          return;
+        }
       }
 
       // Calculate total cost
@@ -598,9 +628,17 @@ const Calendar: React.FC = () => {
                       <SelectValue placeholder="Choose a client" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="client1">John Smith - 123 Main St</SelectItem>
-                      <SelectItem value="client2">Mary Johnson - 456 Oak Ave</SelectItem>
-                      <SelectItem value="client3">Robert Davis - 789 Pine Rd</SelectItem>
+                      {clientsLoading ? (
+                        <SelectItem value="loading" disabled>Loading...</SelectItem>
+                      ) : clients.length ? (
+                        clients.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {(c.first_name || '') + ' ' + (c.last_name || '')} {c.address ? `- ${c.address}` : ''}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="no-clients" disabled>No clients found</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
