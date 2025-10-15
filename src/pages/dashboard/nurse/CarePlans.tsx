@@ -43,10 +43,6 @@ const CarePlans: React.FC = () => {
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
-  const getCategoryIcon = (category: string) => {
-    return <FileText size={20} className="text-purple-600" />;
-  };
-
   return (
     <div className="container mx-auto p-6 space-y-6">
         <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -136,7 +132,11 @@ const CarePlans: React.FC = () => {
             </Card>
 
             {/* Care Plans List */}
-            {filteredPlans.length === 0 ? (
+            {plansLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map(i => <Skeleton key={i} className="h-48 w-full" />)}
+              </div>
+            ) : filteredPlans.length === 0 ? (
               <Card className="p-12 text-center">
                 <FileText className="text-muted-foreground mx-auto mb-4" size={48} />
                 <h3 className="text-lg font-medium text-foreground mb-2">No care plans found</h3>
@@ -150,7 +150,7 @@ const CarePlans: React.FC = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                        {getCategoryIcon(plan.category)}
+                        <FileText size={20} className="text-purple-600" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg text-foreground">{plan.title}</h3>
