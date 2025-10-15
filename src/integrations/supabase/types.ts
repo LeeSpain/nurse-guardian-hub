@@ -31,6 +31,7 @@ export type Database = {
           payment_status: string | null
           service_type: string | null
           special_instructions: string | null
+          staff_member_id: string | null
           start_time: string
           status: Database["public"]["Enums"]["appointment_status"]
           stripe_payment_intent: string | null
@@ -55,6 +56,7 @@ export type Database = {
           payment_status?: string | null
           service_type?: string | null
           special_instructions?: string | null
+          staff_member_id?: string | null
           start_time: string
           status?: Database["public"]["Enums"]["appointment_status"]
           stripe_payment_intent?: string | null
@@ -79,6 +81,7 @@ export type Database = {
           payment_status?: string | null
           service_type?: string | null
           special_instructions?: string | null
+          staff_member_id?: string | null
           start_time?: string
           status?: Database["public"]["Enums"]["appointment_status"]
           stripe_payment_intent?: string | null
@@ -100,6 +103,13 @@ export type Database = {
             columns: ["nurse_id"]
             isOneToOne: false
             referencedRelation: "nurse_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_staff_member_id_fkey"
+            columns: ["staff_member_id"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
             referencedColumns: ["id"]
           },
         ]
@@ -299,6 +309,71 @@ export type Database = {
             columns: ["template_id"]
             isOneToOne: false
             referencedRelation: "care_plan_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_staff_assignments: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          client_id: string
+          created_at: string | null
+          id: string
+          is_primary: boolean | null
+          notes: string | null
+          organization_id: string
+          staff_member_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          client_id: string
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          notes?: string | null
+          organization_id: string
+          staff_member_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          client_id?: string
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          notes?: string | null
+          organization_id?: string
+          staff_member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_staff_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_staff_assignments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_staff_assignments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "nurse_organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_staff_assignments_staff_member_id_fkey"
+            columns: ["staff_member_id"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1177,6 +1252,7 @@ export type Database = {
       }
       staff_shifts: {
         Row: {
+          appointment_id: string | null
           break_minutes: number | null
           client_id: string | null
           created_at: string | null
@@ -1192,6 +1268,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          appointment_id?: string | null
           break_minutes?: number | null
           client_id?: string | null
           created_at?: string | null
@@ -1207,6 +1284,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          appointment_id?: string | null
           break_minutes?: number | null
           client_id?: string | null
           created_at?: string | null
@@ -1222,6 +1300,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "staff_shifts_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "staff_shifts_client_id_fkey"
             columns: ["client_id"]
