@@ -6,13 +6,51 @@ export interface StaffMember {
   id: string;
   profile_id: string | null;
   organization_id: string;
+  // Personal Information
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string | null;
+  date_of_birth: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  postal_code: string | null;
+  national_id_number: string | null;
+  // Employment Details
   job_title: string | null;
   employment_type: string | null;
   hourly_rate: number | null;
   start_date: string | null;
   end_date: string | null;
   is_active: boolean;
+  // Professional Qualifications
+  license_number: string | null;
+  license_type: string | null;
+  license_state: string | null;
+  license_expiry: string | null;
+  certifications: any;
+  professional_indemnity_insurance: boolean;
+  insurance_policy_number: string | null;
+  insurance_expiry: string | null;
+  // Background Checks
+  background_check_status: string | null;
+  background_check_date: string | null;
+  background_check_expiry: string | null;
+  dbs_number: string | null;
+  right_to_work_verified: boolean;
+  right_to_work_document_type: string | null;
+  right_to_work_expiry: string | null;
+  // Emergency Contact
+  emergency_contact_name: string | null;
+  emergency_contact_relationship: string | null;
+  emergency_contact_phone: string | null;
+  emergency_contact_email: string | null;
+  // Other
+  professional_references: any;
+  education_history: any;
   qualifications: any;
+  notes: string | null;
   created_at: string;
   updated_at: string;
   profile?: {

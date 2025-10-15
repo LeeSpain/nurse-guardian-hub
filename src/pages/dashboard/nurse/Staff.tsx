@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { Search, Plus, MoreVertical, Mail, Phone, Edit, Trash2, DollarSign, Award, Clock } from 'lucide-react';
+import { Search, Plus, MoreVertical, Mail, Phone, Edit, Trash2, DollarSign, Award, Clock, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -81,11 +81,26 @@ const Staff: React.FC = () => {
     return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
   };
 
+  const getBackgroundCheckBadge = (status: string | null) => {
+    if (!status) return null;
+    
+    const variants: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: any }> = {
+      cleared: { variant: 'default', icon: CheckCircle },
+      in_progress: { variant: 'secondary', icon: Clock },
+      pending: { variant: 'outline', icon: Clock },
+      flagged: { variant: 'destructive', icon: AlertTriangle },
+      expired: { variant: 'destructive', icon: AlertTriangle },
+    };
+    
+    return variants[status] || { variant: 'outline', icon: Shield };
+  };
+
   const filteredStaff = staff.filter(member => {
-    const fullName = `${member.profile?.first_name || ''} ${member.profile?.last_name || ''}`.toLowerCase();
+    const fullName = `${member.first_name || ''} ${member.last_name || ''}`.toLowerCase();
     const jobTitle = (member.job_title || '').toLowerCase();
+    const email = (member.email || '').toLowerCase();
     const search = searchTerm.toLowerCase();
-    return fullName.includes(search) || jobTitle.includes(search);
+    return fullName.includes(search) || jobTitle.includes(search) || email.includes(search);
   });
 
   const confirmDelete = (id: string) => {
@@ -228,27 +243,31 @@ const Staff: React.FC = () => {
                   <TableHead>Job Title</TableHead>
                   <TableHead>Employment</TableHead>
                   <TableHead>Rate</TableHead>
-                  <TableHead>Start Date</TableHead>
+                  <TableHead>Compliance</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredStaff.map((member) => (
+                {filteredStaff.map((member) => {
+                  const badgeConfig = getBackgroundCheckBadge(member.background_check_status);
+                  const BadgeIcon = badgeConfig?.icon;
+                  
+                  return (
                   <TableRow key={member.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar>
                           <AvatarImage src={member.profile?.avatar_url || undefined} />
                           <AvatarFallback>
-                            {getInitials(member.profile?.first_name || null, member.profile?.last_name || null)}
+                            {getInitials(member.first_name || null, member.last_name || null)}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium">
-                            {member.profile?.first_name} {member.profile?.last_name}
+                            {member.first_name} {member.last_name}
                           </p>
-                          <p className="text-sm text-muted-foreground">{member.profile?.email}</p>
+                          <p className="text-sm text-muted-foreground">{member.email}</p>
                         </div>
                       </div>
                     </TableCell>
@@ -260,7 +279,26 @@ const Staff: React.FC = () => {
                     </TableCell>
                     <TableCell>${member.hourly_rate?.toFixed(2) || '0.00'}/hr</TableCell>
                     <TableCell>
-                      {member.start_date ? new Date(member.start_date).toLocaleDateString() : 'N/A'}
+                      <div className="flex flex-col gap-1">
+                        {member.background_check_status && badgeConfig && (
+                          <Badge variant={badgeConfig.variant} className="flex items-center gap-1 w-fit">
+                            <BadgeIcon size={12} />
+                            {member.background_check_status.replace('_', ' ')}
+                          </Badge>
+                        )}
+                        {member.right_to_work_verified && (
+                          <Badge variant="default" className="flex items-center gap-1 w-fit">
+                            <CheckCircle size={12} />
+                            Right to Work
+                          </Badge>
+                        )}
+                        {member.license_expiry && new Date(member.license_expiry) < new Date() && (
+                          <Badge variant="destructive" className="flex items-center gap-1 w-fit">
+                            <AlertTriangle size={12} />
+                            License Expired
+                          </Badge>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Badge variant={member.is_active ? 'default' : 'secondary'}>
@@ -299,7 +337,8 @@ const Staff: React.FC = () => {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           </div>

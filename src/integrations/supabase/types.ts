@@ -1199,45 +1199,141 @@ export type Database = {
       }
       staff_members: {
         Row: {
+          address: string | null
+          background_check_date: string | null
+          background_check_expiry: string | null
+          background_check_status: string | null
+          certifications: Json | null
+          city: string | null
           created_at: string | null
+          date_of_birth: string | null
+          dbs_number: string | null
+          education_history: Json | null
+          email: string | null
+          emergency_contact_email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          emergency_contact_relationship: string | null
           employment_type: string | null
           end_date: string | null
+          first_name: string | null
           hourly_rate: number | null
           id: string
+          insurance_expiry: string | null
+          insurance_policy_number: string | null
           is_active: boolean | null
           job_title: string | null
+          last_name: string | null
+          license_expiry: string | null
+          license_number: string | null
+          license_state: string | null
+          license_type: string | null
+          national_id_number: string | null
+          notes: string | null
           organization_id: string
+          phone: string | null
+          postal_code: string | null
+          professional_indemnity_insurance: boolean | null
+          professional_references: Json | null
           profile_id: string | null
           qualifications: Json | null
+          right_to_work_document_type: string | null
+          right_to_work_expiry: string | null
+          right_to_work_verified: boolean | null
           start_date: string | null
+          state: string | null
           updated_at: string | null
         }
         Insert: {
+          address?: string | null
+          background_check_date?: string | null
+          background_check_expiry?: string | null
+          background_check_status?: string | null
+          certifications?: Json | null
+          city?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
+          dbs_number?: string | null
+          education_history?: Json | null
+          email?: string | null
+          emergency_contact_email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relationship?: string | null
           employment_type?: string | null
           end_date?: string | null
+          first_name?: string | null
           hourly_rate?: number | null
           id?: string
+          insurance_expiry?: string | null
+          insurance_policy_number?: string | null
           is_active?: boolean | null
           job_title?: string | null
+          last_name?: string | null
+          license_expiry?: string | null
+          license_number?: string | null
+          license_state?: string | null
+          license_type?: string | null
+          national_id_number?: string | null
+          notes?: string | null
           organization_id: string
+          phone?: string | null
+          postal_code?: string | null
+          professional_indemnity_insurance?: boolean | null
+          professional_references?: Json | null
           profile_id?: string | null
           qualifications?: Json | null
+          right_to_work_document_type?: string | null
+          right_to_work_expiry?: string | null
+          right_to_work_verified?: boolean | null
           start_date?: string | null
+          state?: string | null
           updated_at?: string | null
         }
         Update: {
+          address?: string | null
+          background_check_date?: string | null
+          background_check_expiry?: string | null
+          background_check_status?: string | null
+          certifications?: Json | null
+          city?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
+          dbs_number?: string | null
+          education_history?: Json | null
+          email?: string | null
+          emergency_contact_email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relationship?: string | null
           employment_type?: string | null
           end_date?: string | null
+          first_name?: string | null
           hourly_rate?: number | null
           id?: string
+          insurance_expiry?: string | null
+          insurance_policy_number?: string | null
           is_active?: boolean | null
           job_title?: string | null
+          last_name?: string | null
+          license_expiry?: string | null
+          license_number?: string | null
+          license_state?: string | null
+          license_type?: string | null
+          national_id_number?: string | null
+          notes?: string | null
           organization_id?: string
+          phone?: string | null
+          postal_code?: string | null
+          professional_indemnity_insurance?: boolean | null
+          professional_references?: Json | null
           profile_id?: string | null
           qualifications?: Json | null
+          right_to_work_document_type?: string | null
+          right_to_work_expiry?: string | null
+          right_to_work_verified?: boolean | null
           start_date?: string | null
+          state?: string | null
           updated_at?: string | null
         }
         Relationships: [
