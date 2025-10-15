@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { User, Bell, Shield, Save } from 'lucide-react';
+import { User, Bell, Shield, Save, CreditCard } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import ProfileImageUploader from '@/components/ui-components/ProfileImageUploader';
 import { useProfile } from '@/hooks/useProfile';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
@@ -194,6 +195,25 @@ const Settings: React.FC = () => {
           </div>
         </div>
         
+        {/* Payment & Integrations */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+          <div className="flex items-center mb-4">
+            <CreditCard className="text-purple-600 mr-3" size={20} />
+            <h3 className="font-semibold text-gray-800">Payment & Integrations</h3>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <Label className="block text-sm font-medium text-gray-700 mb-2">Stripe Integration</Label>
+              <Alert>
+                <AlertDescription>
+                  Stripe is not configured yet. Contact your administrator to add the Stripe API key to enable payment processing for appointments.
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
+        </div>
+
         {/* Privacy Settings */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center mb-4">
