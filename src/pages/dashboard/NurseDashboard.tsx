@@ -1,15 +1,29 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { Shield, Calendar, Users, Settings, CreditCard, Star, FileText, Activity, AlertCircle, Clock } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { useNurseStats } from '@/hooks/useNurseStats';
+import { useProfile } from '@/hooks/useProfile';
+import { useOrganization } from '@/hooks/useOrganization';
+import { format } from 'date-fns';
 
 const NurseDashboard: React.FC = () => {
   const { user, isAuthenticated, isLoading, subscription, subscriptionLoading, checkSubscription } = useUser();
   const { stats, loading: statsLoading } = useNurseStats();
+  const { profile } = useProfile();
+  const { organization } = useOrganization();
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
   
   // If auth is loading, show spinner
   if (isLoading) {
@@ -78,9 +92,31 @@ const NurseDashboard: React.FC = () => {
   
   return (
     <div className="container mx-auto p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Welcome back, {user.firstName}!</h1>
-        <p className="text-muted-foreground">Healthcare Professional Dashboard</p>
+      <div className="mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">
+              Welcome back, {profile?.first_name || user.firstName} {profile?.last_name || user.lastName}!
+            </h1>
+            {organization && (
+              <p className="text-lg text-purple-600 font-medium mt-1">
+                {organization.name}
+              </p>
+            )}
+            <p className="text-muted-foreground mt-1">Healthcare Professional Dashboard</p>
+          </div>
+          <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-100">
+            <Clock className="w-5 h-5 text-purple-600" />
+            <div className="text-right">
+              <p className="text-sm font-semibold text-gray-800">
+                {format(currentTime, 'h:mm a')}
+              </p>
+              <p className="text-xs text-gray-500">
+                {format(currentTime, 'EEEE, MMMM d, yyyy')}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
         
         {/* Quick Stats */}
