@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { useAppointments } from '@/hooks/useAppointments';
 import { format, startOfWeek, addDays, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, isToday, isBefore, startOfDay } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
 import { ChevronLeft, ChevronRight, Plus, Clock, MapPin, User, Calendar as CalendarIcon, Grid3x3, List, LayoutGrid, X, UserPlus } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
@@ -25,6 +26,26 @@ const Calendar: React.FC = () => {
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
   const [appointmentDate, setAppointmentDate] = useState<Date>(new Date());
   const [isNewClient, setIsNewClient] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  // Form state
+  const [appointmentForm, setAppointmentForm] = useState({
+    clientId: '',
+    staffId: '',
+    startTime: '09:00',
+    endTime: '10:00',
+    serviceType: '',
+    title: '',
+    duration: '60',
+    hourlyRate: '45.00',
+    specialInstructions: '',
+    // New client fields
+    clientFirstName: '',
+    clientLastName: '',
+    clientEmail: '',
+    clientPhone: '',
+    clientAddress: '',
+  });
   
   if (isLoading || loading) {
     return (
@@ -85,10 +106,72 @@ const Calendar: React.FC = () => {
     setIsAppointmentModalOpen(true);
   };
 
-  const handleCreateAppointment = () => {
-    // This will be replaced with actual appointment creation logic
-    toast.success('Appointment created successfully!');
-    setIsAppointmentModalOpen(false);
+  const handleCreateAppointment = async () => {
+    setIsSaving(true);
+    try {
+      // Calculate total cost
+      const durationHours = parseInt(appointmentForm.duration) / 60;
+      const totalCost = durationHours * parseFloat(appointmentForm.hourlyRate);
+
+      // Prepare appointment data
+      const appointmentData = {
+        nurse_id: user.id,
+        client_id: appointmentForm.clientId || user.id, // Temporary - will be replaced with actual client
+        appointment_date: format(appointmentDate, 'yyyy-MM-dd'),
+        start_time: appointmentForm.startTime,
+        end_time: appointmentForm.endTime,
+        title: appointmentForm.title,
+        service_type: appointmentForm.serviceType,
+        duration_minutes: parseInt(appointmentForm.duration),
+        hourly_rate: parseFloat(appointmentForm.hourlyRate),
+        total_cost: totalCost,
+        special_instructions: appointmentForm.specialInstructions,
+        status: 'pending' as const,
+        address: isNewClient ? appointmentForm.clientAddress : '',
+        description: `${appointmentForm.serviceType} - ${appointmentForm.title}`,
+      };
+
+      const { data, error } = await supabase
+        .from('appointments')
+        .insert([appointmentData])
+        .select();
+
+      if (error) {
+        console.error('Error creating appointment:', error);
+        toast.error('Failed to create appointment: ' + error.message);
+        return;
+      }
+
+      toast.success('Appointment created successfully!');
+      setIsAppointmentModalOpen(false);
+      
+      // Reset form
+      setAppointmentForm({
+        clientId: '',
+        staffId: '',
+        startTime: '09:00',
+        endTime: '10:00',
+        serviceType: '',
+        title: '',
+        duration: '60',
+        hourlyRate: '45.00',
+        specialInstructions: '',
+        clientFirstName: '',
+        clientLastName: '',
+        clientEmail: '',
+        clientPhone: '',
+        clientAddress: '',
+      });
+      setIsNewClient(false);
+      
+      // Refresh appointments - trigger a re-fetch
+      window.location.reload();
+    } catch (error: any) {
+      console.error('Error creating appointment:', error);
+      toast.error('Failed to create appointment');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const goToToday = () => {
@@ -119,7 +202,7 @@ const Calendar: React.FC = () => {
       </div>
 
       {/* View Selector */}
-      <Tabs value={view} onValueChange={(v) => setView(v as any)} className="w-full">
+      <Tabs value={view} onValueChange={(v) => setView(v as 'month' | 'week' | 'day')} className="w-full">
         <TabsList className="grid w-full max-w-md grid-cols-3">
           <TabsTrigger value="month" className="gap-2">
             <LayoutGrid size={16} />
@@ -413,29 +496,56 @@ const Calendar: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4 p-4 border rounded-lg bg-accent/50">
                   <div className="space-y-2">
                     <Label htmlFor="client-first-name">First Name *</Label>
-                    <Input id="client-first-name" placeholder="John" />
+                    <Input 
+                      id="client-first-name" 
+                      placeholder="John"
+                      value={appointmentForm.clientFirstName}
+                      onChange={(e) => setAppointmentForm({...appointmentForm, clientFirstName: e.target.value})}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="client-last-name">Last Name *</Label>
-                    <Input id="client-last-name" placeholder="Doe" />
+                    <Input 
+                      id="client-last-name" 
+                      placeholder="Doe"
+                      value={appointmentForm.clientLastName}
+                      onChange={(e) => setAppointmentForm({...appointmentForm, clientLastName: e.target.value})}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="client-email">Email</Label>
-                    <Input id="client-email" type="email" placeholder="john.doe@email.com" />
+                    <Input 
+                      id="client-email" 
+                      type="email" 
+                      placeholder="john.doe@email.com"
+                      value={appointmentForm.clientEmail}
+                      onChange={(e) => setAppointmentForm({...appointmentForm, clientEmail: e.target.value})}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="client-phone">Phone *</Label>
-                    <Input id="client-phone" type="tel" placeholder="+1 (555) 123-4567" />
+                    <Input 
+                      id="client-phone" 
+                      type="tel" 
+                      placeholder="+1 (555) 123-4567"
+                      value={appointmentForm.clientPhone}
+                      onChange={(e) => setAppointmentForm({...appointmentForm, clientPhone: e.target.value})}
+                    />
                   </div>
                   <div className="space-y-2 col-span-2">
                     <Label htmlFor="client-address">Address *</Label>
-                    <Input id="client-address" placeholder="123 Main St, City, State 12345" />
+                    <Input 
+                      id="client-address" 
+                      placeholder="123 Main St, City, State 12345"
+                      value={appointmentForm.clientAddress}
+                      onChange={(e) => setAppointmentForm({...appointmentForm, clientAddress: e.target.value})}
+                    />
                   </div>
                 </div>
               ) : (
                 <div className="space-y-2">
                   <Label htmlFor="client-select">Select Client *</Label>
-                  <Select>
+                  <Select value={appointmentForm.clientId} onValueChange={(v) => setAppointmentForm({...appointmentForm, clientId: v})}>
                     <SelectTrigger id="client-select">
                       <SelectValue placeholder="Choose a client" />
                     </SelectTrigger>
@@ -452,7 +562,7 @@ const Calendar: React.FC = () => {
             {/* Staff Assignment */}
             <div className="space-y-2">
               <Label htmlFor="staff-select" className="text-base font-semibold">Assign Staff *</Label>
-              <Select>
+              <Select value={appointmentForm.staffId} onValueChange={(v) => setAppointmentForm({...appointmentForm, staffId: v})}>
                 <SelectTrigger id="staff-select">
                   <SelectValue placeholder="Select staff member" />
                 </SelectTrigger>
@@ -472,17 +582,27 @@ const Calendar: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="start-time">Start Time *</Label>
-                  <Input id="start-time" type="time" defaultValue="09:00" />
+                  <Input 
+                    id="start-time" 
+                    type="time" 
+                    value={appointmentForm.startTime}
+                    onChange={(e) => setAppointmentForm({...appointmentForm, startTime: e.target.value})}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="end-time">End Time *</Label>
-                  <Input id="end-time" type="time" defaultValue="10:00" />
+                  <Input 
+                    id="end-time" 
+                    type="time" 
+                    value={appointmentForm.endTime}
+                    onChange={(e) => setAppointmentForm({...appointmentForm, endTime: e.target.value})}
+                  />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="service-type">Service Type *</Label>
-                <Select>
+                <Select value={appointmentForm.serviceType} onValueChange={(v) => setAppointmentForm({...appointmentForm, serviceType: v})}>
                   <SelectTrigger id="service-type">
                     <SelectValue placeholder="Select service type" />
                   </SelectTrigger>
@@ -499,17 +619,35 @@ const Calendar: React.FC = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="appointment-title">Appointment Title *</Label>
-                <Input id="appointment-title" placeholder="e.g., Morning Care Visit" />
+                <Input 
+                  id="appointment-title" 
+                  placeholder="e.g., Morning Care Visit"
+                  value={appointmentForm.title}
+                  onChange={(e) => setAppointmentForm({...appointmentForm, title: e.target.value})}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="duration">Duration (minutes)</Label>
-                <Input id="duration" type="number" defaultValue="60" min="15" step="15" />
+                <Input 
+                  id="duration" 
+                  type="number" 
+                  min="15" 
+                  step="15"
+                  value={appointmentForm.duration}
+                  onChange={(e) => setAppointmentForm({...appointmentForm, duration: e.target.value})}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="hourly-rate">Hourly Rate ($)</Label>
-                <Input id="hourly-rate" type="number" defaultValue="45.00" step="0.01" />
+                <Input 
+                  id="hourly-rate" 
+                  type="number" 
+                  step="0.01"
+                  value={appointmentForm.hourlyRate}
+                  onChange={(e) => setAppointmentForm({...appointmentForm, hourlyRate: e.target.value})}
+                />
               </div>
 
               <div className="space-y-2">
@@ -518,6 +656,8 @@ const Calendar: React.FC = () => {
                   id="special-instructions"
                   placeholder="Any special notes or requirements for this appointment..."
                   rows={3}
+                  value={appointmentForm.specialInstructions}
+                  onChange={(e) => setAppointmentForm({...appointmentForm, specialInstructions: e.target.value})}
                 />
               </div>
             </div>
@@ -531,18 +671,28 @@ const Calendar: React.FC = () => {
                   <span className="ml-2 font-medium">{format(appointmentDate, 'MMM d, yyyy')}</span>
                 </div>
                 <div>
+                  <span className="text-muted-foreground">Time:</span>
+                  <span className="ml-2 font-medium">{appointmentForm.startTime} - {appointmentForm.endTime}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Duration:</span>
+                  <span className="ml-2 font-medium">{appointmentForm.duration} min</span>
+                </div>
+                <div>
                   <span className="text-muted-foreground">Estimated Cost:</span>
-                  <span className="ml-2 font-medium text-primary">$45.00</span>
+                  <span className="ml-2 font-medium text-primary">
+                    ${((parseInt(appointmentForm.duration) / 60) * parseFloat(appointmentForm.hourlyRate)).toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
-              <Button onClick={handleCreateAppointment} className="flex-1">
-                Create Appointment
+              <Button onClick={handleCreateAppointment} className="flex-1" disabled={isSaving}>
+                {isSaving ? 'Creating...' : 'Create Appointment'}
               </Button>
-              <Button variant="outline" onClick={() => setIsAppointmentModalOpen(false)} className="flex-1">
+              <Button variant="outline" onClick={() => setIsAppointmentModalOpen(false)} className="flex-1" disabled={isSaving}>
                 Cancel
               </Button>
             </div>
