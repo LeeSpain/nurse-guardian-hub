@@ -109,22 +109,35 @@ const Staff: React.FC = () => {
   if (!organization) {
     return (
       <div className="container mx-auto p-6">
-        <Card className="p-8 text-center space-y-4">
-          <h2 className="text-2xl font-bold">No Organization Found</h2>
-          <p className="text-muted-foreground">
-            You need to create or join an organization to manage staff.
-          </p>
-          <Button
-            variant="nurse"
-            onClick={async () => {
-              await createOrganization({
-                name: `${user?.firstName || 'My'}'s Practice`,
-                email: user?.email || null,
-              });
-            }}
-          >
-            Create Organization
-          </Button>
+        <Card className="p-8 text-center space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Welcome to Your Dashboard</h2>
+            <p className="text-muted-foreground">
+              Let's get started by setting up your organization.
+            </p>
+          </div>
+          <div className="max-w-md mx-auto space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Your organization is the foundation for managing staff, clients, and schedules.
+            </p>
+            <Button
+              variant="nurse"
+              size="lg"
+              className="w-full"
+              onClick={async () => {
+                try {
+                  await createOrganization({
+                    name: `${user?.firstName || 'My'}'s Practice`,
+                    email: user?.email || null,
+                  });
+                } catch (error) {
+                  console.error('Failed to create organization:', error);
+                }
+              }}
+            >
+              Create My Organization
+            </Button>
+          </div>
         </Card>
       </div>
     );

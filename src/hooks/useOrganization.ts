@@ -66,25 +66,45 @@ export const useOrganization = () => {
     }
   };
 
-  const createOrganization = async (orgData: Omit<Partial<Organization>, 'owner_id'> & { name: string }) => {
+  const createOrganization = async (newOrgData: Omit<Partial<Organization>, 'owner_id'> & { name: string }) => {
     if (!user?.id) return;
 
     try {
-      const { data, error } = await supabase
+      // Create organization
+      const { data: createdOrg, error: orgError } = await supabase
         .from('nurse_organizations')
-        .insert([{ ...orgData, owner_id: user.id }])
+        .insert([{ 
+          name: newOrgData.name,
+          email: newOrgData.email || null,
+          phone: newOrgData.phone || null,
+          address: newOrgData.address || null,
+          registration_number: newOrgData.registration_number || null,
+          owner_id: user.id 
+        }])
         .select()
         .single();
 
-      if (error) throw error;
+      if (orgError) throw orgError;
+
+      // Create owner role for the user
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert([{
+          user_id: user.id,
+          role: 'owner',
+          nurse_organization_id: createdOrg.id
+        }]);
+
+      if (roleError) throw roleError;
 
       toast({
         title: "Success",
         description: "Organization created successfully",
       });
 
-      setOrganization(data);
-      return data;
+      setOrganization(createdOrg);
+      await fetchOrganization();
+      return createdOrg;
     } catch (error: any) {
       toast({
         title: "Error creating organization",
