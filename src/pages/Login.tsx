@@ -73,7 +73,7 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {renderHeader()}
-      <main className="flex-grow flex items-center justify-center py-12 bg-gray-50">
+      <main className="flex-grow flex items-center justify-center py-12 pt-32 bg-gray-50">
         <div className="w-full max-w-md mx-4">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="p-8">
