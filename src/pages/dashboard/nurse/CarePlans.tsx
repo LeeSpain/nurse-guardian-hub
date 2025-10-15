@@ -6,11 +6,14 @@ import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
+import { useCarePlans } from '@/hooks/useCarePlans';
 
 const CarePlans: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
+  const { carePlans, templates, stats, loading: plansLoading } = useCarePlans();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('active');
   
@@ -25,38 +28,6 @@ const CarePlans: React.FC = () => {
   if (!isAuthenticated || user?.role !== UserRole.NURSE) {
     return <Navigate to="/login" />;
   }
-
-  // Mock data
-  const carePlans = [
-    {
-      id: '1',
-      client_name: 'Mrs. Thompson',
-      title: 'Personal Care Plan',
-      category: 'general',
-      status: 'active',
-      start_date: new Date(2025, 8, 1),
-      review_date: new Date(2025, 10, 1),
-      goals: ['Maintain independence', 'Improve mobility'],
-    },
-    {
-      id: '2',
-      client_name: 'Mr. Davis',
-      title: 'Medication Management Plan',
-      category: 'medication',
-      status: 'review_needed',
-      start_date: new Date(2025, 7, 15),
-      review_date: new Date(2025, 9, 15),
-      goals: ['Ensure medication compliance', 'Monitor side effects'],
-    },
-  ];
-
-  const templates = [
-    { id: '1', name: 'Medication Administration Record (MAR)', category: 'medication' },
-    { id: '2', name: 'Personal Care Plan', category: 'general' },
-    { id: '3', name: 'Mobility & Handling Assessment', category: 'mobility' },
-    { id: '4', name: 'Nutrition & Hydration Plan', category: 'nutrition' },
-    { id: '5', name: 'Risk Assessment', category: 'general' },
-  ];
 
   const filteredPlans = carePlans.filter(plan =>
     plan.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,9 +66,9 @@ const CarePlans: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Active Plans</p>
-                <p className="text-2xl font-bold text-foreground">
-                  {carePlans.filter(p => p.status === 'active').length}
-                </p>
+                {plansLoading ? <Skeleton className="h-8 w-12" /> : (
+                  <p className="text-2xl font-bold text-foreground">{stats.activeCount}</p>
+                )}
               </div>
               <FileText className="text-green-600" size={32} />
             </div>
@@ -106,9 +77,9 @@ const CarePlans: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Need Review</p>
-                <p className="text-2xl font-bold text-foreground">
-                  {carePlans.filter(p => p.status === 'review_needed').length}
-                </p>
+                {plansLoading ? <Skeleton className="h-8 w-12" /> : (
+                  <p className="text-2xl font-bold text-foreground">{stats.reviewNeededCount}</p>
+                )}
               </div>
               <AlertTriangle className="text-yellow-600" size={32} />
             </div>
@@ -116,8 +87,10 @@ const CarePlans: React.FC = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Clients</p>
-                <p className="text-2xl font-bold text-foreground">{carePlans.length}</p>
+                <p className="text-sm text-muted-foreground">Total Plans</p>
+                {plansLoading ? <Skeleton className="h-8 w-12" /> : (
+                  <p className="text-2xl font-bold text-foreground">{carePlans.length}</p>
+                )}
               </div>
               <FileText className="text-blue-600" size={32} />
             </div>
@@ -126,7 +99,9 @@ const CarePlans: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Templates</p>
-                <p className="text-2xl font-bold text-foreground">{templates.length}</p>
+                {plansLoading ? <Skeleton className="h-8 w-12" /> : (
+                  <p className="text-2xl font-bold text-foreground">{templates.length}</p>
+                )}
               </div>
               <FileText className="text-purple-600" size={32} />
             </div>

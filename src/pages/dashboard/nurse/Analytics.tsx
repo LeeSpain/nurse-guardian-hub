@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { TrendingUp, DollarSign, Users, Calendar, Download, Filter } from 'lucide-react';
+import { TrendingUp, DollarSign, Users, Calendar, Download, Filter, TrendingDown } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { format, subMonths } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const Analytics: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
+  const { analytics, loading: analyticsLoading, error } = useAnalytics();
   const [timeRange, setTimeRange] = useState('month');
   
   if (isLoading) {
@@ -23,21 +25,24 @@ const Analytics: React.FC = () => {
     return <Navigate to="/login" />;
   }
 
-  // Mock data - would be replaced with real data
-  const monthlyEarnings = [
-    { month: 'Jan', amount: 4200 },
-    { month: 'Feb', amount: 4800 },
-    { month: 'Mar', amount: 5100 },
-    { month: 'Apr', amount: 4900 },
-    { month: 'May', amount: 5400 },
-    { month: 'Jun', amount: 5800 },
-  ];
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <Card className="p-6">
+          <p className="text-destructive">Error loading analytics: {error}</p>
+        </Card>
+      </div>
+    );
+  }
 
-  const currentMonth = monthlyEarnings[monthlyEarnings.length - 1];
-  const previousMonth = monthlyEarnings[monthlyEarnings.length - 2];
-  const earningsGrowth = ((currentMonth.amount - previousMonth.amount) / previousMonth.amount * 100).toFixed(1);
+  const monthlyData = analytics?.monthlyRevenueData || [];
+  const currentMonthEarnings = analytics?.monthlyEarnings || 0;
+  const previousMonthEarnings = monthlyData.length >= 2 ? monthlyData[monthlyData.length - 2].amount : 0;
+  const earningsGrowth = previousMonthEarnings > 0 
+    ? ((currentMonthEarnings - previousMonthEarnings) / previousMonthEarnings * 100).toFixed(1)
+    : '0';
 
-  const maxEarnings = Math.max(...monthlyEarnings.map(m => m.amount));
+  const maxEarnings = Math.max(...monthlyData.map(m => m.amount), 1);
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -64,15 +69,25 @@ const Analytics: React.FC = () => {
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                 <DollarSign className="text-green-600" size={24} />
               </div>
-              <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
-                <TrendingUp size={16} />
-                +{earningsGrowth}%
-              </div>
+              {analyticsLoading ? (
+                <Skeleton className="h-6 w-16" />
+              ) : (
+                <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
+                  {parseFloat(earningsGrowth) >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                  {parseFloat(earningsGrowth) >= 0 ? '+' : ''}{earningsGrowth}%
+                </div>
+              )}
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">Monthly Earnings</p>
-              <p className="text-2xl font-bold text-foreground">£{currentMonth.amount.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground mt-1">vs. £{previousMonth.amount.toLocaleString()} last month</p>
+              {analyticsLoading ? (
+                <Skeleton className="h-8 w-32" />
+              ) : (
+                <>
+                  <p className="text-2xl font-bold text-foreground">£{currentMonthEarnings.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-1">vs. £{previousMonthEarnings.toLocaleString()} last month</p>
+                </>
+              )}
             </div>
           </Card>
 
@@ -81,15 +96,14 @@ const Analytics: React.FC = () => {
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                 <Calendar className="text-blue-600" size={24} />
               </div>
-              <div className="flex items-center gap-1 text-blue-600 text-sm font-medium">
-                <TrendingUp size={16} />
-                +12%
-              </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">Total Shifts</p>
-              <p className="text-2xl font-bold text-foreground">156</p>
-              <p className="text-xs text-muted-foreground mt-1">vs. 139 last month</p>
+              {analyticsLoading ? (
+                <Skeleton className="h-8 w-20" />
+              ) : (
+                <p className="text-2xl font-bold text-foreground">{analytics?.totalShifts || 0}</p>
+              )}
             </div>
           </Card>
 
@@ -98,15 +112,17 @@ const Analytics: React.FC = () => {
               <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
                 <Users className="text-purple-600" size={24} />
               </div>
-              <div className="flex items-center gap-1 text-purple-600 text-sm font-medium">
-                <TrendingUp size={16} />
-                +8%
-              </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">Active Clients</p>
-              <p className="text-2xl font-bold text-foreground">24</p>
-              <p className="text-xs text-muted-foreground mt-1">vs. 22 last month</p>
+              {analyticsLoading ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                <>
+                  <p className="text-2xl font-bold text-foreground">{analytics?.activeClients || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Last 30 days</p>
+                </>
+              )}
             </div>
           </Card>
 
@@ -115,14 +131,14 @@ const Analytics: React.FC = () => {
               <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
                 <TrendingUp className="text-orange-600" size={24} />
               </div>
-              <div className="flex items-center gap-1 text-orange-600 text-sm font-medium">
-                +5%
-              </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">Avg. Hourly Rate</p>
-              <p className="text-2xl font-bold text-foreground">£32.50</p>
-              <p className="text-xs text-muted-foreground mt-1">vs. £31.00 last month</p>
+              {analyticsLoading ? (
+                <Skeleton className="h-8 w-24" />
+              ) : (
+                <p className="text-2xl font-bold text-foreground">£{(analytics?.averageHourlyRate || 0).toFixed(2)}</p>
+              )}
             </div>
           </Card>
         </div>
@@ -138,75 +154,75 @@ const Analytics: React.FC = () => {
           <TabsContent value="revenue" className="space-y-6">
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-6">Monthly Revenue Trend</h3>
-              <div className="space-y-4">
-                {monthlyEarnings.map((month) => (
-                  <div key={month.month} className="flex items-center gap-4">
-                    <div className="w-12 text-sm font-medium text-muted-foreground">{month.month}</div>
-                    <div className="flex-grow">
-                      <div className="h-8 bg-muted rounded-lg overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-end px-3 transition-all duration-500"
-                          style={{ width: `${(month.amount / maxEarnings) * 100}%` }}
-                        >
-                          <span className="text-white text-sm font-medium">
-                            £{month.amount.toLocaleString()}
-                          </span>
+              {analyticsLoading ? (
+                <Skeleton className="h-64 w-full" />
+              ) : monthlyData.length > 0 ? (
+                <div className="space-y-4">
+                  {monthlyData.map((month) => (
+                    <div key={month.month} className="flex items-center gap-4">
+                      <div className="w-12 text-sm font-medium text-muted-foreground">{month.month}</div>
+                      <div className="flex-grow">
+                        <div className="h-8 bg-muted rounded-lg overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-end px-3 transition-all duration-500"
+                            style={{ width: `${(month.amount / maxEarnings) * 100}%` }}
+                          >
+                            <span className="text-white text-sm font-medium">
+                              £{month.amount.toLocaleString()}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground py-12">No revenue data available</p>
+              )}
             </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="p-6">
                 <h3 className="text-lg font-semibold mb-4">Revenue by Service Type</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Personal Care</span>
-                    <span className="font-medium">£2,400 (42%)</span>
+                {analyticsLoading ? (
+                  <Skeleton className="h-48 w-full" />
+                ) : analytics?.revenueByService && analytics.revenueByService.length > 0 ? (
+                  <div className="space-y-3">
+                    {analytics.revenueByService.map((service, idx) => (
+                      <div key={idx} className="flex justify-between items-center">
+                        <span className="text-sm">{service.service_type}</span>
+                        <span className="font-medium">£{service.amount.toLocaleString()} ({service.percentage.toFixed(0)}%)</span>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Medication Support</span>
-                    <span className="font-medium">£1,800 (31%)</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Mobility Assistance</span>
-                    <span className="font-medium">£1,000 (17%)</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Other Services</span>
-                    <span className="font-medium">£600 (10%)</span>
-                  </div>
-                </div>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">No service data available</p>
+                )}
               </Card>
 
               <Card className="p-6">
                 <h3 className="text-lg font-semibold mb-4">Top Earning Staff</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                    <div>
-                      <p className="font-medium">Sarah Johnson</p>
-                      <p className="text-xs text-muted-foreground">42 shifts completed</p>
-                    </div>
-                    <span className="font-semibold text-purple-600">£2,100</span>
+                {analyticsLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-20 w-full" />)}
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                    <div>
-                      <p className="font-medium">Michael Chen</p>
-                      <p className="text-xs text-muted-foreground">38 shifts completed</p>
-                    </div>
-                    <span className="font-semibold">£1,850</span>
+                ) : analytics?.topStaff && analytics.topStaff.length > 0 ? (
+                  <div className="space-y-3">
+                    {analytics.topStaff.map((staff, idx) => (
+                      <div key={staff.id} className={`flex justify-between items-center p-3 rounded-lg ${idx === 0 ? 'bg-purple-50' : 'bg-muted'}`}>
+                        <div>
+                          <p className="font-medium">{staff.name}</p>
+                          <p className="text-xs text-muted-foreground">{staff.shifts} shifts completed</p>
+                        </div>
+                        <span className={`font-semibold ${idx === 0 ? 'text-purple-600' : ''}`}>
+                          £{staff.earnings.toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                    <div>
-                      <p className="font-medium">Emma Williams</p>
-                      <p className="text-xs text-muted-foreground">35 shifts completed</p>
-                    </div>
-                    <span className="font-semibold">£1,650</span>
-                  </div>
-                </div>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">No staff data available</p>
+                )}
               </Card>
             </div>
           </TabsContent>
@@ -215,57 +231,59 @@ const Analytics: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="p-6">
                 <h3 className="text-lg font-semibold mb-4">Shift Completion Rate</h3>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm">Completed</span>
-                      <span className="font-medium">94%</span>
+                {analyticsLoading ? (
+                  <Skeleton className="h-48 w-full" />
+                ) : analytics?.shiftStats ? (
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm">Completed</span>
+                        <span className="font-medium">{analytics.shiftStats.completionRate.toFixed(0)}%</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-green-600" style={{ width: `${analytics.shiftStats.completionRate}%` }}></div>
+                      </div>
                     </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full bg-green-600" style={{ width: '94%' }}></div>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm">Cancelled</span>
+                        <span className="font-medium">{analytics.shiftStats.cancelled}</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-yellow-600" style={{ width: `${(analytics.shiftStats.cancelled / (analytics.totalShifts || 1)) * 100}%` }}></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm">No Show</span>
+                        <span className="font-medium">{analytics.shiftStats.noShow}</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-red-600" style={{ width: `${(analytics.shiftStats.noShow / (analytics.totalShifts || 1)) * 100}%` }}></div>
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm">Cancelled</span>
-                      <span className="font-medium">4%</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full bg-yellow-600" style={{ width: '4%' }}></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm">No Show</span>
-                      <span className="font-medium">2%</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full bg-red-600" style={{ width: '2%' }}></div>
-                    </div>
-                  </div>
-                </div>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">No shift data available</p>
+                )}
               </Card>
 
               <Card className="p-6">
                 <h3 className="text-lg font-semibold mb-4">Peak Hours</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Morning (6AM - 12PM)</span>
-                    <span className="font-medium">45 shifts</span>
+                {analyticsLoading ? (
+                  <Skeleton className="h-48 w-full" />
+                ) : analytics?.peakHours && analytics.peakHours.length > 0 ? (
+                  <div className="space-y-2">
+                    {analytics.peakHours.map((slot, idx) => (
+                      <div key={idx} className="flex justify-between items-center">
+                        <span className="text-sm">{slot.hour}:00 - {slot.hour + 1}:00</span>
+                        <span className="font-medium">{slot.count} shifts</span>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Afternoon (12PM - 6PM)</span>
-                    <span className="font-medium">68 shifts</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Evening (6PM - 12AM)</span>
-                    <span className="font-medium">32 shifts</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Night (12AM - 6AM)</span>
-                    <span className="font-medium">11 shifts</span>
-                  </div>
-                </div>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">No peak hour data available</p>
+                )}
               </Card>
             </div>
           </TabsContent>
@@ -273,79 +291,40 @@ const Analytics: React.FC = () => {
           <TabsContent value="clients" className="space-y-6">
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Client Engagement Metrics</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Average Visits/Client</p>
-                  <p className="text-3xl font-bold text-foreground">6.5</p>
-                  <p className="text-xs text-green-600 mt-1">+0.8 from last month</p>
+              {analyticsLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-24 w-full" />)}
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Client Retention</p>
-                  <p className="text-3xl font-bold text-foreground">92%</p>
-                  <p className="text-xs text-green-600 mt-1">+3% from last month</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Active Clients</p>
+                    <p className="text-3xl font-bold text-foreground">{analytics?.activeClients || 0}</p>
+                    <p className="text-xs text-blue-600 mt-1">Last 30 days</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">New Clients</p>
-                  <p className="text-3xl font-bold text-foreground">8</p>
-                  <p className="text-xs text-blue-600 mt-1">This month</p>
-                </div>
-              </div>
+              )}
             </Card>
           </TabsContent>
 
           <TabsContent value="performance" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Care Quality Indicators</h3>
-                <div className="space-y-4">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Business Overview</h3>
+              {analyticsLoading ? (
+                <Skeleton className="h-48 w-full" />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm">Care Plans Reviewed On Time</span>
-                      <span className="font-medium text-green-600">98%</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full bg-green-600" style={{ width: '98%' }}></div>
-                    </div>
+                    <p className="text-sm text-muted-foreground mb-1">Total Shifts</p>
+                    <p className="text-3xl font-bold text-foreground">{analytics?.totalShifts || 0}</p>
                   </div>
                   <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm">Medication Compliance</span>
-                      <span className="font-medium text-green-600">96%</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full bg-green-600" style={{ width: '96%' }}></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm">Documentation Completed</span>
-                      <span className="font-medium text-green-600">100%</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full bg-green-600" style={{ width: '100%' }}></div>
-                    </div>
+                    <p className="text-sm text-muted-foreground mb-1">Completion Rate</p>
+                    <p className="text-3xl font-bold text-foreground">{analytics?.shiftStats?.completionRate.toFixed(1) || 0}%</p>
                   </div>
                 </div>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Compliance Status</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <span className="text-sm">All Staff DBS Checks</span>
-                    <span className="text-green-600 font-medium">✓ Current</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <span className="text-sm">Training Certifications</span>
-                    <span className="text-green-600 font-medium">✓ Up to Date</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <span className="text-sm">Insurance Renewal</span>
-                    <span className="text-yellow-600 font-medium">⚠ Due in 14 days</span>
-                  </div>
-                </div>
-              </Card>
-            </div>
+              )}
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

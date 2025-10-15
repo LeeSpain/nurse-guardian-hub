@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Dialog,
   DialogContent,
@@ -15,9 +16,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { format, formatDistanceToNow } from 'date-fns';
+import { useCareLogs } from '@/hooks/useCareLogs';
 
 const CareLogs: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
+  const { careLogs, stats, loading: logsLoading, error } = useCareLogs();
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddLogOpen, setIsAddLogOpen] = useState(false);
   
@@ -32,40 +35,6 @@ const CareLogs: React.FC = () => {
   if (!isAuthenticated || user?.role !== UserRole.NURSE) {
     return <Navigate to="/login" />;
   }
-
-  // Mock data
-  const careLogs = [
-    {
-      id: '1',
-      client_name: 'Mrs. Thompson',
-      staff_name: 'Sarah Johnson',
-      category: 'personal_care',
-      content: 'Assisted with morning personal care routine. Client in good spirits.',
-      log_date: new Date(2025, 9, 15),
-      log_time: '09:30',
-      created_at: new Date(2025, 9, 15, 9, 35),
-    },
-    {
-      id: '2',
-      client_name: 'Mr. Davis',
-      staff_name: 'Michael Chen',
-      category: 'medication',
-      content: 'Administered morning medications. Blood pressure: 120/80.',
-      log_date: new Date(2025, 9, 15),
-      log_time: '08:00',
-      created_at: new Date(2025, 9, 15, 8, 5),
-    },
-    {
-      id: '3',
-      client_name: 'Mrs. Thompson',
-      staff_name: 'Sarah Johnson',
-      category: 'observation',
-      content: 'Client appears more mobile today. No signs of discomfort.',
-      log_date: new Date(2025, 9, 15),
-      log_time: '14:00',
-      created_at: new Date(2025, 9, 15, 14, 5),
-    },
-  ];
 
   const filteredLogs = careLogs.filter(log =>
     log.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -161,8 +130,10 @@ const CareLogs: React.FC = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Today's Logs</p>
-                <p className="text-2xl font-bold text-foreground">{careLogs.length}</p>
+                <p className="text-sm text-muted-foreground">Recent Logs</p>
+                {logsLoading ? <Skeleton className="h-8 w-16" /> : (
+                  <p className="text-2xl font-bold text-foreground">{careLogs.length}</p>
+                )}
               </div>
               <FileText className="text-purple-600" size={32} />
             </div>
@@ -171,7 +142,9 @@ const CareLogs: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">This Week</p>
-                <p className="text-2xl font-bold text-foreground">42</p>
+                {logsLoading ? <Skeleton className="h-8 w-16" /> : (
+                  <p className="text-2xl font-bold text-foreground">{stats.weeklyLogs}</p>
+                )}
               </div>
               <Clock className="text-blue-600" size={32} />
             </div>
@@ -180,7 +153,9 @@ const CareLogs: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Clients Logged</p>
-                <p className="text-2xl font-bold text-foreground">2</p>
+                {logsLoading ? <Skeleton className="h-8 w-12" /> : (
+                  <p className="text-2xl font-bold text-foreground">{stats.clientsLogged}</p>
+                )}
               </div>
               <User className="text-green-600" size={32} />
             </div>
@@ -189,7 +164,9 @@ const CareLogs: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Incidents</p>
-                <p className="text-2xl font-bold text-foreground">0</p>
+                {logsLoading ? <Skeleton className="h-8 w-12" /> : (
+                  <p className="text-2xl font-bold text-foreground">{stats.incidents}</p>
+                )}
               </div>
               <FileText className="text-orange-600" size={32} />
             </div>

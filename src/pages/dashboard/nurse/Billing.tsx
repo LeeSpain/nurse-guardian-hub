@@ -1,59 +1,50 @@
 import React, { useState } from 'react';
-import { Calendar, DollarSign, FileText, Send, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Navigate } from 'react-router-dom';
+import { useUser, UserRole } from '@/contexts/UserContext';
+import { Calendar, DollarSign, FileText, Send, CheckCircle, Clock, AlertCircle, Eye, CreditCard } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useInvoices } from '@/hooks/useInvoices';
+import { format } from 'date-fns';
 
 const Billing: React.FC = () => {
+  const { user, isAuthenticated, isLoading } = useUser();
+  const { invoices, stats, loading: invoicesLoading, error } = useInvoices();
   const [activeTab, setActiveTab] = useState('pending');
 
-  // Mock data - will be replaced with real data
-  const invoices = [
-    {
-      id: 'INV-001',
-      clientName: 'John Smith',
-      amount: 450.00,
-      hoursWorked: 15,
-      status: 'pending',
-      dueDate: '2025-01-20',
-      billingPeriod: 'Jan 1-15, 2025',
-      staffMembers: ['Sarah Johnson', 'Mike Williams'],
-    },
-    {
-      id: 'INV-002',
-      clientName: 'Mary Johnson',
-      amount: 720.00,
-      hoursWorked: 24,
-      status: 'sent',
-      dueDate: '2025-01-18',
-      billingPeriod: 'Jan 1-15, 2025',
-      staffMembers: ['Sarah Johnson'],
-    },
-    {
-      id: 'INV-003',
-      clientName: 'Robert Davis',
-      amount: 300.00,
-      hoursWorked: 10,
-      status: 'paid',
-      paidDate: '2025-01-10',
-      billingPeriod: 'Dec 16-31, 2024',
-      staffMembers: ['Mike Williams', 'Emily Brown'],
-    },
-  ];
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-16 h-16 border-4 border-t-purple-600 border-r-transparent border-b-purple-600 border-l-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
-  const stats = {
-    pendingInvoices: 3,
-    totalPending: 1450.00,
-    paidThisMonth: 3200.00,
-    overdueInvoices: 1,
-  };
+  if (!isAuthenticated || user?.role !== UserRole.NURSE) {
+    return <Navigate to="/login" />;
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <Card>
+          <CardContent className="p-6">
+            <p className="text-destructive">Error loading invoices: {error}</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: any; icon: any }> = {
       pending: { variant: 'secondary', icon: Clock },
       sent: { variant: 'default', icon: Send },
       paid: { variant: 'default', icon: CheckCircle },
+      draft: { variant: 'secondary', icon: FileText },
       overdue: { variant: 'destructive', icon: AlertCircle },
     };
     
@@ -67,9 +58,9 @@ const Billing: React.FC = () => {
     );
   };
 
-  const filteredInvoices = invoices.filter(inv => 
-    activeTab === 'all' ? true : inv.status === activeTab
-  );
+  const filteredInvoices = activeTab === 'all' 
+    ? invoices 
+    : invoices.filter(inv => inv.status === activeTab);
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -89,25 +80,37 @@ const Billing: React.FC = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Pending Invoices</CardDescription>
-            <CardTitle className="text-2xl">{stats.pendingInvoices}</CardTitle>
+            {invoicesLoading ? (
+              <Skeleton className="h-8 w-16" />
+            ) : (
+              <CardTitle className="text-2xl">{stats.pendingCount}</CardTitle>
+            )}
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
-              ${stats.totalPending.toFixed(2)} total
-            </p>
+            {invoicesLoading ? (
+              <Skeleton className="h-4 w-24" />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                £{stats.pendingAmount.toFixed(2)} total
+              </p>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Paid This Month</CardDescription>
-            <CardTitle className="text-2xl text-green-600">
-              ${stats.paidThisMonth.toFixed(2)}
-            </CardTitle>
+            {invoicesLoading ? (
+              <Skeleton className="h-8 w-24" />
+            ) : (
+              <CardTitle className="text-2xl text-green-600">
+                £{stats.paidThisMonth.toFixed(2)}
+              </CardTitle>
+            )}
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              +12% from last month
+              Successfully collected
             </p>
           </CardContent>
         </Card>
@@ -115,7 +118,11 @@ const Billing: React.FC = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Overdue</CardDescription>
-            <CardTitle className="text-2xl text-red-600">{stats.overdueInvoices}</CardTitle>
+            {invoicesLoading ? (
+              <Skeleton className="h-8 w-12" />
+            ) : (
+              <CardTitle className="text-2xl text-red-600">{stats.overdueCount}</CardTitle>
+            )}
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
@@ -126,12 +133,16 @@ const Billing: React.FC = () => {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Avg. Payment Time</CardDescription>
-            <CardTitle className="text-2xl">5 days</CardTitle>
+            <CardDescription>Total Invoices</CardDescription>
+            {invoicesLoading ? (
+              <Skeleton className="h-8 w-16" />
+            ) : (
+              <CardTitle className="text-2xl">{invoices.length}</CardTitle>
+            )}
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Within terms
+              All time
             </p>
           </CardContent>
         </Card>
@@ -153,9 +164,14 @@ const Billing: React.FC = () => {
             </TabsList>
 
             <TabsContent value={activeTab} className="space-y-4">
-              {filteredInvoices.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No invoices found
+              {invoicesLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-32 w-full" />)}
+                </div>
+              ) : filteredInvoices.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No {activeTab === 'all' ? '' : activeTab} invoices found</p>
                 </div>
               ) : (
                 filteredInvoices.map((invoice) => (
@@ -168,17 +184,17 @@ const Billing: React.FC = () => {
                         <div className="flex items-start gap-3">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-lg">{invoice.id}</h3>
+                              <h3 className="font-semibold text-lg">{invoice.invoice_number}</h3>
                               {getStatusBadge(invoice.status)}
                             </div>
                             <p className="text-sm text-muted-foreground">
-                              Client: {invoice.clientName}
+                              Client: {invoice.client_name}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              Period: {invoice.billingPeriod}
+                              Period: {format(new Date(invoice.billing_period_start), 'MMM d')} - {format(new Date(invoice.billing_period_end), 'MMM d, yyyy')}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              Staff: {invoice.staffMembers.join(', ')}
+                              Due: {format(new Date(invoice.due_date), 'MMM d, yyyy')}
                             </p>
                           </div>
                         </div>
@@ -187,15 +203,15 @@ const Billing: React.FC = () => {
                       <div className="flex flex-col md:items-end gap-2">
                         <div className="text-right">
                           <p className="text-2xl font-bold text-foreground">
-                            ${invoice.amount.toFixed(2)}
+                            £{invoice.total_amount.toFixed(2)}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {invoice.hoursWorked} hours worked
+                            {invoice.total_hours} hours • {invoice.line_items_count} items
                           </p>
                         </div>
                         <div className="flex gap-2">
                           <Button variant="outline" size="sm">
-                            <FileText className="w-4 h-4 mr-1" />
+                            <Eye className="w-4 h-4 mr-1" />
                             View
                           </Button>
                           {invoice.status === 'pending' && (
@@ -206,7 +222,7 @@ const Billing: React.FC = () => {
                           )}
                           {invoice.status === 'sent' && (
                             <Button size="sm" variant="secondary" className="gap-1">
-                              <DollarSign className="w-4 h-4" />
+                              <CreditCard className="w-4 h-4" />
                               Charge Now
                             </Button>
                           )}
