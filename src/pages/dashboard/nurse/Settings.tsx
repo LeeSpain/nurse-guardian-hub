@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { User, Bell, Shield, Save, CreditCard } from 'lucide-react';
+import { User, Bell, Shield, Save, CreditCard, Building2 } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import ProfileImageUploader from '@/components/ui-components/ProfileImageUploader';
 import { useProfile } from '@/hooks/useProfile';
+import { useOrganization } from '@/hooks/useOrganization';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useToast } from '@/hooks/use-toast';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
   const { profile, loading: profileLoading, updateProfile, updateProfileImage } = useProfile();
+  const { organization, loading: orgLoading, createOrganization, updateOrganization, refetch } = useOrganization();
+  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingOrg, setIsEditingOrg] = useState(false);
+  const [showCreateOrg, setShowCreateOrg] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -22,6 +28,13 @@ const Settings: React.FC = () => {
     city: '',
     state: '',
     zip_code: ''
+  });
+  const [orgFormData, setOrgFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    registration_number: ''
   });
 
   React.useEffect(() => {
@@ -37,6 +50,18 @@ const Settings: React.FC = () => {
       });
     }
   }, [profile]);
+
+  React.useEffect(() => {
+    if (organization) {
+      setOrgFormData({
+        name: organization.name || '',
+        email: organization.email || '',
+        phone: organization.phone || '',
+        address: organization.address || '',
+        registration_number: organization.registration_number || ''
+      });
+    }
+  }, [organization]);
   
   if (isLoading || profileLoading) {
     return (
@@ -57,6 +82,50 @@ const Settings: React.FC = () => {
 
   const handleImageUpload = (url: string) => {
     updateProfileImage(url);
+  };
+
+  const handleOrgSave = async () => {
+    if (!organization?.id) return;
+    try {
+      await updateOrganization(organization.id, orgFormData);
+      setIsEditingOrg(false);
+      toast({
+        title: 'Success',
+        description: 'Organization details updated successfully'
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update organization details',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleCreateOrg = async () => {
+    if (!orgFormData.name.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Organization name is required',
+        variant: 'destructive'
+      });
+      return;
+    }
+    try {
+      await createOrganization(orgFormData);
+      setShowCreateOrg(false);
+      toast({
+        title: 'Success',
+        description: 'Organization created successfully'
+      });
+      await refetch();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to create organization',
+        variant: 'destructive'
+      });
+    }
   };
   
   return (
@@ -169,6 +238,180 @@ const Settings: React.FC = () => {
               />
             </div>
           </div>
+        </div>
+
+        {/* Organization Details */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <Building2 className="text-purple-600 mr-3" size={20} />
+              <div>
+                <h3 className="font-semibold text-gray-800">Organization Details</h3>
+                <p className="text-sm text-gray-500">Manage your organization for invoicing and communications</p>
+              </div>
+            </div>
+            {organization && !isEditingOrg && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsEditingOrg(true)}
+              >
+                Edit
+              </Button>
+            )}
+          </div>
+
+          {orgLoading ? (
+            <p className="text-sm text-gray-500">Loading organization details...</p>
+          ) : !organization ? (
+            showCreateOrg ? (
+              <div className="space-y-4">
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Organization Name *</Label>
+                  <Input
+                    type="text"
+                    value={orgFormData.name}
+                    onChange={(e) => setOrgFormData({ ...orgFormData, name: e.target.value })}
+                    placeholder="Your Organization Name"
+                  />
+                </div>
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Business Email</Label>
+                  <Input
+                    type="email"
+                    value={orgFormData.email}
+                    onChange={(e) => setOrgFormData({ ...orgFormData, email: e.target.value })}
+                    placeholder="contact@organization.com"
+                  />
+                </div>
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Business Phone</Label>
+                  <Input
+                    type="tel"
+                    value={orgFormData.phone}
+                    onChange={(e) => setOrgFormData({ ...orgFormData, phone: e.target.value })}
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Business Address</Label>
+                  <Input
+                    type="text"
+                    value={orgFormData.address}
+                    onChange={(e) => setOrgFormData({ ...orgFormData, address: e.target.value })}
+                    placeholder="123 Main Street, City, State 12345"
+                  />
+                </div>
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Registration/License Number</Label>
+                  <Input
+                    type="text"
+                    value={orgFormData.registration_number}
+                    onChange={(e) => setOrgFormData({ ...orgFormData, registration_number: e.target.value })}
+                    placeholder="License or registration number"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={handleCreateOrg} variant="nurse">Create Organization</Button>
+                  <Button onClick={() => setShowCreateOrg(false)} variant="outline">Cancel</Button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8 space-y-4">
+                <p className="text-gray-600">
+                  No organization found. Create one to enable invoicing, official communications, and professional documentation.
+                </p>
+                <Button onClick={() => setShowCreateOrg(true)} variant="nurse">
+                  <Building2 className="mr-2" size={16} />
+                  Create My Organization
+                </Button>
+              </div>
+            )
+          ) : isEditingOrg ? (
+            <div className="space-y-4">
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">Organization Name</Label>
+                <Input
+                  type="text"
+                  value={orgFormData.name}
+                  onChange={(e) => setOrgFormData({ ...orgFormData, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">Business Email</Label>
+                <Input
+                  type="email"
+                  value={orgFormData.email}
+                  onChange={(e) => setOrgFormData({ ...orgFormData, email: e.target.value })}
+                />
+                <p className="text-xs text-gray-500 mt-1">Used for invoices and official communications</p>
+              </div>
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">Business Phone</Label>
+                <Input
+                  type="tel"
+                  value={orgFormData.phone}
+                  onChange={(e) => setOrgFormData({ ...orgFormData, phone: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">Business Address</Label>
+                <Input
+                  type="text"
+                  value={orgFormData.address}
+                  onChange={(e) => setOrgFormData({ ...orgFormData, address: e.target.value })}
+                />
+                <p className="text-xs text-gray-500 mt-1">Appears on invoices and official documents</p>
+              </div>
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">Registration/License Number</Label>
+                <Input
+                  type="text"
+                  value={orgFormData.registration_number}
+                  onChange={(e) => setOrgFormData({ ...orgFormData, registration_number: e.target.value })}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleOrgSave} variant="nurse" icon={<Save size={16} />}>
+                  Save Changes
+                </Button>
+                <Button onClick={() => setIsEditingOrg(false)} variant="outline">
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="block text-sm font-medium text-gray-500 mb-1">Organization Name</Label>
+                <p className="text-gray-800">{organization.name}</p>
+              </div>
+              {organization.email && (
+                <div>
+                  <Label className="block text-sm font-medium text-gray-500 mb-1">Business Email</Label>
+                  <p className="text-gray-800">{organization.email}</p>
+                </div>
+              )}
+              {organization.phone && (
+                <div>
+                  <Label className="block text-sm font-medium text-gray-500 mb-1">Business Phone</Label>
+                  <p className="text-gray-800">{organization.phone}</p>
+                </div>
+              )}
+              {organization.address && (
+                <div className="md:col-span-2">
+                  <Label className="block text-sm font-medium text-gray-500 mb-1">Business Address</Label>
+                  <p className="text-gray-800">{organization.address}</p>
+                </div>
+              )}
+              {organization.registration_number && (
+                <div>
+                  <Label className="block text-sm font-medium text-gray-500 mb-1">Registration Number</Label>
+                  <p className="text-gray-800">{organization.registration_number}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         
         {/* Notification Settings */}
