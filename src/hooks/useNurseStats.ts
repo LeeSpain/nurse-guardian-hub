@@ -28,13 +28,13 @@ export const useNurseStats = () => {
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', userId)
+        .eq('id', userId)
         .single();
 
       const { data: nurseProfile } = await supabase
         .from('nurse_profiles')
         .select('*')
-        .eq('user_id', userId)
+        .eq('id', userId)
         .single();
 
       if (!profile || !nurseProfile) return 0;

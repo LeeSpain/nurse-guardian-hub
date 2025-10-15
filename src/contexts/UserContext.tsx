@@ -135,12 +135,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       if (error) {
         console.error('Error checking subscription:', error);
+        // Set default subscription data when check fails
+        setSubscription({ subscribed: false });
         return;
       }
 
       setSubscription(data);
     } catch (error) {
       console.error('Error checking subscription:', error);
+      // Set default subscription data on error
+      setSubscription({ subscribed: false });
     }
   };
 
