@@ -3,12 +3,18 @@ import { Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { useAppointments } from '@/hooks/useAppointments';
 import { format, startOfWeek, addDays, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, isToday, isBefore, startOfDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, Clock, MapPin, User, Calendar as CalendarIcon, Grid3x3, List, LayoutGrid } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Clock, MapPin, User, Calendar as CalendarIcon, Grid3x3, List, LayoutGrid, X, UserPlus } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const Calendar: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
@@ -16,6 +22,9 @@ const Calendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
+  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+  const [appointmentDate, setAppointmentDate] = useState<Date>(new Date());
+  const [isNewClient, setIsNewClient] = useState(false);
   
   if (isLoading || loading) {
     return (
@@ -70,6 +79,18 @@ const Calendar: React.FC = () => {
     setCurrentDate(newDate);
   };
 
+  const handleDateClick = (date: Date) => {
+    setSelectedDate(date);
+    setAppointmentDate(date);
+    setIsAppointmentModalOpen(true);
+  };
+
+  const handleCreateAppointment = () => {
+    // This will be replaced with actual appointment creation logic
+    toast.success('Appointment created successfully!');
+    setIsAppointmentModalOpen(false);
+  };
+
   const goToToday = () => {
     setCurrentDate(new Date());
     setSelectedDate(new Date());
@@ -87,7 +108,10 @@ const Calendar: React.FC = () => {
           <Button variant="outline" size="sm" onClick={goToToday}>
             Today
           </Button>
-          <Button size="sm" className="gap-2">
+          <Button size="sm" className="gap-2" onClick={() => {
+            setAppointmentDate(new Date());
+            setIsAppointmentModalOpen(true);
+          }}>
             <Plus size={16} />
             New Appointment
           </Button>
@@ -147,7 +171,7 @@ const Calendar: React.FC = () => {
                 return (
                   <button
                     key={index}
-                    onClick={() => setSelectedDate(day)}
+                    onClick={() => handleDateClick(day)}
                     className={cn(
                       "min-h-24 p-2 rounded-lg border transition-all hover:border-primary/50 hover:shadow-sm",
                       isSelected && "border-primary bg-primary/5 shadow-md",
@@ -358,6 +382,173 @@ const Calendar: React.FC = () => {
           )}
         </div>
       </Card>
+
+      {/* Appointment Creation Modal */}
+      <Dialog open={isAppointmentModalOpen} onOpenChange={setIsAppointmentModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create New Appointment</DialogTitle>
+            <DialogDescription>
+              Schedule an appointment for {format(appointmentDate, 'EEEE, MMMM d, yyyy')}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            {/* Client Selection */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-semibold">Client Information</Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsNewClient(!isNewClient)}
+                  className="gap-2"
+                >
+                  <UserPlus size={16} />
+                  {isNewClient ? 'Select Existing' : 'Add New Client'}
+                </Button>
+              </div>
+
+              {isNewClient ? (
+                <div className="grid grid-cols-2 gap-4 p-4 border rounded-lg bg-accent/50">
+                  <div className="space-y-2">
+                    <Label htmlFor="client-first-name">First Name *</Label>
+                    <Input id="client-first-name" placeholder="John" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="client-last-name">Last Name *</Label>
+                    <Input id="client-last-name" placeholder="Doe" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="client-email">Email</Label>
+                    <Input id="client-email" type="email" placeholder="john.doe@email.com" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="client-phone">Phone *</Label>
+                    <Input id="client-phone" type="tel" placeholder="+1 (555) 123-4567" />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label htmlFor="client-address">Address *</Label>
+                    <Input id="client-address" placeholder="123 Main St, City, State 12345" />
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label htmlFor="client-select">Select Client *</Label>
+                  <Select>
+                    <SelectTrigger id="client-select">
+                      <SelectValue placeholder="Choose a client" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="client1">John Smith - 123 Main St</SelectItem>
+                      <SelectItem value="client2">Mary Johnson - 456 Oak Ave</SelectItem>
+                      <SelectItem value="client3">Robert Davis - 789 Pine Rd</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+
+            {/* Staff Assignment */}
+            <div className="space-y-2">
+              <Label htmlFor="staff-select" className="text-base font-semibold">Assign Staff *</Label>
+              <Select>
+                <SelectTrigger id="staff-select">
+                  <SelectValue placeholder="Select staff member" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="staff1">Sarah Johnson - Senior RN</SelectItem>
+                  <SelectItem value="staff2">Mike Williams - LPN</SelectItem>
+                  <SelectItem value="staff3">Emily Brown - CNA</SelectItem>
+                  <SelectItem value="staff4">David Martinez - RN</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Appointment Details */}
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">Appointment Details</Label>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="start-time">Start Time *</Label>
+                  <Input id="start-time" type="time" defaultValue="09:00" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="end-time">End Time *</Label>
+                  <Input id="end-time" type="time" defaultValue="10:00" />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="service-type">Service Type *</Label>
+                <Select>
+                  <SelectTrigger id="service-type">
+                    <SelectValue placeholder="Select service type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="home-visit">Home Visit</SelectItem>
+                    <SelectItem value="medication">Medication Management</SelectItem>
+                    <SelectItem value="wound-care">Wound Care</SelectItem>
+                    <SelectItem value="vital-check">Vital Signs Check</SelectItem>
+                    <SelectItem value="personal-care">Personal Care</SelectItem>
+                    <SelectItem value="companionship">Companionship</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="appointment-title">Appointment Title *</Label>
+                <Input id="appointment-title" placeholder="e.g., Morning Care Visit" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="duration">Duration (minutes)</Label>
+                <Input id="duration" type="number" defaultValue="60" min="15" step="15" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="hourly-rate">Hourly Rate ($)</Label>
+                <Input id="hourly-rate" type="number" defaultValue="45.00" step="0.01" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="special-instructions">Special Instructions</Label>
+                <Textarea
+                  id="special-instructions"
+                  placeholder="Any special notes or requirements for this appointment..."
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-2">
+              <h4 className="font-semibold text-sm text-primary">Appointment Summary</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Date:</span>
+                  <span className="ml-2 font-medium">{format(appointmentDate, 'MMM d, yyyy')}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Estimated Cost:</span>
+                  <span className="ml-2 font-medium text-primary">$45.00</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4">
+              <Button onClick={handleCreateAppointment} className="flex-1">
+                Create Appointment
+              </Button>
+              <Button variant="outline" onClick={() => setIsAppointmentModalOpen(false)} className="flex-1">
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
