@@ -136,18 +136,22 @@ const Login: React.FC = () => {
                 </div>
                 
                 <div className="text-center text-sm text-gray-500 mt-4">
-                  <p>Demo login credentials:</p>
+                  <p className="font-medium mb-2">Don't have an account?</p>
                   <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
-                    <div className="border border-gray-200 rounded p-2">
-                      <p className="font-semibold mb-1">Nurse Account</p>
-                      <p>Email: nurse@example.com</p>
-                      <p>Any password works</p>
-                    </div>
-                    <div className="border border-gray-200 rounded p-2">
-                      <p className="font-semibold mb-1">Client Account</p>
-                      <p>Email: client@example.com</p>
-                      <p>Any password works</p>
-                    </div>
+                    <RouterLink 
+                      to="/register/nurse"
+                      className="border border-purple-200 bg-purple-50 rounded p-3 hover:bg-purple-100 transition-colors"
+                    >
+                      <p className="font-semibold mb-1 text-purple-700">Sign up as Nurse</p>
+                      <p className="text-purple-600">Join as a healthcare professional</p>
+                    </RouterLink>
+                    <RouterLink 
+                      to="/register/client"
+                      className="border border-blue-200 bg-blue-50 rounded p-3 hover:bg-blue-100 transition-colors"
+                    >
+                      <p className="font-semibold mb-1 text-blue-700">Sign up as Client</p>
+                      <p className="text-blue-600">Find care for your loved ones</p>
+                    </RouterLink>
                   </div>
                 </div>
 
