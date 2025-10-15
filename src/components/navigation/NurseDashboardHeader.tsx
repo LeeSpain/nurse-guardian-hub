@@ -26,10 +26,13 @@ const NurseDashboardHeader: React.FC = () => {
   const navLinks = [
     { path: '/nurse/dashboard', label: 'Dashboard' },
     { path: '/nurse/dashboard/calendar', label: 'Calendar' },
+    { path: '/nurse/dashboard/staff', label: 'Staff' },
     { path: '/nurse/dashboard/clients', label: 'Clients' },
+    { path: '/nurse/dashboard/shifts', label: 'Shifts' },
+    { path: '/nurse/dashboard/care-plans', label: 'Care Plans' },
+    { path: '/nurse/dashboard/care-logs', label: 'Care Logs' },
     { path: '/nurse/dashboard/messages', label: 'Messages' },
     { path: '/nurse/dashboard/settings', label: 'Settings' },
-    { path: '/nurse/dashboard/subscription', label: 'Subscription' },
   ];
   
   return (

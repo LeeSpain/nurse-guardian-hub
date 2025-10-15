@@ -23,7 +23,11 @@ const ClientDashboard = lazy(() => import('./pages/dashboard/ClientDashboard'));
 
 // Nurse dashboard pages
 const NurseCalendar = lazy(() => import('./pages/dashboard/nurse/Calendar'));
+const NurseStaff = lazy(() => import('./pages/dashboard/nurse/Staff'));
 const NurseClients = lazy(() => import('./pages/dashboard/nurse/Clients'));
+const NurseShifts = lazy(() => import('./pages/dashboard/nurse/Shifts'));
+const NurseCarePlans = lazy(() => import('./pages/dashboard/nurse/CarePlans'));
+const NurseCareLogs = lazy(() => import('./pages/dashboard/nurse/CareLogs'));
 const NurseMessages = lazy(() => import('./pages/dashboard/nurse/Messages'));
 const NurseSubscription = lazy(() => import('./pages/dashboard/nurse/Subscription'));
 const NurseSettings = lazy(() => import('./pages/dashboard/nurse/Settings'));
@@ -94,9 +98,29 @@ function App() {
                 <NurseCalendar />
               </ProtectedRoute>
             } />
+            <Route path="staff" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseStaff />
+              </ProtectedRoute>
+            } />
             <Route path="clients" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseClients />
+              </ProtectedRoute>
+            } />
+            <Route path="shifts" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseShifts />
+              </ProtectedRoute>
+            } />
+            <Route path="care-plans" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseCarePlans />
+              </ProtectedRoute>
+            } />
+            <Route path="care-logs" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <NurseCareLogs />
               </ProtectedRoute>
             } />
             <Route path="messages" element={
