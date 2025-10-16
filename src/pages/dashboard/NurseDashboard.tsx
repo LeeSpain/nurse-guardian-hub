@@ -55,45 +55,35 @@ const NurseDashboard: React.FC = () => {
     return <Navigate to="/client/home" />;
   }
   
-  // If subscription is still loading, show spinner
-  if (subscriptionLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-16 h-16 border-4 border-t-purple-600 border-r-transparent border-b-purple-600 border-l-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-  
-  // If no active subscription, show payment required screen
-  const hasActiveSubscription = subscription?.subscribed || false;
-  if (!hasActiveSubscription) {
-    return (
-      <div className="min-h-screen bg-background pt-24">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-3xl font-bold text-foreground">Subscription Required</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              You need an active subscription to access the healthcare professional dashboard.
-            </p>
-            <div className="mt-8">
-              <Button 
-                variant="nurse" 
-                size="lg"
-                as={Link} 
-                to="/nurse/pricing"
-                className="mx-auto"
-              >
-                View Subscription Plans
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Optional: Show subscription banner (non-blocking)
+  const showSubscriptionBanner = !subscriptionLoading && subscription && !subscription.subscribed;
   
   return (
     <div className="container mx-auto p-6">
+      {/* Optional Subscription Info Banner (non-blocking) */}
+      {showSubscriptionBanner && (
+        <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium text-blue-900 dark:text-blue-100">
+                Upgrade your plan to unlock premium features
+              </p>
+              <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                Access advanced analytics, unlimited clients, and priority support
+              </p>
+            </div>
+            <Button 
+              variant="primary" 
+              size="sm"
+              as={Link}
+              to="/nurse/pricing"
+            >
+              View Plans
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
