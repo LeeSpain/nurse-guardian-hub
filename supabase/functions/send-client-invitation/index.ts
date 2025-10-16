@@ -41,7 +41,7 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    const { email, first_name, last_name, organization_id } = await req.json();
+    const { email, first_name, last_name, organization_id, redirect_base_url } = await req.json();
 
     console.log('Sending client invitation to:', email);
 
@@ -93,9 +93,18 @@ serve(async (req) => {
       throw inviteError;
     }
 
+    // Build invite link with priority: redirect_base_url > header fallback
+    const baseUrl = redirect_base_url || 
+                    `${req.headers.get('x-forwarded-proto') || 'https'}://${req.headers.get('x-forwarded-host') || req.headers.get('host')}`;
+    const url = new URL('/client/onboard', baseUrl);
+    url.searchParams.set('token', token);
+    const inviteLink = url.toString();
+
+    console.log('Generated invite link:', inviteLink);
+    console.log('Base URL used:', baseUrl);
+
     // Send email via Resend
     const resend = new Resend(resendKey);
-    const onboardingLink = `${req.headers.get('origin')}/client/onboard?token=${token}`;
 
     const emailHtml = `
       <!DOCTYPE html>
@@ -104,50 +113,60 @@ serve(async (req) => {
           <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-            .content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
-            .button { display: inline-block; padding: 14px 32px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }
-            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
-            .info-box { background: #f8f9fa; border-left: 4px solid #667eea; padding: 15px; margin: 20px 0; }
+            .header { background: #f8f9fa; padding: 30px; text-align: center; border-bottom: 3px solid #0066cc; }
+            .content { background: #ffffff; padding: 30px; }
+            .button { display: inline-block; padding: 15px 30px; background: #0066cc; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; background: #f8f9fa; }
+            .info-box { background: #f8f9fa; border-left: 4px solid #0066cc; padding: 15px; margin: 20px 0; }
+            .link-fallback { background: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 5px; }
+            .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h1>Welcome to ${orgData.name}</h1>
+              <h1 style="color: #333; margin: 0;">Welcome to ${orgData.name}</h1>
             </div>
             <div class="content">
               <p>Hi ${first_name || 'there'},</p>
               
-              <p>${inviterName} has invited you to complete your client profile for ${orgData.name}.</p>
-              
-              <p>To get started with your care, please complete your information by clicking the button below:</p>
+              <p>You've been invited by <strong>${orgData.name}</strong> to complete your client profile.</p>
               
               <div style="text-align: center;">
-                <a href="${onboardingLink}" class="button">Complete Your Profile</a>
+                <a href="${inviteLink}" class="button">Complete Your Profile</a>
               </div>
               
               <div class="info-box">
-                <p><strong>What you'll need:</strong></p>
-                <ul>
+                <p style="margin: 0 0 10px 0;"><strong>What you'll need:</strong></p>
+                <ul style="margin: 0; padding-left: 20px;">
                   <li>Personal and contact information</li>
-                  <li>NHS Number (UK clients) or NIE Number (Spain clients)</li>
+                  <li>NHS Number (UK) or NIE Number (Spain)</li>
                   <li>Medical history and current medications</li>
                   <li>Emergency contact details</li>
                   <li>GP details (if applicable)</li>
                 </ul>
               </div>
               
-              <p><strong>This invitation will expire in 7 days.</strong></p>
+              <div class="warning">
+                <p style="margin: 0;"><strong>⏰ This invitation expires in 7 days.</strong></p>
+              </div>
               
-              <p>If you have any questions or need assistance, please don't hesitate to contact us.</p>
+              <div class="link-fallback">
+                <p style="font-size: 14px; color: #666; margin: 0 0 5px 0;">
+                  <strong>If the button doesn't work, copy this link:</strong>
+                </p>
+                <p style="font-size: 13px; color: #0066cc; word-break: break-all; margin: 0;">
+                  ${inviteLink}
+                </p>
+              </div>
               
-              <p>We look forward to supporting your care needs!</p>
-              
-              <p>Best regards,<br>${orgData.name}</p>
+              <p>If you have any questions, please don't hesitate to contact us.</p>
             </div>
             <div class="footer">
-              <p>If you didn't expect this invitation, you can safely ignore this email.</p>
+              <p style="margin: 5px 0;">This invitation was sent by <strong>${orgData.name}</strong></p>
+              ${orgData.email ? `<p style="margin: 5px 0;">Contact: ${orgData.email}</p>` : ''}
+              <p style="margin: 15px 0 5px 0;">Powered by Angels Nursing Care Platform</p>
+              <p style="margin: 5px 0;">If you didn't expect this invitation, you can safely ignore this email.</p>
             </div>
           </div>
         </body>
@@ -155,9 +174,9 @@ serve(async (req) => {
     `;
 
     const { error: emailError } = await resend.emails.send({
-      from: 'Care Team <onboarding@resend.dev>',
+      from: 'Angels Nursing Care <care@angelsnursingcare.com>',
       to: [email],
-      subject: `Complete Your Profile - ${orgData.name}`,
+      subject: `Complete Your Profile – ${orgData.name}`,
       html: emailHtml,
     });
 
@@ -172,6 +191,7 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         message: 'Invitation sent successfully',
+        invite_link: inviteLink,
         expires_at: expiresAt.toISOString()
       }),
       { 

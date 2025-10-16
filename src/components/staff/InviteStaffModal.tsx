@@ -20,6 +20,7 @@ export const InviteStaffModal: React.FC<InviteStaffModalProps> = ({
 }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -42,6 +43,7 @@ export const InviteStaffModal: React.FC<InviteStaffModalProps> = ({
         body: {
           ...formData,
           organization_id: organizationId,
+          redirect_base_url: window.location.origin,
         },
         headers: {
           Authorization: `Bearer ${session.access_token}`,
@@ -50,20 +52,12 @@ export const InviteStaffModal: React.FC<InviteStaffModalProps> = ({
 
       if (error) throw error;
 
+      setInviteLink(data.invite_link);
+
       toast({
         title: 'Invitation Sent!',
         description: `An invitation email has been sent to ${formData.email}`,
       });
-
-      // Reset form
-      setFormData({
-        first_name: '',
-        last_name: '',
-        email: '',
-        job_title: '',
-      });
-      
-      onOpenChange(false);
     } catch (error: any) {
       console.error('Error sending invitation:', error);
       toast({
@@ -76,8 +70,16 @@ export const InviteStaffModal: React.FC<InviteStaffModalProps> = ({
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setInviteLink(null);
+      setFormData({ first_name: '', last_name: '', email: '', job_title: '' });
+    }
+    onOpenChange(open);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -143,11 +145,40 @@ export const InviteStaffModal: React.FC<InviteStaffModalProps> = ({
             </ul>
           </div>
 
+          {inviteLink && (
+            <div className="bg-muted/50 p-3 rounded-lg border border-border mt-4">
+              <Label className="text-sm font-medium mb-2 block">Invitation Link</Label>
+              <div className="flex gap-2">
+                <Input 
+                  value={inviteLink} 
+                  readOnly 
+                  className="text-xs font-mono"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(inviteLink);
+                    toast({ 
+                      title: "Link Copied!", 
+                      description: "Share via WhatsApp, SMS, or any messaging app" 
+                    });
+                  }}
+                >
+                  Copy
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                You can also share this link manually via WhatsApp, SMS, or any messaging app
+              </p>
+            </div>
+          )}
+
           <div className="flex justify-end gap-2 pt-4">
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(false)}
+              onClick={() => handleOpenChange(false)}
               disabled={loading}
             >
               Cancel

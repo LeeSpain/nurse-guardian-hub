@@ -23,7 +23,7 @@ const ClientOnboarding: React.FC = () => {
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const token = searchParams.get('token');
+  const token = searchParams.get('token') || searchParams.get('t') || searchParams.get('Token');
 
   useEffect(() => {
     if (!token) {
@@ -179,11 +179,41 @@ const ClientOnboarding: React.FC = () => {
           <div className="text-destructive mb-4">
             <Shield className="w-12 h-12 mx-auto" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Invalid Invitation</h2>
-          <p className="text-muted-foreground mb-6">{error}</p>
-          <p className="text-sm text-muted-foreground">
-            Please contact your care provider for assistance.
-          </p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">
+            Invalid or Incomplete Invitation
+          </h2>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          
+          {error === 'No invitation token provided' ? (
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4">
+              <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                Need help?
+              </p>
+              <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
+                Your invitation link seems incomplete. Please:
+              </p>
+              <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1 list-disc list-inside text-left">
+                <li>Open the full link from the invitation email</li>
+                <li>Or ask your care team to re-send the invitation</li>
+              </ul>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground mb-4">
+              This invitation may have expired or been used already.
+            </p>
+          )}
+          
+          <div className="flex flex-col gap-2">
+            <Button onClick={() => window.location.href = '/'}>
+              Go to Home
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => window.location.href = 'mailto:care@angelsnursingcare.com?subject=Help with Invitation'}
+            >
+              Contact Support
+            </Button>
+          </div>
         </Card>
       </div>
     );

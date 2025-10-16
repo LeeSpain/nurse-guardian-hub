@@ -20,6 +20,7 @@ export const InviteClientModal: React.FC<InviteClientModalProps> = ({
   onSuccess,
 }) => {
   const [loading, setLoading] = useState(false);
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -49,22 +50,23 @@ export const InviteClientModal: React.FC<InviteClientModalProps> = ({
         throw new Error('Not authenticated');
       }
 
-      const { error } = await supabase.functions.invoke('send-client-invitation', {
+      const { data, error } = await supabase.functions.invoke('send-client-invitation', {
         body: {
           ...formData,
           organization_id: organization.id,
+          redirect_base_url: window.location.origin,
         },
       });
 
       if (error) throw error;
+
+      setInviteLink(data.invite_link);
 
       toast({
         title: "Invitation Sent!",
         description: `An email has been sent to ${formData.email} with instructions to complete their profile.`,
       });
 
-      setFormData({ first_name: '', last_name: '', email: '' });
-      onOpenChange(false);
       onSuccess?.();
     } catch (error: any) {
       console.error('Error sending invitation:', error);
@@ -78,8 +80,16 @@ export const InviteClientModal: React.FC<InviteClientModalProps> = ({
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setInviteLink(null);
+      setFormData({ first_name: '', last_name: '', email: '' });
+    }
+    onOpenChange(open);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -149,11 +159,40 @@ export const InviteClientModal: React.FC<InviteClientModalProps> = ({
             </div>
           </div>
 
+          {inviteLink && (
+            <div className="bg-muted/50 p-3 rounded-lg border border-border mt-4">
+              <Label className="text-sm font-medium mb-2 block">Invitation Link</Label>
+              <div className="flex gap-2">
+                <Input 
+                  value={inviteLink} 
+                  readOnly 
+                  className="text-xs font-mono"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(inviteLink);
+                    toast({ 
+                      title: "Link Copied!", 
+                      description: "Share via WhatsApp, SMS, or any messaging app" 
+                    });
+                  }}
+                >
+                  Copy
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                You can also share this link manually via WhatsApp, SMS, or any messaging app
+              </p>
+            </div>
+          )}
+
           <div className="flex justify-end gap-2 pt-4">
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(false)}
+              onClick={() => handleOpenChange(false)}
               disabled={loading}
             >
               Cancel
