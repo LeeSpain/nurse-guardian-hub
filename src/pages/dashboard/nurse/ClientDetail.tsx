@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate, useParams, useNavigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { ArrowLeft, Edit, Save, X, Calendar, FileText, Clock, AlertTriangle, User, Phone, Mail, MapPin, Heart, Bell, Activity, Send } from 'lucide-react';
+import { ArrowLeft, Edit, Save, X, Calendar, FileText, Clock, AlertTriangle, User, Phone, Mail, MapPin, Heart, Bell, Activity, Send, Plus } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -564,9 +564,34 @@ const ClientDetail: React.FC = () => {
 
             <TabsContent value="care-plans">
               <Card className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold">Care Plans</h3>
+                  <div className="flex gap-2">
+                    {carePlans.length > 0 && (
+                      <Button 
+                        variant="outline"
+                        onClick={() => navigate(`/nurse/dashboard/care-plans?clientId=${id}`)}
+                      >
+                        <FileText className="h-4 w-4 mr-2" />
+                        View All
+                      </Button>
+                    )}
+                    <Button onClick={() => navigate(`/nurse/dashboard/care-plans?action=create&clientId=${id}`)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create
+                    </Button>
+                  </div>
+                </div>
                 <div className="space-y-4">
                   {carePlans.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">No care plans yet</p>
+                    <div className="text-center text-muted-foreground py-8">
+                      <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p className="mb-4">No care plans yet</p>
+                      <Button onClick={() => navigate(`/nurse/dashboard/care-plans?action=create&clientId=${id}`)}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create First Care Plan
+                      </Button>
+                    </div>
                   ) : (
                     carePlans.map((plan) => (
                       <div
@@ -581,7 +606,16 @@ const ClientDetail: React.FC = () => {
                               Started: {format(new Date(plan.start_date), 'MMM d, yyyy')}
                             </p>
                           </div>
-                          <Badge className={getStatusColor(plan.status)}>{plan.status}</Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge className={getStatusColor(plan.status)}>{plan.status}</Badge>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => navigate(`/nurse/dashboard/care-plans/${plan.id}`)}
+                            >
+                              View
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))
@@ -592,20 +626,59 @@ const ClientDetail: React.FC = () => {
 
             <TabsContent value="appointments">
               <Card className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold">Appointments</h3>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline"
+                      onClick={() => navigate(`/nurse/dashboard/calendar?clientId=${id}`)}
+                    >
+                      <Calendar className="h-4 w-4 mr-2" />
+                      View Calendar
+                    </Button>
+                    <Button onClick={() => navigate(`/nurse/dashboard/calendar?clientId=${id}`)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Book
+                    </Button>
+                  </div>
+                </div>
                 <div className="space-y-4">
                   {appointments.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">No appointments yet</p>
+                    <div className="text-center text-muted-foreground py-8">
+                      <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p className="mb-4">No appointments yet</p>
+                      <Button onClick={() => navigate(`/nurse/dashboard/calendar?clientId=${id}`)}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Book First Appointment
+                      </Button>
+                    </div>
                   ) : (
                     appointments.map((apt) => (
-                      <div key={apt.id} className="p-4 border rounded-lg">
+                      <div 
+                        key={apt.id} 
+                        className="p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                        onClick={() => navigate(`/nurse/dashboard/calendar?date=${apt.appointment_date}`)}
+                      >
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="font-semibold">{apt.title || 'Appointment'}</p>
                             <p className="text-sm text-muted-foreground mt-1">
                               {format(new Date(apt.appointment_date), 'MMM d, yyyy')} at {apt.start_time}
                             </p>
+                            {apt.address && (
+                              <p className="text-xs text-muted-foreground mt-1">{apt.address}</p>
+                            )}
                           </div>
-                          <Badge className={getStatusColor(apt.status)}>{apt.status}</Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge className={getStatusColor(apt.status)}>{apt.status}</Badge>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => navigate(`/nurse/dashboard/calendar?date=${apt.appointment_date}`)}
+                            >
+                              View
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))
@@ -637,21 +710,69 @@ const ClientDetail: React.FC = () => {
 
             <TabsContent value="logs">
               <Card className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold">Care Logs</h3>
+                  <div className="flex gap-2">
+                    {careLogs.length > 0 && (
+                      <Button 
+                        variant="outline"
+                        onClick={() => navigate(`/nurse/dashboard/care-logs?clientId=${id}`)}
+                      >
+                        <FileText className="h-4 w-4 mr-2" />
+                        View All ({careLogs.length})
+                      </Button>
+                    )}
+                    <Button onClick={() => navigate(`/nurse/dashboard/care-logs?clientId=${id}&action=add`)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Log
+                    </Button>
+                  </div>
+                </div>
                 <div className="space-y-4">
                   {careLogs.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">No care logs yet</p>
+                    <div className="text-center text-muted-foreground py-8">
+                      <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p className="mb-4">No care logs yet</p>
+                      <Button onClick={() => navigate(`/nurse/dashboard/care-logs?clientId=${id}&action=add`)}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add First Log
+                      </Button>
+                    </div>
                   ) : (
-                    careLogs.map((log) => (
-                      <div key={log.id} className="p-4 border rounded-lg">
-                        <div className="flex items-start justify-between mb-2">
-                          <Badge variant="outline">{log.category}</Badge>
-                          <span className="text-sm text-muted-foreground">
-                            {format(new Date(log.log_date), 'MMM d, yyyy')} at {log.log_time}
-                          </span>
+                    <>
+                      {careLogs.slice(0, 20).map((log) => (
+                        <div key={log.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                          <div className="flex items-start justify-between mb-2">
+                            <Badge variant="outline">{log.category}</Badge>
+                            <span className="text-sm text-muted-foreground">
+                              {format(new Date(log.log_date), 'MMM d, yyyy')} at {log.log_time}
+                            </span>
+                          </div>
+                          <p className="text-sm whitespace-pre-wrap">{log.content}</p>
+                          {log.attachments && Array.isArray(log.attachments) && log.attachments.length > 0 && (
+                            <div className="mt-2 flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">
+                                {log.attachments.length} {log.attachments.length === 1 ? 'attachment' : 'attachments'}
+                              </span>
+                            </div>
+                          )}
                         </div>
-                        <p className="text-sm">{log.content}</p>
-                      </div>
-                    ))
+                      ))}
+                      {careLogs.length > 20 && (
+                        <div className="text-center py-4">
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Showing 20 of {careLogs.length} logs
+                          </p>
+                          <Button 
+                            variant="outline"
+                            onClick={() => navigate(`/nurse/dashboard/care-logs?clientId=${id}`)}
+                          >
+                            View All {careLogs.length} Logs
+                          </Button>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </Card>

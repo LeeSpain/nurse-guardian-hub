@@ -2015,6 +2015,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_due_reminders: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _org_id: string

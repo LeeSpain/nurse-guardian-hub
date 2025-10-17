@@ -1,15 +1,17 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { toast } from 'sonner';
-import { Shield, Calendar, Users, Settings, CreditCard, Star, FileText, Activity, AlertCircle, Clock } from 'lucide-react';
+import { Shield, Calendar, Users, Settings, CreditCard, Star, FileText, Activity, AlertCircle, Clock, Bell, CheckCircle2 } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { useNurseStats } from '@/hooks/useNurseStats';
 import { useProfile } from '@/hooks/useProfile';
 import { useOrganization } from '@/hooks/useOrganization';
 import { useTodayShifts } from '@/hooks/useTodayShifts';
-import { format } from 'date-fns';
+import { format, isPast, isToday } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const NurseDashboard: React.FC = () => {
   const { user, isAuthenticated, isLoading, subscription, subscriptionLoading, checkSubscription } = useUser();
@@ -18,6 +20,8 @@ const NurseDashboard: React.FC = () => {
   const { organization } = useOrganization();
   const { shifts: todayShifts, loading: shiftsLoading } = useTodayShifts();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [todayReminders, setTodayReminders] = useState<any[]>([]);
+  const [remindersLoading, setRemindersLoading] = useState(true);
 
   // Auto-check subscription on mount
   useEffect(() => {
@@ -33,6 +37,42 @@ const NurseDashboard: React.FC = () => {
     }, 60000);
     return () => clearInterval(timer);
   }, []);
+  
+  // Fetch today's reminders
+  useEffect(() => {
+    const fetchTodayReminders = async () => {
+      if (!organization?.id) return;
+      
+      try {
+        const today = format(new Date(), 'yyyy-MM-dd');
+        const { data, error } = await supabase
+          .from('client_reminders')
+          .select(`
+            *,
+            client:clients(id, first_name, last_name),
+            assigned_staff:staff_members!client_reminders_assigned_to_fkey(id, first_name, last_name)
+          `)
+          .eq('organization_id', organization.id)
+          .lte('reminder_date', today)
+          .eq('status', 'pending')
+          .order('reminder_date', { ascending: true })
+          .order('reminder_time', { ascending: true })
+          .limit(5);
+        
+        if (error) {
+          console.error('Error fetching reminders:', error);
+        } else {
+          setTodayReminders(data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching reminders:', error);
+      } finally {
+        setRemindersLoading(false);
+      }
+    };
+    
+    fetchTodayReminders();
+  }, [organization?.id]);
   
   // If auth is loading, show spinner
   if (isLoading) {
@@ -188,6 +228,102 @@ const NurseDashboard: React.FC = () => {
           )}
         </div>
         
+        {/* Today's Reminders */}
+        <div className="mb-8">
+          <Card className="p-6 border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Bell className="h-5 w-5 text-amber-600" />
+                Today's Reminders
+              </h2>
+            </div>
+            
+            {remindersLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-16 bg-muted/50 rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : todayReminders.length === 0 ? (
+              <div className="text-center py-6">
+                <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-green-500" />
+                <p className="text-sm text-muted-foreground">All caught up! No pending reminders</p>
+              </div>
+            ) : (
+              <>
+                {(() => {
+                  const overdueCount = todayReminders.filter(r => 
+                    isPast(new Date(r.reminder_date)) && !isToday(new Date(r.reminder_date))
+                  ).length;
+                  
+                  return overdueCount > 0 ? (
+                    <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
+                      <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                        ⚠️ {overdueCount} overdue {overdueCount === 1 ? 'reminder' : 'reminders'}
+                      </p>
+                    </div>
+                  ) : null;
+                })()}
+                
+                <div className="space-y-3">
+                  {todayReminders.map((reminder) => {
+                    const isOverdue = isPast(new Date(reminder.reminder_date)) && !isToday(new Date(reminder.reminder_date));
+                    const isDueToday = isToday(new Date(reminder.reminder_date));
+                    
+                    return (
+                      <Link 
+                        key={reminder.id} 
+                        to={`/nurse/dashboard/clients/${reminder.client_id}?tab=reminders`}
+                        className="block"
+                      >
+                        <Card className={`p-4 hover:shadow-md transition-all cursor-pointer ${
+                          isOverdue ? 'border-red-300 bg-red-50/50 dark:bg-red-950/20' : 
+                          isDueToday ? 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20' : ''
+                        }`}>
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                <h4 className="font-semibold text-sm">{reminder.title}</h4>
+                                <Badge className={
+                                  reminder.priority === 'urgent' ? 'bg-red-500' :
+                                  reminder.priority === 'high' ? 'bg-orange-500' :
+                                  reminder.priority === 'medium' ? 'bg-yellow-500' :
+                                  'bg-blue-500'
+                                }>
+                                  {reminder.priority}
+                                </Badge>
+                                {isOverdue && (
+                                  <Badge variant="destructive" className="text-xs">Overdue</Badge>
+                                )}
+                                {isDueToday && (
+                                  <Badge className="bg-amber-500 text-xs">Due Today</Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground mb-1">
+                                {reminder.client?.first_name} {reminder.client?.last_name}
+                              </p>
+                              <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+                                <span className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  {format(new Date(reminder.reminder_date), 'MMM d')}
+                                  {reminder.reminder_time && ` at ${reminder.reminder_time}`}
+                                </span>
+                                <Badge variant="secondary" className="text-xs">
+                                  {reminder.reminder_type.replace('_', ' ')}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </Card>
+        </div>
+
         {/* Today's Rota Widget */}
         <div className="mb-8">
           <div className="bg-card p-6 rounded-xl shadow-sm border border-border">

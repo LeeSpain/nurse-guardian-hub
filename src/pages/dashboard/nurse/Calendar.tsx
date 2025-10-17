@@ -149,23 +149,33 @@ const Calendar: React.FC = () => {
     fetchClients();
   }, [organization?.id]);
 
-  // Handle URL parameters for pre-selecting client and opening modal
+  // Handle URL parameters for filtering by client
   useEffect(() => {
     const clientId = searchParams.get('clientId');
-    const action = searchParams.get('action');
+    const viewParam = searchParams.get('view');
+    const dateParam = searchParams.get('date');
     
-    if (clientId && action === 'book' && clients.length > 0) {
-      // Pre-select the client
-      setAppointmentForm(prev => ({
-        ...prev,
-        clientId: clientId
-      }));
-      // Open the appointment modal
-      setIsAppointmentModalOpen(true);
-      // Clear the URL parameters
-      setSearchParams({});
+    // Set view if specified
+    if (viewParam && (viewParam === 'month' || viewParam === 'week' || viewParam === 'day')) {
+      setView(viewParam);
     }
-  }, [searchParams, clients, setSearchParams]);
+    
+    // Set date if specified
+    if (dateParam) {
+      try {
+        const parsedDate = new Date(dateParam);
+        if (!isNaN(parsedDate.getTime())) {
+          setCurrentDate(parsedDate);
+          setSelectedDate(parsedDate);
+        }
+      } catch (error) {
+        console.error('Invalid date parameter:', error);
+      }
+    }
+    
+    // If clientId is present, just filter the calendar view (no action needed)
+    // The shifts are already being filtered via the useCalendarShifts hook
+  }, [searchParams]);
   
   if (isLoading || loading || orgLoading || staffLoading) {
     return (
