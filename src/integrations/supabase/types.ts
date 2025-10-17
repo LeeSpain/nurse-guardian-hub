@@ -23,13 +23,16 @@ export type Database = {
           created_at: string
           description: string | null
           duration_minutes: number | null
+          end_date: string | null
           end_time: string
           hourly_rate: number | null
           id: string
+          is_live_in: boolean | null
           notes: string | null
           nurse_id: string
           payment_status: string | null
           service_type: string | null
+          shift_group_id: string | null
           special_instructions: string | null
           staff_member_id: string | null
           start_time: string
@@ -48,13 +51,16 @@ export type Database = {
           created_at?: string
           description?: string | null
           duration_minutes?: number | null
+          end_date?: string | null
           end_time: string
           hourly_rate?: number | null
           id?: string
+          is_live_in?: boolean | null
           notes?: string | null
           nurse_id: string
           payment_status?: string | null
           service_type?: string | null
+          shift_group_id?: string | null
           special_instructions?: string | null
           staff_member_id?: string | null
           start_time: string
@@ -73,13 +79,16 @@ export type Database = {
           created_at?: string
           description?: string | null
           duration_minutes?: number | null
+          end_date?: string | null
           end_time?: string
           hourly_rate?: number | null
           id?: string
+          is_live_in?: boolean | null
           notes?: string | null
           nurse_id?: string
           payment_status?: string | null
           service_type?: string | null
+          shift_group_id?: string | null
           special_instructions?: string | null
           staff_member_id?: string | null
           start_time?: string

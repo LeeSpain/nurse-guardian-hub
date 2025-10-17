@@ -48,7 +48,7 @@ const Calendar: React.FC = () => {
     duration: '60',
     hourlyRate: '45.00',
     specialInstructions: '',
-    isMultiDay: false,
+    appointmentMode: 'single' as 'single' | 'weekly' | 'live-in',
     // New client fields
     clientFirstName: '',
     clientLastName: '',
@@ -56,6 +56,35 @@ const Calendar: React.FC = () => {
     clientPhone: '',
     clientAddress: '',
   });
+
+  // Weekly schedule state (7 days)
+  const [weeklySchedule, setWeeklySchedule] = useState(
+    Array.from({ length: 7 }, (_, i) => ({
+      enabled: true,
+      date: addDays(appointmentDate, i),
+      startTime: '09:00',
+      endTime: '10:00',
+    }))
+  );
+
+  // Live-in care state
+  const [liveInDays, setLiveInDays] = useState(3);
+  const [liveInEndDate, setLiveInEndDate] = useState(addDays(appointmentDate, 3));
+
+  // Update weekly schedule when appointment date changes
+  useEffect(() => {
+    setWeeklySchedule(prev => 
+      prev.map((day, i) => ({
+        ...day,
+        date: addDays(appointmentDate, i),
+      }))
+    );
+  }, [appointmentDate]);
+
+  // Update live-in end date when days change
+  useEffect(() => {
+    setLiveInEndDate(addDays(appointmentDate, liveInDays));
+  }, [appointmentDate, liveInDays]);
   const [clients, setClients] = useState<any[]>([]);
   const [clientsLoading, setClientsLoading] = useState(false);
   useEffect(() => {
@@ -218,7 +247,7 @@ const Calendar: React.FC = () => {
         }
       }
 
-      // Calculate total cost
+      // Calculate total cost for single appointment
       const durationHours = parseInt(appointmentForm.duration) / 60;
       const totalCost = durationHours * parseFloat(appointmentForm.hourlyRate);
 
@@ -227,29 +256,61 @@ const Calendar: React.FC = () => {
         nurse_id: user.id,
         client_id: clientId,
         staff_member_id: (appointmentForm.staffId && appointmentForm.staffId !== 'unassigned') ? appointmentForm.staffId : null,
-        start_time: appointmentForm.startTime,
-        end_time: appointmentForm.endTime,
         title: appointmentForm.title,
         service_type: appointmentForm.serviceType,
         duration_minutes: parseInt(appointmentForm.duration),
         hourly_rate: parseFloat(appointmentForm.hourlyRate),
-        total_cost: totalCost,
         special_instructions: appointmentForm.specialInstructions,
         status: 'pending' as const,
         address: isNewClient ? appointmentForm.clientAddress : '',
         description: `${appointmentForm.serviceType} - ${appointmentForm.title}`,
       };
 
-      // Create appointments (either 1 or 7 days)
-      const numberOfDays = appointmentForm.isMultiDay ? 7 : 1;
-      const appointmentsToCreate = [];
+      let appointmentsToCreate = [];
 
-      for (let i = 0; i < numberOfDays; i++) {
-        const currentDate = addDays(appointmentDate, i);
-        appointmentsToCreate.push({
+      if (appointmentForm.appointmentMode === 'single') {
+        // Single appointment
+        appointmentsToCreate = [{
           ...baseAppointmentData,
-          appointment_date: format(currentDate, 'yyyy-MM-dd'),
-        });
+          appointment_date: format(appointmentDate, 'yyyy-MM-dd'),
+          start_time: appointmentForm.startTime,
+          end_time: appointmentForm.endTime,
+          total_cost: totalCost,
+        }];
+      } else if (appointmentForm.appointmentMode === 'weekly') {
+        // Weekly care plan with individual daily schedules
+        appointmentsToCreate = weeklySchedule
+          .filter(day => day.enabled)
+          .map(day => {
+            const dayDurationHours = 
+              (parseInt(day.endTime.split(':')[0]) * 60 + parseInt(day.endTime.split(':')[1]) -
+               parseInt(day.startTime.split(':')[0]) * 60 - parseInt(day.startTime.split(':')[1])) / 60;
+            return {
+              ...baseAppointmentData,
+              appointment_date: format(day.date, 'yyyy-MM-dd'),
+              start_time: day.startTime,
+              end_time: day.endTime,
+              duration_minutes: Math.round(dayDurationHours * 60),
+              total_cost: dayDurationHours * parseFloat(appointmentForm.hourlyRate),
+            };
+          });
+      } else if (appointmentForm.appointmentMode === 'live-in') {
+        // Live-in care (continuous multi-day shift)
+        const shiftGroupId = crypto.randomUUID();
+        const totalHours = liveInDays * 24;
+        const totalLiveInCost = totalHours * parseFloat(appointmentForm.hourlyRate);
+
+        appointmentsToCreate = [{
+          ...baseAppointmentData,
+          appointment_date: format(appointmentDate, 'yyyy-MM-dd'),
+          end_date: format(liveInEndDate, 'yyyy-MM-dd'),
+          start_time: appointmentForm.startTime,
+          end_time: appointmentForm.endTime,
+          is_live_in: true,
+          shift_group_id: shiftGroupId,
+          duration_minutes: totalHours * 60,
+          total_cost: totalLiveInCost,
+        }];
       }
 
       const { data, error } = await supabase
@@ -263,9 +324,13 @@ const Calendar: React.FC = () => {
         return;
       }
 
-      toast.success(appointmentForm.isMultiDay 
-        ? `Successfully created ${numberOfDays} appointments!` 
-        : 'Appointment created successfully!');
+      const successMessages = {
+        single: 'Appointment created successfully!',
+        weekly: `Successfully created ${appointmentsToCreate.length} appointments for weekly care plan!`,
+        'live-in': `Successfully created ${liveInDays}-day live-in care assignment!`,
+      };
+
+      toast.success(successMessages[appointmentForm.appointmentMode]);
       setIsAppointmentModalOpen(false);
       
       // Reset form
@@ -279,7 +344,7 @@ const Calendar: React.FC = () => {
         duration: '60',
         hourlyRate: '45.00',
         specialInstructions: '',
-        isMultiDay: false,
+        appointmentMode: 'single',
         clientFirstName: '',
         clientLastName: '',
         clientEmail: '',
@@ -287,6 +352,15 @@ const Calendar: React.FC = () => {
         clientAddress: '',
       });
       setIsNewClient(false);
+      setWeeklySchedule(
+        Array.from({ length: 7 }, (_, i) => ({
+          enabled: true,
+          date: addDays(new Date(), i),
+          startTime: '09:00',
+          endTime: '10:00',
+        }))
+      );
+      setLiveInDays(3);
       
       // Refresh appointments - trigger a re-fetch
       window.location.reload();
@@ -806,26 +880,185 @@ const Calendar: React.FC = () => {
               </p>
             </div>
 
-            {/* 7-Day Care Plan Option */}
-            <div className="space-y-2 p-4 border rounded-lg bg-accent/10">
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="multi-day"
-                  checked={appointmentForm.isMultiDay}
-                  onChange={(e) => setAppointmentForm({...appointmentForm, isMultiDay: e.target.checked})}
-                  className="w-4 h-4"
-                />
-                <Label htmlFor="multi-day" className="cursor-pointer">
-                  Create 7-day care plan (repeating daily)
-                </Label>
+            {/* Appointment Mode Selection */}
+            <div className="space-y-4 p-4 border rounded-lg bg-accent/10">
+              <Label className="text-base font-semibold">Appointment Type</Label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="mode-single"
+                    name="appointmentMode"
+                    checked={appointmentForm.appointmentMode === 'single'}
+                    onChange={() => setAppointmentForm({...appointmentForm, appointmentMode: 'single'})}
+                    className="w-4 h-4"
+                  />
+                  <Label htmlFor="mode-single" className="cursor-pointer font-normal">
+                    Single appointment
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="mode-weekly"
+                    name="appointmentMode"
+                    checked={appointmentForm.appointmentMode === 'weekly'}
+                    onChange={() => setAppointmentForm({...appointmentForm, appointmentMode: 'weekly'})}
+                    className="w-4 h-4"
+                  />
+                  <Label htmlFor="mode-weekly" className="cursor-pointer font-normal">
+                    Weekly care plan (7 individual visits)
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="mode-live-in"
+                    name="appointmentMode"
+                    checked={appointmentForm.appointmentMode === 'live-in'}
+                    onChange={() => setAppointmentForm({...appointmentForm, appointmentMode: 'live-in'})}
+                    className="w-4 h-4"
+                  />
+                  <Label htmlFor="mode-live-in" className="cursor-pointer font-normal">
+                    Live-in care (continuous stay)
+                  </Label>
+                </div>
               </div>
-              {appointmentForm.isMultiDay && (
-                <p className="text-sm text-muted-foreground pl-6">
-                  This will create 7 consecutive appointments from {format(appointmentDate, 'MMM d')} to {format(addDays(appointmentDate, 6), 'MMM d, yyyy')} with the same time and details.
-                </p>
-              )}
             </div>
+
+            {/* Weekly Care Plan Schedule */}
+            {appointmentForm.appointmentMode === 'weekly' && (
+              <div className="space-y-4 p-4 border rounded-lg bg-primary/5">
+                <div className="flex justify-between items-center">
+                  <Label className="text-base font-semibold">Weekly Schedule</Label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const firstDay = weeklySchedule[0];
+                        setWeeklySchedule(prev => prev.map(day => ({
+                          ...day,
+                          startTime: firstDay.startTime,
+                          endTime: firstDay.endTime,
+                        })));
+                        toast.success('Copied times to all days');
+                      }}
+                    >
+                      Copy to all
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setWeeklySchedule(prev => prev.map(day => ({...day, enabled: true})))}
+                    >
+                      Enable all
+                    </Button>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  {weeklySchedule.map((day, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 bg-background rounded border">
+                      <input
+                        type="checkbox"
+                        checked={day.enabled}
+                        onChange={(e) => {
+                          const newSchedule = [...weeklySchedule];
+                          newSchedule[index].enabled = e.target.checked;
+                          setWeeklySchedule(newSchedule);
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <div className="flex-1 grid grid-cols-3 gap-3 items-center">
+                        <span className={cn(
+                          "text-sm font-medium",
+                          !day.enabled && "text-muted-foreground"
+                        )}>
+                          Day {index + 1} - {format(day.date, 'MMM d')}
+                        </span>
+                        <Input
+                          type="time"
+                          value={day.startTime}
+                          onChange={(e) => {
+                            const newSchedule = [...weeklySchedule];
+                            newSchedule[index].startTime = e.target.value;
+                            setWeeklySchedule(newSchedule);
+                          }}
+                          disabled={!day.enabled}
+                          className="h-9"
+                        />
+                        <Input
+                          type="time"
+                          value={day.endTime}
+                          onChange={(e) => {
+                            const newSchedule = [...weeklySchedule];
+                            newSchedule[index].endTime = e.target.value;
+                            setWeeklySchedule(newSchedule);
+                          }}
+                          disabled={!day.enabled}
+                          className="h-9"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Total: {weeklySchedule.filter(d => d.enabled).reduce((sum, day) => {
+                    const hours = (parseInt(day.endTime.split(':')[0]) * 60 + parseInt(day.endTime.split(':')[1]) -
+                                  parseInt(day.startTime.split(':')[0]) * 60 - parseInt(day.startTime.split(':')[1])) / 60;
+                    return sum + hours;
+                  }, 0).toFixed(1)} hours across {weeklySchedule.filter(d => d.enabled).length} days
+                </div>
+              </div>
+            )}
+
+            {/* Live-in Care Configuration */}
+            {appointmentForm.appointmentMode === 'live-in' && (
+              <div className="space-y-4 p-4 border rounded-lg bg-primary/5">
+                <Label className="text-base font-semibold">Live-in Care Details</Label>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="live-in-days">Number of Days</Label>
+                    <Input
+                      id="live-in-days"
+                      type="number"
+                      min="1"
+                      max="14"
+                      value={liveInDays}
+                      onChange={(e) => setLiveInDays(parseInt(e.target.value) || 1)}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Check-in</Label>
+                      <div className="text-sm font-medium">
+                        {format(appointmentDate, 'MMM d, yyyy')} at {appointmentForm.startTime}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Check-out</Label>
+                      <div className="text-sm font-medium">
+                        {format(liveInEndDate, 'MMM d, yyyy')} at {appointmentForm.endTime}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">Duration: </span>
+                      <span className="font-semibold">{liveInDays} days ({liveInDays * 24} hours)</span>
+                    </div>
+                    <div className="text-sm mt-1">
+                      <span className="text-muted-foreground">Estimated Cost: </span>
+                      <span className="font-semibold text-primary">
+                        €{(liveInDays * 24 * parseFloat(appointmentForm.hourlyRate)).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Appointment Details */}
             <div className="space-y-4">
@@ -916,29 +1149,31 @@ const Calendar: React.FC = () => {
             </div>
 
             {/* Summary */}
-            <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-2">
-              <h4 className="font-semibold text-sm text-primary">Appointment Summary</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                  <span className="text-muted-foreground">Date:</span>
-                  <span className="ml-2 font-medium">{format(appointmentDate, 'MMM d, yyyy')}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Time:</span>
-                  <span className="ml-2 font-medium">{appointmentForm.startTime} - {appointmentForm.endTime}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Duration:</span>
-                  <span className="ml-2 font-medium">{appointmentForm.duration} min</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Estimated Cost:</span>
-                  <span className="ml-2 font-medium text-primary">
-                    €{((parseInt(appointmentForm.duration) / 60) * parseFloat(appointmentForm.hourlyRate)).toFixed(2)}
-                  </span>
+            {appointmentForm.appointmentMode === 'single' && (
+              <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-2">
+                <h4 className="font-semibold text-sm text-primary">Appointment Summary</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Date:</span>
+                    <span className="ml-2 font-medium">{format(appointmentDate, 'MMM d, yyyy')}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Time:</span>
+                    <span className="ml-2 font-medium">{appointmentForm.startTime} - {appointmentForm.endTime}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Duration:</span>
+                    <span className="ml-2 font-medium">{appointmentForm.duration} min</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Estimated Cost:</span>
+                    <span className="ml-2 font-medium text-primary">
+                      €{((parseInt(appointmentForm.duration) / 60) * parseFloat(appointmentForm.hourlyRate)).toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
