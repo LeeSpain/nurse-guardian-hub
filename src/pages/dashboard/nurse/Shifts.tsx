@@ -199,6 +199,32 @@ const Shifts: React.FC = () => {
     fetchSwapRequests();
   }, [organization?.id]);
 
+  // Real-time subscription for shifts
+  useEffect(() => {
+    if (!organization?.id) return;
+
+    const channel = supabase
+      .channel('staff_shifts_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'staff_shifts',
+          filter: `organization_id=eq.${organization.id}`
+        },
+        (payload) => {
+          console.log('Shift change detected:', payload);
+          refetchShifts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [organization?.id, refetchShifts]);
+
   const filteredShifts = clientIdParam 
     ? shifts.filter(shift => shift.client_id === clientIdParam)
     : shifts;
