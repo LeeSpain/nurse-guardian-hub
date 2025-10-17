@@ -39,7 +39,7 @@ const Calendar: React.FC = () => {
   // Form state
   const [appointmentForm, setAppointmentForm] = useState({
     clientId: '',
-    staffId: '',
+    staffId: 'unassigned',
     startTime: '09:00',
     endTime: '10:00',
     serviceType: '',
@@ -203,7 +203,7 @@ const Calendar: React.FC = () => {
       const appointmentData = {
         nurse_id: user.id,
         client_id: clientId,
-        staff_member_id: appointmentForm.staffId || null,
+        staff_member_id: (appointmentForm.staffId && appointmentForm.staffId !== 'unassigned') ? appointmentForm.staffId : null,
         appointment_date: format(appointmentDate, 'yyyy-MM-dd'),
         start_time: appointmentForm.startTime,
         end_time: appointmentForm.endTime,
@@ -235,7 +235,7 @@ const Calendar: React.FC = () => {
       // Reset form
       setAppointmentForm({
         clientId: '',
-        staffId: '',
+        staffId: 'unassigned',
         startTime: '09:00',
         endTime: '10:00',
         serviceType: '',
@@ -754,7 +754,7 @@ const Calendar: React.FC = () => {
                     <SelectItem value="no-staff" disabled>No staff members available</SelectItem>
                   ) : (
                     <>
-                      <SelectItem value="">No staff assigned</SelectItem>
+                      <SelectItem value="unassigned">No staff assigned</SelectItem>
                       {staff.map((member) => (
                         <SelectItem key={member.id} value={member.id}>
                           {member.profile?.first_name} {member.profile?.last_name} - {member.job_title}
