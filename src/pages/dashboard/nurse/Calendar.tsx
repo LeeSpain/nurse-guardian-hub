@@ -105,6 +105,23 @@ const Calendar: React.FC = () => {
   }, [appointmentDate, liveInDays]);
   const [clients, setClients] = useState<any[]>([]);
   const [clientsLoading, setClientsLoading] = useState(false);
+
+  // Calculate date ranges for calendar views (needed for hooks)
+  const monthStart = startOfMonth(currentDate);
+  const monthEnd = endOfMonth(currentDate);
+  const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  
+  const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+
+  // Fetch shifts for current view - MUST be before any conditional returns
+  const { shifts, loading: shiftsLoading } = useCalendarShifts({
+    startDate: view === 'month' ? monthStart : view === 'week' ? weekStart : currentDate,
+    endDate: view === 'month' ? monthEnd : view === 'week' ? addDays(weekStart, 6) : currentDate,
+    organizationId: organization?.id,
+    clientId: clientIdParam || undefined,
+  });
+
   useEffect(() => {
     const fetchClients = async () => {
       if (!organization?.id) return;
@@ -182,21 +199,6 @@ const Calendar: React.FC = () => {
     if (calendarDataView === 'appointments') return [];
     return shifts.filter(shift => isSameDay(new Date(shift.shift_date), date));
   };
-
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
-  
-  const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-
-  // Fetch shifts for current view
-  const { shifts, loading: shiftsLoading } = useCalendarShifts({
-    startDate: view === 'month' ? monthStart : view === 'week' ? weekStart : currentDate,
-    endDate: view === 'month' ? monthEnd : view === 'week' ? addDays(weekStart, 6) : currentDate,
-    organizationId: organization?.id,
-    clientId: clientIdParam || undefined,
-  });
 
   const selectedDayAppointments = getAppointmentsForDate(selectedDate);
   const selectedDayShifts = shifts.filter(shift => isSameDay(new Date(shift.shift_date), selectedDate));
