@@ -47,6 +47,7 @@ const Calendar: React.FC = () => {
     duration: '60',
     hourlyRate: '45.00',
     specialInstructions: '',
+    isMultiDay: false,
     // New client fields
     clientFirstName: '',
     clientLastName: '',
@@ -58,12 +59,15 @@ const Calendar: React.FC = () => {
   const [clientsLoading, setClientsLoading] = useState(false);
   useEffect(() => {
     const fetchClients = async () => {
+      if (!organization?.id) return;
+      
       try {
         setClientsLoading(true);
         const { data, error } = await supabase
-          .from('profiles')
-          .select('id, first_name, last_name, address, email')
-          .eq('user_role', 'client')
+          .from('clients')
+          .select('id, first_name, last_name, address, email, organization_id, status')
+          .eq('organization_id', organization.id)
+          .eq('status', 'active')
           .order('created_at', { ascending: false });
         if (error) {
           console.error('Failed to load clients:', error);
@@ -76,7 +80,7 @@ const Calendar: React.FC = () => {
       }
     };
     fetchClients();
-  }, []);
+  }, [organization?.id]);
   
   if (isLoading || loading || orgLoading || staffLoading) {
     return (
@@ -199,12 +203,11 @@ const Calendar: React.FC = () => {
       const durationHours = parseInt(appointmentForm.duration) / 60;
       const totalCost = durationHours * parseFloat(appointmentForm.hourlyRate);
 
-      // Prepare appointment data
-      const appointmentData = {
+      // Prepare base appointment data
+      const baseAppointmentData = {
         nurse_id: user.id,
         client_id: clientId,
         staff_member_id: (appointmentForm.staffId && appointmentForm.staffId !== 'unassigned') ? appointmentForm.staffId : null,
-        appointment_date: format(appointmentDate, 'yyyy-MM-dd'),
         start_time: appointmentForm.startTime,
         end_time: appointmentForm.endTime,
         title: appointmentForm.title,
@@ -218,9 +221,21 @@ const Calendar: React.FC = () => {
         description: `${appointmentForm.serviceType} - ${appointmentForm.title}`,
       };
 
+      // Create appointments (either 1 or 7 days)
+      const numberOfDays = appointmentForm.isMultiDay ? 7 : 1;
+      const appointmentsToCreate = [];
+
+      for (let i = 0; i < numberOfDays; i++) {
+        const currentDate = addDays(appointmentDate, i);
+        appointmentsToCreate.push({
+          ...baseAppointmentData,
+          appointment_date: format(currentDate, 'yyyy-MM-dd'),
+        });
+      }
+
       const { data, error } = await supabase
         .from('appointments')
-        .insert([appointmentData])
+        .insert(appointmentsToCreate)
         .select();
 
       if (error) {
@@ -229,7 +244,9 @@ const Calendar: React.FC = () => {
         return;
       }
 
-      toast.success('Appointment created successfully!');
+      toast.success(appointmentForm.isMultiDay 
+        ? `Successfully created ${numberOfDays} appointments!` 
+        : 'Appointment created successfully!');
       setIsAppointmentModalOpen(false);
       
       // Reset form
@@ -243,6 +260,7 @@ const Calendar: React.FC = () => {
         duration: '60',
         hourlyRate: '45.00',
         specialInstructions: '',
+        isMultiDay: false,
         clientFirstName: '',
         clientLastName: '',
         clientEmail: '',
@@ -534,7 +552,7 @@ const Calendar: React.FC = () => {
                               {(() => {
                                 const assignedStaff = staff.find(s => s.id === appointment.staff_member_id);
                                 return assignedStaff 
-                                  ? `${assignedStaff.profile?.first_name} ${assignedStaff.profile?.last_name}`
+                                  ? `${assignedStaff.first_name} ${assignedStaff.last_name}`
                                   : 'Staff assigned';
                               })()}
                             </div>
@@ -619,7 +637,7 @@ const Calendar: React.FC = () => {
                       {(() => {
                         const assignedStaff = staff.find(s => s.id === appointment.staff_member_id);
                         return assignedStaff 
-                          ? `${assignedStaff.profile?.first_name} ${assignedStaff.profile?.last_name}`
+                          ? `${assignedStaff.first_name} ${assignedStaff.last_name}`
                           : 'Staff assigned';
                       })()}
                     </div>
@@ -757,7 +775,7 @@ const Calendar: React.FC = () => {
                       <SelectItem value="unassigned">No staff assigned</SelectItem>
                       {staff.map((member) => (
                         <SelectItem key={member.id} value={member.id}>
-                          {member.profile?.first_name} {member.profile?.last_name} - {member.job_title}
+                          {member.first_name} {member.last_name} - {member.job_title}
                         </SelectItem>
                       ))}
                     </>
@@ -767,6 +785,27 @@ const Calendar: React.FC = () => {
               <p className="text-xs text-muted-foreground">
                 {staff.length === 0 && !staffLoading && 'Add staff members from the Staff page to assign them to appointments'}
               </p>
+            </div>
+
+            {/* 7-Day Care Plan Option */}
+            <div className="space-y-2 p-4 border rounded-lg bg-accent/10">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="multi-day"
+                  checked={appointmentForm.isMultiDay}
+                  onChange={(e) => setAppointmentForm({...appointmentForm, isMultiDay: e.target.checked})}
+                  className="w-4 h-4"
+                />
+                <Label htmlFor="multi-day" className="cursor-pointer">
+                  Create 7-day care plan (repeating daily)
+                </Label>
+              </div>
+              {appointmentForm.isMultiDay && (
+                <p className="text-sm text-muted-foreground pl-6">
+                  This will create 7 consecutive appointments from {format(appointmentDate, 'MMM d')} to {format(addDays(appointmentDate, 6), 'MMM d, yyyy')} with the same time and details.
+                </p>
+              )}
             </div>
 
             {/* Appointment Details */}
@@ -807,6 +846,7 @@ const Calendar: React.FC = () => {
                     <SelectItem value="vital-check">Vital Signs Check</SelectItem>
                     <SelectItem value="personal-care">Personal Care</SelectItem>
                     <SelectItem value="companionship">Companionship</SelectItem>
+                    <SelectItem value="live-in-care">Live-in Care</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -834,7 +874,7 @@ const Calendar: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="hourly-rate">Hourly Rate ($)</Label>
+                <Label htmlFor="hourly-rate">Hourly Rate (€)</Label>
                 <Input 
                   id="hourly-rate" 
                   type="number" 
@@ -875,7 +915,7 @@ const Calendar: React.FC = () => {
                 <div>
                   <span className="text-muted-foreground">Estimated Cost:</span>
                   <span className="ml-2 font-medium text-primary">
-                    ${((parseInt(appointmentForm.duration) / 60) * parseFloat(appointmentForm.hourlyRate)).toFixed(2)}
+                    €{((parseInt(appointmentForm.duration) / 60) * parseFloat(appointmentForm.hourlyRate)).toFixed(2)}
                   </span>
                 </div>
               </div>
