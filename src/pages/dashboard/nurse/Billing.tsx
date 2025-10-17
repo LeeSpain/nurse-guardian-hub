@@ -10,12 +10,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useInvoices } from '@/hooks/useInvoices';
 import { format } from 'date-fns';
 import { GenerateInvoiceModal } from '@/components/billing/GenerateInvoiceModal';
+import { supabase } from '@/integrations/supabase/client';
+import { toast as sonnerToast } from 'sonner';
 
 const Billing: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
   const { invoices, stats, loading: invoicesLoading, error, refetch } = useInvoices();
   const [activeTab, setActiveTab] = useState('pending');
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+  const [sendingInvoice, setSendingInvoice] = useState<string | null>(null);
+  const [chargingInvoice, setChargingInvoice] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -58,6 +62,39 @@ const Billing: React.FC = () => {
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
+  };
+
+  const handleSendInvoice = async (invoiceId: string) => {
+    try {
+      setSendingInvoice(invoiceId);
+      const { data, error } = await supabase.functions.invoke('send-invoice', {
+        body: { invoice_id: invoiceId },
+      });
+
+      if (error) throw error;
+
+      sonnerToast.success('Invoice sent successfully');
+      await refetch();
+    } catch (error: any) {
+      console.error('Error sending invoice:', error);
+      sonnerToast.error('Failed to send invoice');
+    } finally {
+      setSendingInvoice(null);
+    }
+  };
+
+  const handleChargeNow = async (invoiceId: string) => {
+    try {
+      setChargingInvoice(invoiceId);
+      // This would integrate with Stripe - for now just show toast
+      sonnerToast.info('Payment processing feature coming soon');
+      // TODO: Integrate with Stripe to charge client
+    } catch (error: any) {
+      console.error('Error charging invoice:', error);
+      sonnerToast.error('Failed to process payment');
+    } finally {
+      setChargingInvoice(null);
+    }
   };
 
   const filteredInvoices = activeTab === 'all' 
@@ -223,15 +260,26 @@ const Billing: React.FC = () => {
                             View
                           </Button>
                           {invoice.status === 'pending' && (
-                            <Button size="sm" className="gap-1">
+                            <Button 
+                              size="sm" 
+                              className="gap-1"
+                              onClick={() => handleSendInvoice(invoice.id)}
+                              disabled={sendingInvoice === invoice.id}
+                            >
                               <Send className="w-4 h-4" />
-                              Send Invoice
+                              {sendingInvoice === invoice.id ? 'Sending...' : 'Send Invoice'}
                             </Button>
                           )}
                           {invoice.status === 'sent' && (
-                            <Button size="sm" variant="secondary" className="gap-1">
+                            <Button 
+                              size="sm" 
+                              variant="secondary" 
+                              className="gap-1"
+                              onClick={() => handleChargeNow(invoice.id)}
+                              disabled={chargingInvoice === invoice.id}
+                            >
                               <CreditCard className="w-4 h-4" />
-                              Charge Now
+                              {chargingInvoice === invoice.id ? 'Processing...' : 'Charge Now'}
                             </Button>
                           )}
                         </div>

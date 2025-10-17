@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import Logo from '@/components/ui-components/Logo';
 import Button from '@/components/ui-components/Button';
+import NotificationPanel from '@/components/notifications/NotificationPanel';
 
 const NurseDashboardSidebar: React.FC = () => {
   const location = useLocation();
@@ -113,12 +114,9 @@ const NurseDashboardSidebar: React.FC = () => {
         
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <button className="w-full justify-start">
-                <Bell className="h-4 w-4" />
-                {!collapsed && <span>Notifications</span>}
-              </button>
-            </SidebarMenuButton>
+            <div className="px-2 py-1.5">
+              <NotificationPanel />
+            </div>
           </SidebarMenuItem>
           
           <SidebarMenuItem>

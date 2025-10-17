@@ -20,16 +20,20 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { useCareLogs } from '@/hooks/useCareLogs';
 import { useClients } from '@/hooks/useClients';
 import { useStaff } from '@/hooks/useStaff';
+import { useOrganization } from '@/hooks/useOrganization';
 import { toast } from 'sonner';
+import FileUploadZone from '@/components/care-logs/FileUploadZone';
 
 const CareLogs: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
   const { careLogs, stats, loading: logsLoading, error, createCareLog } = useCareLogs();
   const { clients } = useClients();
   const { staff } = useStaff();
+  const { organization } = useOrganization();
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddLogOpen, setIsAddLogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   
   const [logForm, setLogForm] = useState({
     client_id: '',
@@ -149,6 +153,14 @@ const CareLogs: React.FC = () => {
                     rows={5}
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Attachments (Optional)</label>
+                  <FileUploadZone
+                    onFilesUploaded={(files) => setUploadedFiles(files)}
+                    maxFiles={5}
+                  />
+                </div>
                 <div className="flex gap-2 pt-4">
                   <Button 
                     variant="nurse" 
@@ -172,9 +184,11 @@ const CareLogs: React.FC = () => {
                         await createCareLog({
                           ...logForm,
                           staff_member_id: currentStaff.id,
+                          attachments: uploadedFiles,
                         });
                         toast.success('Care log entry saved successfully');
                         setIsAddLogOpen(false);
+                        setUploadedFiles([]);
                         setLogForm({
                           client_id: '',
                           category: 'general',

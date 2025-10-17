@@ -136,11 +136,15 @@ export const useCareLogs = () => {
     content: string;
     log_date: string;
     log_time: string;
+    attachments?: any;
   }) => {
     try {
       const { error } = await supabase
         .from('care_logs')
-        .insert([logData]);
+        .insert([{
+          ...logData,
+          attachments: logData.attachments || [],
+        }]);
 
       if (error) throw error;
       await fetchCareLogs();

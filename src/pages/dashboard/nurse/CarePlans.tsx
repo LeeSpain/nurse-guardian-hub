@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { FileText, Plus, Search, Filter, AlertTriangle, Edit, Eye } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
@@ -15,6 +15,7 @@ import { CreateCarePlanModal } from '@/components/care-plans/CreateCarePlanModal
 const CarePlans: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
   const { carePlans, templates, stats, loading: plansLoading } = useCarePlans();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('active');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -192,10 +193,22 @@ const CarePlans: React.FC = () => {
                   </div>
 
                   <div className="flex gap-2 mt-4 pt-4 border-t">
-                    <Button variant="outline" size="sm" icon={<Eye size={16} />} className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      icon={<Eye size={16} />} 
+                      className="flex-1"
+                      onClick={() => navigate(`/nurse/dashboard/care-plans/${plan.id}`)}
+                    >
                       View
                     </Button>
-                    <Button variant="outline" size="sm" icon={<Edit size={16} />} className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      icon={<Edit size={16} />} 
+                      className="flex-1"
+                      onClick={() => navigate(`/nurse/dashboard/care-plans/${plan.id}`)}
+                    >
                       Edit
                     </Button>
                   </div>

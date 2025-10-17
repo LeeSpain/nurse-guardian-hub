@@ -123,6 +123,11 @@ function App() {
                 <NurseCarePlans />
               </ProtectedRoute>
             } />
+            <Route path="care-plans/:id" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                {React.createElement(React.lazy(() => import('./pages/dashboard/nurse/CarePlanDetail')))}
+              </ProtectedRoute>
+            } />
             <Route path="care-logs" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseCareLogs />

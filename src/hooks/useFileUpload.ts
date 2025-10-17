@@ -4,7 +4,7 @@ import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
 export interface FileUploadOptions {
-  bucket: 'profile-images' | 'documents' | 'appointment-files';
+  bucket: 'profile-images' | 'care-logs' | 'documents' | 'appointment-files';
   folder?: string;
   maxSizeBytes?: number;
   allowedTypes?: string[];
@@ -34,7 +34,14 @@ export const useFileUpload = () => {
       }
 
       // Validate file type
-      const allowedTypes = options.allowedTypes || ['image/jpeg', 'image/png', 'image/webp'];
+      const allowedTypes = options.allowedTypes || [
+        'image/jpeg', 
+        'image/png', 
+        'image/webp', 
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
       if (!allowedTypes.includes(file.type)) {
         throw new Error(`File type ${file.type} not allowed`);
       }
@@ -44,9 +51,7 @@ export const useFileUpload = () => {
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       
       let filePath: string;
-      if (options.bucket === 'appointment-files' && options.folder) {
-        filePath = `${user.id}/${options.folder}/${fileName}`;
-      } else if (options.folder) {
+      if (options.folder) {
         filePath = `${user.id}/${options.folder}/${fileName}`;
       } else {
         filePath = `${user.id}/${fileName}`;
@@ -66,13 +71,16 @@ export const useFileUpload = () => {
 
       setProgress(75);
 
-      // Get public URL for public buckets
+      // Get public URL or signed URL based on bucket
       let publicUrl: string | undefined;
       if (options.bucket === 'profile-images') {
         const { data: urlData } = supabase.storage
           .from(options.bucket)
           .getPublicUrl(filePath);
         publicUrl = urlData.publicUrl;
+      } else {
+        // For private buckets, return the path for later signed URL generation
+        publicUrl = filePath;
       }
 
       setProgress(100);
