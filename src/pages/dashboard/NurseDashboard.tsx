@@ -88,7 +88,7 @@ const NurseDashboard: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-foreground">
-              Welcome back, {profile?.first_name || user.firstName} {profile?.last_name || user.lastName}!
+              Welcome back, {profile?.first_name || user.firstName}!
             </h1>
             {organization && (
               <p className="text-lg text-purple-600 font-medium mt-1">
