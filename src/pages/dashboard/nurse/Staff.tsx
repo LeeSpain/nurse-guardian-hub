@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { Search, Plus, MoreVertical, Mail, Phone, Edit, Trash2, DollarSign, Award, Clock, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Search, Plus, MoreVertical, Mail, Phone, Edit, Trash2, DollarSign, Award, Clock, Shield, AlertTriangle, CheckCircle, Calendar } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,7 +25,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button as UiButton } from '@/components/ui/button';
 import { useStaff } from '@/hooks/useStaff';
 import { useOrganization } from '@/hooks/useOrganization';
-import { useNavigate } from 'react-router-dom';
 import { AddStaffModal } from '@/components/staff/AddStaffModal';
 import { InviteStaffModal } from '@/components/staff/InviteStaffModal';
 import {
@@ -41,6 +40,7 @@ import {
 
 const Staff: React.FC = () => {
   const { user, isAuthenticated, isLoading: userLoading } = useUser();
+  const navigate = useNavigate();
   const { organization, loading: orgLoading, createOrganization } = useOrganization();
   const { staff, loading: staffLoading, createStaff, updateStaff, deleteStaff } = useStaff(organization?.id);
   const [searchTerm, setSearchTerm] = useState('');
@@ -276,7 +276,11 @@ const Staff: React.FC = () => {
                   const BadgeIcon = badgeConfig?.icon;
                   
                   return (
-                  <TableRow key={member.id}>
+                  <TableRow 
+                    key={member.id}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => navigate(`/nurse/dashboard/staff/${member.id}`)}
+                  >
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar>
@@ -330,27 +334,44 @@ const Staff: React.FC = () => {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <UiButton variant="ghost" size="sm">
+                          <UiButton 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <MoreVertical size={16} />
                           </UiButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-background">
-                          <DropdownMenuItem onClick={() => setEditingStaff(member)}>
+                          <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/nurse/dashboard/staff/${member.id}`);
+                          }}>
                             <Edit className="mr-2" size={16} />
-                            Edit Details
+                            View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/nurse/dashboard/calendar?staffId=${member.id}`);
+                          }}>
+                            <Calendar className="mr-2" size={16} />
+                            View Schedule
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                             <Mail className="mr-2" size={16} />
                             Send Message
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                             <Phone className="mr-2" size={16} />
                             Call
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             className="text-destructive"
-                            onClick={() => confirmDelete(member.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              confirmDelete(member.id);
+                            }}
                           >
                             <Trash2 className="mr-2" size={16} />
                             Remove Staff
