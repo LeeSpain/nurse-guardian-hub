@@ -17,7 +17,9 @@ import { useClients, Client } from '@/hooks/useClients';
 import { ClientNotesSection } from '@/components/clients/ClientNotesSection';
 import { ClientRemindersSection } from '@/components/clients/ClientRemindersSection';
 import { ClientActivityTimeline } from '@/components/clients/ClientActivityTimeline';
+import { ClientShiftSchedule } from '@/components/clients/ClientShiftSchedule';
 import { useClientReminders } from '@/hooks/useClientReminders';
+import { useClientShifts } from '@/hooks/useClientShifts';
 
 interface ClientData {
   id: string;
@@ -53,6 +55,7 @@ const ClientDetail: React.FC = () => {
   const { organization } = useOrganization();
   const { updateClient } = useClients();
   const { reminders } = useClientReminders(id);
+  const { getThisWeekStats } = useClientShifts(id, organization?.id);
   const [client, setClient] = useState<ClientData | null>(null);
   const [carePlans, setCarePlans] = useState<any[]>([]);
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -63,6 +66,7 @@ const ClientDetail: React.FC = () => {
   const [editForm, setEditForm] = useState<Partial<ClientData>>({});
 
   const pendingReminders = reminders.filter(r => r.status === 'pending');
+  const shiftStats = getThisWeekStats();
 
   useEffect(() => {
     if (id && organization?.id) {
@@ -256,7 +260,15 @@ const ClientDetail: React.FC = () => {
               </div>
 
               {/* Quick Stats */}
-              <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 ml-auto">
+              <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 ml-auto">
+                <Card className="p-3 bg-muted/50">
+                  <div className="text-2xl font-bold text-primary">{shiftStats.count}</div>
+                  <div className="text-xs text-muted-foreground">Shifts/Week</div>
+                </Card>
+                <Card className="p-3 bg-muted/50">
+                  <div className="text-2xl font-bold text-primary">{shiftStats.totalHours}h</div>
+                  <div className="text-xs text-muted-foreground">Hours/Week</div>
+                </Card>
                 <Card className="p-3 bg-muted/50">
                   <div className="text-2xl font-bold text-primary">{appointments.length}</div>
                   <div className="text-xs text-muted-foreground">Appointments</div>
@@ -330,6 +342,10 @@ const ClientDetail: React.FC = () => {
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="w-full justify-start overflow-x-auto">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="shifts">
+                <Clock className="h-4 w-4 mr-2" />
+                Shifts & Schedule ({shiftStats.count})
+              </TabsTrigger>
               <TabsTrigger value="medical">Medical Info</TabsTrigger>
               <TabsTrigger value="notes-activity">
                 <FileText className="h-4 w-4 mr-2" />
@@ -440,6 +456,14 @@ const ClientDetail: React.FC = () => {
                   <p className="text-muted-foreground">{client.notes || 'No additional notes'}</p>
                 )}
               </Card>
+            </TabsContent>
+
+            <TabsContent value="shifts">
+              <ClientShiftSchedule 
+                clientId={id!}
+                clientName={`${client.first_name} ${client.last_name}`}
+                organizationId={organization!.id}
+              />
             </TabsContent>
 
             <TabsContent value="medical" className="space-y-4">
