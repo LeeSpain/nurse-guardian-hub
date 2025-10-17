@@ -1239,13 +1239,16 @@ const Shifts: React.FC = () => {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
         organizationId={organization.id}
-        onShiftCreated={refetchShifts}
+        onSuccess={createShift}
+        staff={staff}
+        clients={clients}
       />
 
       <ShiftSwapRequestModal
-        open={isSwapModalOpen}
-        onOpenChange={setIsSwapModalOpen}
-        shiftId={selectedShiftForSwap}
+        isOpen={isSwapModalOpen}
+        onClose={() => setIsSwapModalOpen(false)}
+        shiftId={selectedShiftForSwap || ''}
+        onSuccess={refetchShifts}
       />
 
       <DeclineShiftModal
