@@ -510,6 +510,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "client_reminders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "client_reminders_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false

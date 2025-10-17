@@ -49,7 +49,7 @@ export const useClientReminders = (clientId?: string) => {
         .from('client_reminders')
         .select(`
           *,
-          assigned_staff:staff_members(first_name, last_name)
+          assigned_staff:staff_members!client_reminders_assigned_to_fkey(first_name, last_name)
         `)
         .eq('client_id', clientId)
         .eq('organization_id', organization.id)
