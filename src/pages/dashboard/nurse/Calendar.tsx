@@ -38,6 +38,8 @@ const Calendar: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState<string | null>(null);
+  const [showDayDetailModal, setShowDayDetailModal] = useState(false);
+  const [dayDetailDate, setDayDetailDate] = useState<Date | null>(null);
   
   // Get filter params
   const clientIdParam = searchParams.get('clientId');
@@ -221,7 +223,22 @@ const Calendar: React.FC = () => {
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
+    const dayAppts = getAppointmentsForDate(date);
+    const dayShifts = getShiftsForDate(date);
+    
+    // If day has existing items, show them; otherwise open new appointment modal
+    if (dayAppts.length > 0 || dayShifts.length > 0) {
+      setDayDetailDate(date);
+      setShowDayDetailModal(true);
+    } else {
+      setAppointmentDate(date);
+      setIsAppointmentModalOpen(true);
+    }
+  };
+
+  const handleNewAppointmentFromDay = (date: Date) => {
     setAppointmentDate(date);
+    setShowDayDetailModal(false);
     setIsAppointmentModalOpen(true);
   };
 
@@ -572,8 +589,14 @@ const Calendar: React.FC = () => {
                       {dayAppointments.slice(0, 2).map((apt) => (
                         <div
                           key={apt.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDate(day);
+                            setDayDetailDate(day);
+                            setShowDayDetailModal(true);
+                          }}
                           className={cn(
-                            "text-xs px-1.5 py-0.5 rounded truncate",
+                            "text-xs px-1.5 py-0.5 rounded truncate cursor-pointer hover:opacity-80",
                             "bg-blue-100 text-blue-800 border-l-2 border-blue-500"
                           )}
                         >
@@ -583,8 +606,14 @@ const Calendar: React.FC = () => {
                       {dayShifts.slice(0, calendarDataView === 'both' ? 1 : 2).map((shift) => (
                         <div
                           key={shift.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDate(day);
+                            setDayDetailDate(day);
+                            setShowDayDetailModal(true);
+                          }}
                           className={cn(
-                            "text-xs px-1.5 py-0.5 rounded truncate",
+                            "text-xs px-1.5 py-0.5 rounded truncate cursor-pointer hover:opacity-80",
                             "bg-green-100 text-green-800 border-l-2 border-green-500"
                           )}
                         >
@@ -626,6 +655,7 @@ const Calendar: React.FC = () => {
             <div className="grid grid-cols-7 gap-3">
               {weekDays.map((day, index) => {
                 const dayAppointments = getAppointmentsForDate(day);
+                const dayShifts = getShiftsForDate(day);
                 const isCurrentDay = isToday(day);
 
                 return (
@@ -639,16 +669,55 @@ const Calendar: React.FC = () => {
                     </div>
                     <div className="space-y-2 min-h-96">
                       {dayAppointments.map((apt) => (
-                        <Card key={apt.id} className="p-3 hover:shadow-md transition-shadow cursor-pointer">
+                        <Card 
+                          key={apt.id} 
+                          className="p-3 hover:shadow-md transition-shadow cursor-pointer"
+                          onClick={() => {
+                            setSelectedDate(day);
+                            setDayDetailDate(day);
+                            setShowDayDetailModal(true);
+                          }}
+                        >
                           <div className="flex items-start gap-2">
                             <div className={cn("w-1 h-full rounded-full", getStatusColor(apt.status))} />
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-sm truncate">{apt.title}</p>
                               <p className="text-xs text-muted-foreground">{apt.start_time}</p>
+                              <Badge variant="outline" className="text-xs mt-1">Appointment</Badge>
                             </div>
                           </div>
                         </Card>
                       ))}
+                      {dayShifts.map((shift) => (
+                        <Card 
+                          key={shift.id} 
+                          className="p-3 hover:shadow-md transition-shadow cursor-pointer bg-green-50"
+                          onClick={() => {
+                            setSelectedDate(day);
+                            setDayDetailDate(day);
+                            setShowDayDetailModal(true);
+                          }}
+                        >
+                          <div className="flex items-start gap-2">
+                            <div className="w-1 h-full rounded-full bg-green-500" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm truncate">
+                                {shift.staff_member?.profiles?.first_name} {shift.staff_member?.profiles?.last_name}
+                              </p>
+                              <p className="text-xs text-muted-foreground">{shift.start_time} - {shift.end_time}</p>
+                              <Badge variant="outline" className="text-xs mt-1">Shift</Badge>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                      {dayAppointments.length === 0 && dayShifts.length === 0 && (
+                        <button
+                          onClick={() => handleDateClick(day)}
+                          className="w-full p-3 border-2 border-dashed rounded-lg hover:border-primary hover:bg-primary/5 transition-colors text-sm text-muted-foreground"
+                        >
+                          + Add
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -677,75 +746,118 @@ const Calendar: React.FC = () => {
 
             {/* Day Schedule */}
             <div className="space-y-3">
-              {selectedDayAppointments.length > 0 ? (
-                selectedDayAppointments.map((appointment) => (
-                  <Card key={appointment.id} className="p-4 hover:shadow-lg transition-all">
-                    <div className="flex items-start gap-4">
-                      <div className={cn("w-2 h-full rounded-full", getStatusColor(appointment.status))} />
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-semibold text-lg">{appointment.title}</h3>
-                            <Badge variant="secondary" className="mt-1">
-                              {appointment.status}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-primary">${appointment.total_cost}</p>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                  <MoreVertical size={16} />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem 
-                                  className="text-destructive focus:text-destructive"
-                                  onClick={() => confirmDelete(appointment.id)}
-                                >
-                                  <Trash2 size={14} className="mr-2" />
-                                  Delete Appointment
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-2">
-                            <Clock size={14} />
-                            {appointment.start_time} - {appointment.end_time}
-                          </div>
-                          {appointment.address && (
-                            <div className="flex items-center gap-2">
-                              <MapPin size={14} />
-                              {appointment.address}
+              {selectedDayAppointments.length > 0 || selectedDayShifts.length > 0 ? (
+                <>
+                  {/* Appointments */}
+                  {calendarDataView !== 'shifts' && selectedDayAppointments.map((appointment) => (
+                    <Card key={appointment.id} className="p-4 hover:shadow-lg transition-all">
+                      <div className="flex items-start gap-4">
+                        <div className={cn("w-2 h-full rounded-full", getStatusColor(appointment.status))} />
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <Badge variant="outline" className="mb-2">Appointment</Badge>
+                              <h3 className="font-semibold text-lg">{appointment.title}</h3>
+                              <Badge variant="secondary" className="mt-1">
+                                {appointment.status}
+                              </Badge>
                             </div>
-                          )}
-                          {appointment.staff_member_id && staff.length > 0 && (
                             <div className="flex items-center gap-2">
-                              <User size={14} />
-                              {(() => {
-                                const assignedStaff = staff.find(s => s.id === appointment.staff_member_id);
-                                return assignedStaff 
-                                  ? `${assignedStaff.first_name} ${assignedStaff.last_name}`
-                                  : 'Staff assigned';
-                              })()}
+                              <p className="font-medium text-primary">${appointment.total_cost}</p>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                    <MoreVertical size={16} />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem 
+                                    className="text-destructive focus:text-destructive"
+                                    onClick={() => confirmDelete(appointment.id)}
+                                  >
+                                    <Trash2 size={14} className="mr-2" />
+                                    Delete Appointment
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Clock size={14} />
+                              {appointment.start_time} - {appointment.end_time}
+                            </div>
+                            {appointment.address && (
+                              <div className="flex items-center gap-2">
+                                <MapPin size={14} />
+                                {appointment.address}
+                              </div>
+                            )}
+                            {appointment.staff_member_id && staff.length > 0 && (
+                              <div className="flex items-center gap-2">
+                                <User size={14} />
+                                {(() => {
+                                  const assignedStaff = staff.find(s => s.id === appointment.staff_member_id);
+                                  return assignedStaff 
+                                    ? `${assignedStaff.first_name} ${assignedStaff.last_name}`
+                                    : 'Staff assigned';
+                                })()}
+                              </div>
+                            )}
+                          </div>
+                          {appointment.description && (
+                            <p className="text-sm text-muted-foreground mt-2">
+                              {appointment.description}
+                            </p>
                           )}
                         </div>
-                        {appointment.description && (
-                          <p className="text-sm text-muted-foreground mt-2">
-                            {appointment.description}
-                          </p>
-                        )}
                       </div>
-                    </div>
-                  </Card>
-                ))
+                    </Card>
+                  ))}
+
+                  {/* Shifts */}
+                  {calendarDataView !== 'appointments' && selectedDayShifts.map((shift) => (
+                    <Card key={shift.id} className="p-4 hover:shadow-lg transition-all bg-green-50">
+                      <div className="flex items-start gap-4">
+                        <div className="w-2 h-full rounded-full bg-green-500" />
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <Badge variant="outline" className="mb-2 bg-white">Shift</Badge>
+                              <h3 className="font-semibold text-lg">
+                                {shift.staff_member?.profiles?.first_name} {shift.staff_member?.profiles?.last_name}
+                              </h3>
+                              <Badge variant="secondary" className="mt-1">
+                                {shift.status}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Clock size={14} />
+                              {shift.start_time} - {shift.end_time}
+                            </div>
+                            {shift.client && (
+                              <div className="flex items-center gap-2">
+                                <User size={14} />
+                                Client: {shift.client.first_name} {shift.client.last_name}
+                              </div>
+                            )}
+                          </div>
+                          {shift.notes && (
+                            <p className="text-sm text-muted-foreground mt-2">
+                              {shift.notes}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </>
               ) : (
                 <div className="text-center py-12 text-muted-foreground">
                   <CalendarIcon size={48} className="mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-medium">No appointments scheduled</p>
+                  <p className="text-lg font-medium">No appointments or shifts scheduled</p>
                   <p className="text-sm">Your calendar is free for this day</p>
                 </div>
               )}
@@ -1311,6 +1423,117 @@ const Calendar: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Day Detail Modal */}
+      <Dialog open={showDayDetailModal} onOpenChange={setShowDayDetailModal}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {dayDetailDate && format(dayDetailDate, 'EEEE, MMMM d, yyyy')}
+            </DialogTitle>
+            <DialogDescription>
+              View and manage appointments and shifts for this day
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {dayDetailDate && (
+              <>
+                {/* Appointments Section */}
+                {calendarDataView !== 'shifts' && (() => {
+                  const dayAppts = getAppointmentsForDate(dayDetailDate);
+                  return dayAppts.length > 0 && (
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-sm flex items-center gap-2">
+                        <CalendarIcon size={16} />
+                        Appointments ({dayAppts.length})
+                      </h3>
+                      {dayAppts.map((apt) => (
+                        <Card key={apt.id} className="p-4">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Badge variant={apt.status === 'confirmed' ? 'default' : 'secondary'}>
+                                  {apt.status}
+                                </Badge>
+                                <span className="text-sm font-medium">{apt.start_time} - {apt.end_time}</span>
+                              </div>
+                              <h4 className="font-semibold">{apt.title}</h4>
+                              <p className="text-sm text-muted-foreground mt-1">{apt.service_type}</p>
+                              {apt.special_instructions && (
+                                <p className="text-sm text-muted-foreground mt-2">{apt.special_instructions}</p>
+                              )}
+                            </div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <MoreVertical size={16} />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => confirmDelete(apt.id)}>
+                                  <Trash2 className="mr-2" size={16} />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  );
+                })()}
+
+                {/* Shifts Section */}
+                {calendarDataView !== 'appointments' && (() => {
+                  const dayShifts = getShiftsForDate(dayDetailDate);
+                  return dayShifts.length > 0 && (
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-sm flex items-center gap-2">
+                        <User size={16} />
+                        Shifts ({dayShifts.length})
+                      </h3>
+                      {dayShifts.map((shift) => (
+                        <Card key={shift.id} className="p-4 bg-green-50">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Badge variant="outline">{shift.status}</Badge>
+                                <span className="text-sm font-medium">{shift.start_time} - {shift.end_time}</span>
+                              </div>
+                              <h4 className="font-semibold">
+                                {shift.staff_member?.profiles?.first_name} {shift.staff_member?.profiles?.last_name}
+                              </h4>
+                              {shift.client && (
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  Client: {shift.client.first_name} {shift.client.last_name}
+                                </p>
+                              )}
+                              {shift.notes && (
+                                <p className="text-sm text-muted-foreground mt-2">{shift.notes}</p>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {/* Add New Button */}
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => dayDetailDate && handleNewAppointmentFromDay(dayDetailDate)}
+            >
+              <Plus size={16} className="mr-2" />
+              Add New Appointment
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
