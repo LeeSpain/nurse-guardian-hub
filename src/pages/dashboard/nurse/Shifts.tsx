@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { Calendar, Clock, Users, Plus, Filter, AlertCircle, CheckCircle, MoreVertical } from 'lucide-react';
+import { Calendar, Clock, Users, Plus, Filter, AlertCircle, CheckCircle, MoreVertical, ChevronDown, ChevronUp, User } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
 import { useStaffShifts } from '@/hooks/useStaffShifts';
 import { useStaff } from '@/hooks/useStaff';
@@ -14,6 +15,7 @@ import { useOrganization } from '@/hooks/useOrganization';
 import { CreateShiftModal } from '@/components/shifts/CreateShiftModal';
 import { ShiftSwapRequestModal } from '@/components/shifts/ShiftSwapRequestModal';
 import { RefreshCw, X } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,6 +47,7 @@ const Shifts: React.FC = () => {
   const [selectedShiftForSwap, setSelectedShiftForSwap] = useState<string | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [shiftToCancel, setShiftToCancel] = useState<string | null>(null);
+  const [expandedStaff, setExpandedStaff] = useState<Set<string>>(new Set());
   
   // Get client filter from URL
   const clientIdParam = searchParams.get('clientId');
@@ -136,6 +139,74 @@ const Shifts: React.FC = () => {
     }
   };
 
+  const toggleStaffExpanded = (staffId: string) => {
+    setExpandedStaff(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(staffId)) {
+        newSet.delete(staffId);
+      } else {
+        newSet.add(staffId);
+      }
+      return newSet;
+    });
+  };
+
+  // Group shifts by staff member
+  const shiftsByStaff = useMemo(() => {
+    const grouped = new Map<string, {
+      staff: any;
+      shifts: any[];
+      todayCount: number;
+      weekCount: number;
+      totalHours: number;
+    }>();
+
+    upcomingShifts.forEach(shift => {
+      const staffId = shift.staff_member_id;
+      if (!staffId) return;
+
+      if (!grouped.has(staffId)) {
+        const today = new Date();
+        const weekFromNow = new Date(today);
+        weekFromNow.setDate(today.getDate() + 7);
+
+        grouped.set(staffId, {
+          staff: shift.staff_member,
+          shifts: [],
+          todayCount: 0,
+          weekCount: 0,
+          totalHours: 0,
+        });
+      }
+
+      const group = grouped.get(staffId)!;
+      group.shifts.push(shift);
+
+      // Calculate hours
+      const [startHour, startMin] = shift.start_time.split(':').map(Number);
+      const [endHour, endMin] = shift.end_time.split(':').map(Number);
+      const hours = (endHour + endMin / 60) - (startHour + startMin / 60) - (shift.break_minutes / 60);
+      group.totalHours += hours;
+
+      // Count today and this week
+      const shiftDate = new Date(shift.shift_date);
+      const today = new Date();
+      if (shiftDate.toDateString() === today.toDateString()) {
+        group.todayCount++;
+      }
+
+      const weekFromNow = new Date(today);
+      weekFromNow.setDate(today.getDate() + 7);
+      if (shiftDate >= today && shiftDate <= weekFromNow) {
+        group.weekCount++;
+      }
+    });
+
+    return Array.from(grouped.values()).sort((a, b) => 
+      b.shifts.length - a.shifts.length
+    );
+  }, [upcomingShifts]);
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -214,8 +285,9 @@ const Shifts: React.FC = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="upcoming">Upcoming Shifts</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger value="upcoming">All Shifts</TabsTrigger>
+          <TabsTrigger value="by-staff">By Staff Member</TabsTrigger>
           <TabsTrigger value="completed">Completed</TabsTrigger>
         </TabsList>
 
@@ -311,6 +383,170 @@ const Shifts: React.FC = () => {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="by-staff">
+          {shiftsLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="w-8 h-8 border-4 border-t-primary border-r-transparent border-b-primary border-l-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : shiftsByStaff.length === 0 ? (
+            <Card className="p-8 text-center">
+              <Users className="text-muted-foreground mx-auto mb-4" size={48} />
+              <h3 className="text-lg font-semibold mb-2">No Staff Shifts</h3>
+              <p className="text-muted-foreground mb-4">Create shifts and assign them to staff members</p>
+              <Button 
+                variant="nurse" 
+                onClick={() => setCreateModalOpen(true)}
+                disabled={staff.length === 0}
+              >
+                {staff.length === 0 ? 'Add Staff First' : 'Create Shift'}
+              </Button>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {shiftsByStaff.map((staffGroup) => (
+                <Card key={staffGroup.staff.id} className="overflow-hidden">
+                  <Collapsible 
+                    open={expandedStaff.has(staffGroup.staff.id)}
+                    onOpenChange={() => toggleStaffExpanded(staffGroup.staff.id)}
+                  >
+                    <CollapsibleTrigger className="w-full">
+                      <div className="p-6 hover:bg-accent/50 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <Avatar className="h-12 w-12">
+                              <AvatarImage src={staffGroup.staff.profile_image_url} />
+                              <AvatarFallback className="bg-primary/10 text-primary">
+                                <User size={24} />
+                              </AvatarFallback>
+                            </Avatar>
+                            
+                            <div className="text-left">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="font-semibold text-lg">
+                                  {staffGroup.staff.first_name} {staffGroup.staff.last_name}
+                                </h3>
+                                <Badge variant="secondary" className="text-xs">
+                                  {staffGroup.shifts.length} {staffGroup.shifts.length === 1 ? 'shift' : 'shifts'}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground">{staffGroup.staff.job_title || 'Staff Member'}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-6">
+                            <div className="text-right">
+                              <div className="grid grid-cols-3 gap-4 text-sm">
+                                <div>
+                                  <p className="text-xs text-muted-foreground">Today</p>
+                                  <p className="font-bold text-lg text-primary">{staffGroup.todayCount}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground">This Week</p>
+                                  <p className="font-bold text-lg text-primary">{staffGroup.weekCount}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-muted-foreground">Total Hours</p>
+                                  <p className="font-bold text-lg text-primary">{staffGroup.totalHours.toFixed(1)}h</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {expandedStaff.has(staffGroup.staff.id) ? (
+                              <ChevronUp size={20} className="text-muted-foreground" />
+                            ) : (
+                              <ChevronDown size={20} className="text-muted-foreground" />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </CollapsibleTrigger>
+
+                    <CollapsibleContent>
+                      <div className="border-t bg-muted/20 p-4 space-y-3">
+                        {staffGroup.shifts.map((shift) => (
+                          <Card key={shift.id} className="p-4 bg-background">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Badge variant={getStatusColor(shift.status)}>
+                                    {shift.status}
+                                  </Badge>
+                                  {(() => {
+                                    const shiftDate = new Date(shift.shift_date);
+                                    const today = new Date();
+                                    if (shiftDate.toDateString() === today.toDateString()) {
+                                      return <Badge className="bg-blue-500">Today</Badge>;
+                                    }
+                                    return null;
+                                  })()}
+                                </div>
+                                
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                                  <div>
+                                    <p className="text-xs text-muted-foreground">Date</p>
+                                    <p className="font-medium">{format(new Date(shift.shift_date), 'EEE, MMM dd')}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-muted-foreground">Time</p>
+                                    <p className="font-medium">{shift.start_time} - {shift.end_time}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-muted-foreground">Client</p>
+                                    <p className="font-medium">
+                                      {shift.client ? `${shift.client.first_name} ${shift.client.last_name}` : 'No client'}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {shift.notes && (
+                                  <p className="mt-2 text-xs text-muted-foreground italic">{shift.notes}</p>
+                                )}
+                              </div>
+
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <MoreVertical size={16} />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="bg-background">
+                                  <DropdownMenuItem onClick={() => updateShift(shift.id, { status: 'confirmed' })}>
+                                    <CheckCircle className="mr-2" size={16} />
+                                    Confirm Shift
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => updateShift(shift.id, { status: 'completed' })}>
+                                    <CheckCircle className="mr-2" size={16} />
+                                    Mark Completed
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => {
+                                    setSelectedShiftForSwap(shift.id);
+                                    setIsSwapModalOpen(true);
+                                  }}>
+                                    <RefreshCw className="mr-2" size={16} />
+                                    Request Swap
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem 
+                                    className="text-destructive"
+                                    onClick={() => confirmCancel(shift.id)}
+                                  >
+                                    <AlertCircle className="mr-2" size={16} />
+                                    Cancel Shift
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </Card>
               ))}
             </div>
