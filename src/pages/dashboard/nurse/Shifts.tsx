@@ -1,20 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { Calendar, Clock, Users, Plus, Filter, AlertCircle, CheckCircle, MoreVertical, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { Calendar, Clock, Users, Plus, AlertCircle, CheckCircle, MoreVertical, ChevronDown, ChevronUp, User, XCircle, MapPin, X, RefreshCw } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
-import { useStaffShifts } from '@/hooks/useStaffShifts';
+import { useStaffShifts, StaffShift } from '@/hooks/useStaffShifts';
 import { useStaff } from '@/hooks/useStaff';
 import { useClients } from '@/hooks/useClients';
 import { useOrganization } from '@/hooks/useOrganization';
 import { CreateShiftModal } from '@/components/shifts/CreateShiftModal';
 import { ShiftSwapRequestModal } from '@/components/shifts/ShiftSwapRequestModal';
-import { RefreshCw, X } from 'lucide-react';
+import DeclineShiftModal from '@/components/shifts/DeclineShiftModal';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   DropdownMenu,
@@ -34,14 +38,32 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+interface SwapRequest {
+  id: string;
+  original_shift_id: string;
+  requesting_staff_id: string;
+  covering_staff_id: string | null;
+  request_reason: string;
+  status: string;
+  approved_by: string | null;
+  approved_at: string | null;
+  created_at: string;
+  shift_date: string;
+  shift_start_time: string;
+  shift_end_time: string;
+  requesting_staff_name: string;
+  covering_staff_name: string | null;
+  client_name: string;
+}
+
 const Shifts: React.FC = () => {
   const { user, isAuthenticated, isLoading: userLoading } = useUser();
   const { organization, loading: orgLoading } = useOrganization();
-  const { shifts, loading: shiftsLoading, createShift, updateShift, deleteShift } = useStaffShifts(organization?.id);
+  const { shifts, loading: shiftsLoading, confirmShift, declineShift, createShift, updateShift, deleteShift, refetch: refetchShifts } = useStaffShifts(organization?.id);
   const { staff, loading: staffLoading } = useStaff(organization?.id);
   const { clients, loading: clientsLoading } = useClients();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState('upcoming');
+  const [activeTab, setActiveTab] = useState('all');
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [selectedShiftForSwap, setSelectedShiftForSwap] = useState<string | null>(null);
@@ -49,19 +71,134 @@ const Shifts: React.FC = () => {
   const [shiftToCancel, setShiftToCancel] = useState<string | null>(null);
   const [expandedStaff, setExpandedStaff] = useState<Set<string>>(new Set());
   const [confirmationFilter, setConfirmationFilter] = useState<'all' | 'pending' | 'accepted' | 'declined'>('all');
-  
-  // Get client filter from URL
-  const clientIdParam = searchParams.get('clientId');
-  
-  useEffect(() => {
-    // If view param is set, switch to that tab
-    const view = searchParams.get('view');
-    if (view === 'week') {
-      setActiveTab('upcoming');
-    }
-  }, [searchParams]);
+  const [isStaffMember, setIsStaffMember] = useState(false);
+  const [myStaffId, setMyStaffId] = useState<string | null>(null);
+  const [myShifts, setMyShifts] = useState<{ pending: StaffShift[], accepted: StaffShift[], declined: StaffShift[] }>({
+    pending: [],
+    accepted: [],
+    declined: []
+  });
+  const [swapRequests, setSwapRequests] = useState<SwapRequest[]>([]);
+  const [processingRequest, setProcessingRequest] = useState<string | null>(null);
+  const [selectedShift, setSelectedShift] = useState<StaffShift | null>(null);
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
 
-  // Filter shifts by client if param is present
+  const clientIdParam = searchParams.get('clientId');
+
+  // Check if user is a staff member
+  useEffect(() => {
+    const checkStaffMember = async () => {
+      if (!user?.id) return;
+      
+      const { data, error } = await supabase
+        .from('staff_members')
+        .select('id')
+        .eq('profile_id', user.id)
+        .eq('is_active', true)
+        .single();
+      
+      if (!error && data) {
+        setIsStaffMember(true);
+        setMyStaffId(data.id);
+      }
+    };
+    
+    checkStaffMember();
+  }, [user?.id]);
+
+  // Fetch my personal shifts
+  useEffect(() => {
+    const fetchMyShifts = async () => {
+      if (!myStaffId) return;
+
+      const { data: myShiftsData, error } = await supabase
+        .from('staff_shifts')
+        .select(`
+          *,
+          client:clients!staff_shifts_client_id_fkey(
+            first_name,
+            last_name,
+            address,
+            city,
+            state
+          )
+        `)
+        .eq('staff_member_id', myStaffId)
+        .gte('shift_date', new Date().toISOString().split('T')[0])
+        .order('shift_date', { ascending: true })
+        .order('start_time', { ascending: true });
+
+      if (!error && myShiftsData) {
+        setMyShifts({
+          pending: myShiftsData.filter(s => s.confirmation_status === 'pending'),
+          accepted: myShiftsData.filter(s => s.confirmation_status === 'accepted'),
+          declined: myShiftsData.filter(s => s.confirmation_status === 'declined')
+        });
+      }
+    };
+
+    fetchMyShifts();
+  }, [myStaffId, shifts]);
+
+  // Fetch swap requests
+  useEffect(() => {
+    const fetchSwapRequests = async () => {
+      if (!organization?.id) return;
+
+      const { data: requests, error } = await supabase
+        .from('shift_swap_requests')
+        .select(`
+          *,
+          staff_shifts!original_shift_id(shift_date, start_time, end_time, client_id)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (!error && requests) {
+        const enrichedRequests = await Promise.all(
+          requests.map(async (req) => {
+            const shift = req.staff_shifts as any;
+            
+            const { data: requestingStaff } = await supabase
+              .from('staff_members')
+              .select('first_name, last_name')
+              .eq('id', req.requesting_staff_id)
+              .single();
+
+            let coveringStaffName = null;
+            if (req.covering_staff_id) {
+              const { data: coveringStaff } = await supabase
+                .from('staff_members')
+                .select('first_name, last_name')
+                .eq('id', req.covering_staff_id)
+                .single();
+              coveringStaffName = coveringStaff ? `${coveringStaff.first_name} ${coveringStaff.last_name}` : null;
+            }
+
+            const { data: client } = await supabase
+              .from('clients')
+              .select('first_name, last_name')
+              .eq('id', shift.client_id)
+              .single();
+
+            return {
+              ...req,
+              shift_date: shift.shift_date,
+              shift_start_time: shift.start_time,
+              shift_end_time: shift.end_time,
+              requesting_staff_name: requestingStaff ? `${requestingStaff.first_name} ${requestingStaff.last_name}` : 'Unknown',
+              covering_staff_name: coveringStaffName,
+              client_name: client ? `${client.first_name} ${client.last_name}` : 'Unknown',
+            };
+          })
+        );
+
+        setSwapRequests(enrichedRequests);
+      }
+    };
+
+    fetchSwapRequests();
+  }, [organization?.id]);
+
   const filteredShifts = clientIdParam 
     ? shifts.filter(shift => shift.client_id === clientIdParam)
     : shifts;
@@ -70,7 +207,6 @@ const Shifts: React.FC = () => {
     new Date(shift.shift_date) >= new Date() && shift.status !== 'cancelled' && shift.status !== 'completed'
   );
 
-  // Apply confirmation status filter
   if (confirmationFilter !== 'all') {
     upcomingShifts = upcomingShifts.filter(shift => shift.confirmation_status === confirmationFilter);
   }
@@ -93,7 +229,6 @@ const Shifts: React.FC = () => {
     return shiftDate >= today && shiftDate <= weekFromNow;
   });
 
-  // Group shifts by staff member
   const shiftsByStaff = useMemo(() => {
     const grouped = new Map<string, {
       staff: any;
@@ -124,13 +259,11 @@ const Shifts: React.FC = () => {
       const group = grouped.get(staffId)!;
       group.shifts.push(shift);
 
-      // Calculate hours
       const [startHour, startMin] = shift.start_time.split(':').map(Number);
       const [endHour, endMin] = shift.end_time.split(':').map(Number);
       const hours = (endHour + endMin / 60) - (startHour + startMin / 60) - (shift.break_minutes / 60);
       group.totalHours += hours;
 
-      // Count today and this week
       const shiftDate = new Date(shift.shift_date);
       const today = new Date();
       if (shiftDate.toDateString() === today.toDateString()) {
@@ -191,7 +324,7 @@ const Shifts: React.FC = () => {
       case 'accepted':
         return <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20 flex items-center gap-1"><CheckCircle className="w-3 h-3" />Confirmed</Badge>;
       case 'declined':
-        return <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20 flex items-center gap-1"><X className="w-3 h-3" />Declined</Badge>;
+        return <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20 flex items-center gap-1"><XCircle className="w-3 h-3" />Declined</Badge>;
       default:
         return null;
     }
@@ -226,6 +359,100 @@ const Shifts: React.FC = () => {
     });
   };
 
+  const handleAcceptShift = async (shiftId: string) => {
+    await confirmShift(shiftId);
+    refetchShifts();
+  };
+
+  const handleDeclineShift = (shift: StaffShift) => {
+    setSelectedShift(shift);
+    setShowDeclineModal(true);
+  };
+
+  const handleDeclineConfirm = async (reason?: string) => {
+    if (selectedShift) {
+      await declineShift(selectedShift.id, reason);
+      refetchShifts();
+    }
+    setShowDeclineModal(false);
+    setSelectedShift(null);
+  };
+
+  const handleApproveSwapRequest = async (requestId: string) => {
+    try {
+      setProcessingRequest(requestId);
+      const { error } = await supabase
+        .from('shift_swap_requests')
+        .update({
+          status: 'approved',
+          approved_by: user?.id,
+          approved_at: new Date().toISOString(),
+        })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      toast.success('Swap request approved');
+      const { data: requests } = await supabase
+        .from('shift_swap_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (requests) {
+        // Re-fetch swap requests
+        window.location.reload();
+      }
+    } catch (error: any) {
+      console.error('Error approving request:', error);
+      toast.error('Failed to approve request');
+    } finally {
+      setProcessingRequest(null);
+    }
+  };
+
+  const handleRejectSwapRequest = async (requestId: string) => {
+    try {
+      setProcessingRequest(requestId);
+      const { error } = await supabase
+        .from('shift_swap_requests')
+        .update({
+          status: 'rejected',
+          approved_by: user?.id,
+          approved_at: new Date().toISOString(),
+        })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      toast.success('Swap request rejected');
+      window.location.reload();
+    } catch (error: any) {
+      console.error('Error rejecting request:', error);
+      toast.error('Failed to reject request');
+    } finally {
+      setProcessingRequest(null);
+    }
+  };
+
+  const calculateDuration = (startTime: string, endTime: string, breakMinutes: number) => {
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+    const totalMinutes = (endHour * 60 + endMinute) - (startHour * 60 + startMinute) - breakMinutes;
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+  };
+
+  const totalConfirmedHours = myShifts.accepted.reduce((total, shift) => {
+    const [startHour, startMinute] = shift.start_time.split(':').map(Number);
+    const [endHour, endMinute] = shift.end_time.split(':').map(Number);
+    const minutes = (endHour * 60 + endMinute) - (startHour * 60 + startMinute) - (shift.break_minutes || 0);
+    return total + (minutes / 60);
+  }, 0);
+
+  const pendingSwapRequests = swapRequests.filter(r => r.status === 'pending');
+  const approvedSwapRequests = swapRequests.filter(r => r.status === 'approved');
+  const rejectedSwapRequests = swapRequests.filter(r => r.status === 'rejected');
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -250,16 +477,18 @@ const Shifts: React.FC = () => {
         </div>
         
         <div className="flex gap-2">
-          <select
-            value={confirmationFilter}
-            onChange={(e) => setConfirmationFilter(e.target.value as any)}
-            className="px-3 py-2 border rounded-md text-sm bg-background"
-          >
-            <option value="all">All Confirmations</option>
-            <option value="pending">Pending</option>
-            <option value="accepted">Confirmed</option>
-            <option value="declined">Declined</option>
-          </select>
+          {activeTab === 'all' && (
+            <select
+              value={confirmationFilter}
+              onChange={(e) => setConfirmationFilter(e.target.value as any)}
+              className="px-3 py-2 border rounded-md text-sm bg-background"
+            >
+              <option value="all">All Confirmations</option>
+              <option value="pending">Pending</option>
+              <option value="accepted">Confirmed</option>
+              <option value="declined">Declined</option>
+            </select>
+          )}
           <Button 
             variant="nurse" 
             icon={<Plus size={16} />}
@@ -316,13 +545,16 @@ const Shifts: React.FC = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="upcoming">All Shifts</TabsTrigger>
+        <TabsList className={isStaffMember ? "grid w-full grid-cols-5 mb-6" : "grid w-full grid-cols-4 mb-6"}>
+          <TabsTrigger value="all">All Shifts</TabsTrigger>
           <TabsTrigger value="by-staff">By Staff Member</TabsTrigger>
+          {isStaffMember && <TabsTrigger value="my-shifts">My Shifts</TabsTrigger>}
+          <TabsTrigger value="swaps">Shift Swaps</TabsTrigger>
           <TabsTrigger value="completed">Completed</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="upcoming">
+        {/* All Shifts Tab */}
+        <TabsContent value="all">
           {shiftsLoading ? (
             <div className="flex justify-center py-8">
               <div className="w-8 h-8 border-4 border-t-primary border-r-transparent border-b-primary border-l-transparent rounded-full animate-spin"></div>
@@ -421,6 +653,7 @@ const Shifts: React.FC = () => {
           )}
         </TabsContent>
 
+        {/* By Staff Member Tab */}
         <TabsContent value="by-staff">
           {shiftsLoading ? (
             <div className="flex justify-center py-8">
@@ -599,6 +832,360 @@ const Shifts: React.FC = () => {
           )}
         </TabsContent>
 
+        {/* My Shifts Tab - Staff Member Personal View */}
+        {isStaffMember && (
+          <TabsContent value="my-shifts" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Pending</p>
+                      <p className="text-3xl font-bold">{myShifts.pending.length}</p>
+                    </div>
+                    <AlertCircle className="w-8 h-8 text-warning" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Confirmed</p>
+                      <p className="text-3xl font-bold">{myShifts.accepted.length}</p>
+                    </div>
+                    <CheckCircle className="w-8 h-8 text-success" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Total Hours</p>
+                      <p className="text-3xl font-bold">{totalConfirmedHours.toFixed(1)}</p>
+                    </div>
+                    <Clock className="w-8 h-8 text-primary" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Tabs defaultValue="pending" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="pending">
+                  Pending ({myShifts.pending.length})
+                </TabsTrigger>
+                <TabsTrigger value="confirmed">
+                  Confirmed ({myShifts.accepted.length})
+                </TabsTrigger>
+                <TabsTrigger value="declined">
+                  Declined ({myShifts.declined.length})
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="pending" className="space-y-4">
+                {myShifts.pending.length === 0 ? (
+                  <Card>
+                    <CardContent className="pt-6 text-center py-12">
+                      <CheckCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">No pending shifts to confirm</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  myShifts.pending.map((shift) => (
+                    <Card key={shift.id}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="text-lg">
+                              {shift.client?.first_name} {shift.client?.last_name}
+                            </CardTitle>
+                            <CardDescription className="mt-1">
+                              {format(new Date(shift.shift_date), 'EEEE, MMMM d, yyyy')}
+                            </CardDescription>
+                          </div>
+                          {getConfirmationBadge(shift.confirmation_status)}
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid gap-3">
+                          <div className="flex items-center gap-2 text-sm">
+                            <Clock className="w-4 h-4 text-muted-foreground" />
+                            <span>{shift.start_time} - {shift.end_time}</span>
+                            <span className="text-muted-foreground">
+                              ({calculateDuration(shift.start_time, shift.end_time, shift.break_minutes || 0)})
+                            </span>
+                          </div>
+                          {shift.client?.address && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <MapPin className="w-4 h-4 text-muted-foreground" />
+                              <span>
+                                {shift.client.address}
+                                {shift.client.city && `, ${shift.client.city}`}
+                                {shift.client.state && `, ${shift.client.state}`}
+                              </span>
+                            </div>
+                          )}
+                          {shift.notes && (
+                            <div className="text-sm text-muted-foreground border-l-2 border-primary/20 pl-3 py-1">
+                              {shift.notes}
+                            </div>
+                          )}
+                        </div>
+
+                        <Separator />
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => handleAcceptShift(shift.id)}
+                            className="flex-1"
+                            size="sm"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Accept Shift
+                          </Button>
+                          <Button
+                            onClick={() => handleDeclineShift(shift)}
+                            variant="outline"
+                            className="flex-1"
+                            size="sm"
+                          >
+                            <XCircle className="w-4 h-4 mr-2" />
+                            Decline
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
+
+              <TabsContent value="confirmed" className="space-y-4">
+                {myShifts.accepted.length === 0 ? (
+                  <Card>
+                    <CardContent className="pt-6 text-center py-12">
+                      <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">No confirmed shifts yet</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  myShifts.accepted.map((shift) => (
+                    <Card key={shift.id}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="text-lg">
+                              {shift.client?.first_name} {shift.client?.last_name}
+                            </CardTitle>
+                            <CardDescription className="mt-1">
+                              {format(new Date(shift.shift_date), 'EEEE, MMMM d, yyyy')}
+                            </CardDescription>
+                          </div>
+                          {getConfirmationBadge(shift.confirmation_status)}
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid gap-3">
+                          <div className="flex items-center gap-2 text-sm">
+                            <Clock className="w-4 h-4 text-muted-foreground" />
+                            <span>{shift.start_time} - {shift.end_time}</span>
+                            <span className="text-muted-foreground">
+                              ({calculateDuration(shift.start_time, shift.end_time, shift.break_minutes || 0)})
+                            </span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
+
+              <TabsContent value="declined" className="space-y-4">
+                {myShifts.declined.length === 0 ? (
+                  <Card>
+                    <CardContent className="pt-6 text-center py-12">
+                      <XCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">No declined shifts</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  myShifts.declined.map((shift) => (
+                    <Card key={shift.id}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="text-lg">
+                              {shift.client?.first_name} {shift.client?.last_name}
+                            </CardTitle>
+                            <CardDescription className="mt-1">
+                              {format(new Date(shift.shift_date), 'EEEE, MMMM d, yyyy')}
+                            </CardDescription>
+                          </div>
+                          {getConfirmationBadge(shift.confirmation_status)}
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid gap-3">
+                          <div className="flex items-center gap-2 text-sm">
+                            <Clock className="w-4 h-4 text-muted-foreground" />
+                            <span>{shift.start_time} - {shift.end_time}</span>
+                          </div>
+                          {shift.decline_reason && (
+                            <div className="text-sm text-destructive border-l-2 border-destructive/20 pl-3 py-1">
+                              <strong>Decline Reason:</strong> {shift.decline_reason}
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
+            </Tabs>
+          </TabsContent>
+        )}
+
+        {/* Shift Swaps Tab */}
+        <TabsContent value="swaps">
+          <Tabs defaultValue="pending" className="w-full">
+            <TabsList>
+              <TabsTrigger value="pending">
+                Pending <Badge variant="secondary" className="ml-2">{pendingSwapRequests.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="approved">
+                Approved <Badge variant="secondary" className="ml-2">{approvedSwapRequests.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="rejected">
+                Rejected <Badge variant="secondary" className="ml-2">{rejectedSwapRequests.length}</Badge>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="pending" className="space-y-4">
+              {pendingSwapRequests.length === 0 ? (
+                <Card className="p-12 text-center">
+                  <AlertCircle className="text-muted-foreground mx-auto mb-4" size={48} />
+                  <h3 className="text-lg font-medium text-foreground mb-2">No pending requests</h3>
+                  <p className="text-muted-foreground">All swap requests have been processed</p>
+                </Card>
+              ) : (
+                pendingSwapRequests.map((request) => (
+                  <Card key={request.id} className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                          <User size={24} className="text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-lg">{request.requesting_staff_name}</h3>
+                          <p className="text-sm text-muted-foreground">Requested {format(new Date(request.created_at), 'MMM d, yyyy')}</p>
+                        </div>
+                      </div>
+                      <Badge className="bg-yellow-100 text-yellow-800">{request.status}</Badge>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-4 bg-muted rounded-lg">
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Shift Date</p>
+                        <p className="font-medium flex items-center gap-2">
+                          <Calendar size={16} className="text-primary" />
+                          {format(new Date(request.shift_date), 'EEEE, MMM d, yyyy')}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Shift Time</p>
+                        <p className="font-medium flex items-center gap-2">
+                          <Clock size={16} className="text-primary" />
+                          {request.shift_start_time} - {request.shift_end_time}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Client</p>
+                        <p className="font-medium">{request.client_name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Preferred Cover</p>
+                        <p className="font-medium">{request.covering_staff_name || 'No preference'}</p>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <p className="text-sm text-muted-foreground mb-2">Reason for Request</p>
+                      <p className="text-sm p-3 bg-muted rounded-lg">{request.request_reason}</p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleRejectSwapRequest(request.id)}
+                        disabled={processingRequest === request.id}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <XCircle size={16} className="mr-2" />
+                        Reject
+                      </Button>
+                      <Button
+                        variant="nurse"
+                        onClick={() => handleApproveSwapRequest(request.id)}
+                        disabled={processingRequest === request.id}
+                      >
+                        <CheckCircle size={16} className="mr-2" />
+                        {processingRequest === request.id ? 'Processing...' : 'Approve'}
+                      </Button>
+                    </div>
+                  </Card>
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="approved" className="space-y-4">
+              {approvedSwapRequests.length === 0 ? (
+                <Card className="p-12 text-center">
+                  <p className="text-muted-foreground">No approved requests yet</p>
+                </Card>
+              ) : (
+                approvedSwapRequests.map((request) => (
+                  <Card key={request.id} className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="font-semibold text-lg">{request.requesting_staff_name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(request.shift_date), 'MMM d, yyyy')} • {request.shift_start_time} - {request.shift_end_time}
+                        </p>
+                      </div>
+                      <Badge className="bg-green-100 text-green-800">{request.status}</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Approved on {format(new Date(request.approved_at!), 'MMM d, yyyy')}</p>
+                  </Card>
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="rejected" className="space-y-4">
+              {rejectedSwapRequests.length === 0 ? (
+                <Card className="p-12 text-center">
+                  <p className="text-muted-foreground">No rejected requests</p>
+                </Card>
+              ) : (
+                rejectedSwapRequests.map((request) => (
+                  <Card key={request.id} className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="font-semibold text-lg">{request.requesting_staff_name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(request.shift_date), 'MMM d, yyyy')} • {request.shift_start_time} - {request.shift_end_time}
+                        </p>
+                      </div>
+                      <Badge className="bg-red-100 text-red-800">{request.status}</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Rejected on {format(new Date(request.approved_at!), 'MMM d, yyyy')}</p>
+                  </Card>
+                ))
+              )}
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        {/* Completed Tab */}
         <TabsContent value="completed">
           {completedShifts.length === 0 ? (
             <Card className="p-8 text-center">
@@ -651,40 +1238,38 @@ const Shifts: React.FC = () => {
       <CreateShiftModal
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
-        onSuccess={createShift}
         organizationId={organization.id}
-        staff={staff}
-        clients={clients}
+        onShiftCreated={refetchShifts}
       />
 
-{selectedShiftForSwap && (
-        <ShiftSwapRequestModal
-          isOpen={isSwapModalOpen}
-          onClose={() => {
-            setIsSwapModalOpen(false);
-            setSelectedShiftForSwap(null);
-          }}
-          shiftId={selectedShiftForSwap}
-          onSuccess={() => {
-            setIsSwapModalOpen(false);
-            setSelectedShiftForSwap(null);
-          }}
-        />
-      )}
+      <ShiftSwapRequestModal
+        open={isSwapModalOpen}
+        onOpenChange={setIsSwapModalOpen}
+        shiftId={selectedShiftForSwap}
+      />
+
+      <DeclineShiftModal
+        open={showDeclineModal}
+        onOpenChange={setShowDeclineModal}
+        onConfirm={handleDeclineConfirm}
+        shiftDetails={selectedShift ? {
+          date: format(new Date(selectedShift.shift_date), 'MMMM d, yyyy'),
+          time: `${selectedShift.start_time} - ${selectedShift.end_time}`,
+          client: `${selectedShift.client?.first_name} ${selectedShift.client?.last_name}`,
+        } : undefined}
+      />
 
       <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Shift</AlertDialogTitle>
+            <AlertDialogTitle>Cancel Shift?</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to cancel this shift? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>No, Keep Shift</AlertDialogCancel>
-            <AlertDialogAction onClick={handleCancel} className="bg-destructive text-destructive-foreground">
-              Yes, Cancel Shift
-            </AlertDialogAction>
+            <AlertDialogCancel>Keep Shift</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCancel}>Cancel Shift</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
