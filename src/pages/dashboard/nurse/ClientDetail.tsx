@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate, useParams, useNavigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { ArrowLeft, Edit, Save, X, Calendar, FileText, Clock, AlertTriangle, User, Phone, Mail, MapPin, Heart } from 'lucide-react';
+import { ArrowLeft, Edit, Save, X, Calendar, FileText, Clock, AlertTriangle, User, Phone, Mail, MapPin, Heart, Bell, Activity } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useOrganization } from '@/hooks/useOrganization';
 import { useClients, Client } from '@/hooks/useClients';
+import { ClientNotesSection } from '@/components/clients/ClientNotesSection';
+import { ClientRemindersSection } from '@/components/clients/ClientRemindersSection';
+import { ClientActivityTimeline } from '@/components/clients/ClientActivityTimeline';
+import { useClientReminders } from '@/hooks/useClientReminders';
 
 interface ClientData {
   id: string;
@@ -48,6 +52,7 @@ const ClientDetail: React.FC = () => {
   const { user, isAuthenticated, isLoading: userLoading } = useUser();
   const { organization } = useOrganization();
   const { updateClient } = useClients();
+  const { reminders } = useClientReminders(id);
   const [client, setClient] = useState<ClientData | null>(null);
   const [carePlans, setCarePlans] = useState<any[]>([]);
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -56,6 +61,8 @@ const ClientDetail: React.FC = () => {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState<Partial<ClientData>>({});
+
+  const pendingReminders = reminders.filter(r => r.status === 'pending');
 
   useEffect(() => {
     if (id && organization?.id) {
@@ -288,9 +295,21 @@ const ClientDetail: React.FC = () => {
 
           {/* Tabs for different sections */}
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList>
+            <TabsList className="w-full justify-start overflow-x-auto">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="medical">Medical Info</TabsTrigger>
+              <TabsTrigger value="notes-activity">
+                <FileText className="h-4 w-4 mr-2" />
+                Notes & Activity
+              </TabsTrigger>
+              <TabsTrigger value="reminders">
+                <Bell className="h-4 w-4 mr-2" />
+                Reminders {pendingReminders.length > 0 && (
+                  <Badge variant="destructive" className="ml-2 h-5 px-1.5 text-xs">
+                    {pendingReminders.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
               <TabsTrigger value="care-plans">Care Plans ({carePlans.length})</TabsTrigger>
               <TabsTrigger value="appointments">Appointments ({appointments.length})</TabsTrigger>
               <TabsTrigger value="logs">Care Logs ({careLogs.length})</TabsTrigger>
@@ -493,6 +512,27 @@ const ClientDetail: React.FC = () => {
                   )}
                 </div>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="notes-activity" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <ClientNotesSection clientId={id!} />
+                </div>
+                <div>
+                  <Card className="p-6">
+                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                      <Activity className="h-5 w-5" />
+                      Activity Timeline
+                    </h3>
+                    <ClientActivityTimeline clientId={id!} />
+                  </Card>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="reminders">
+              <ClientRemindersSection clientId={id!} />
             </TabsContent>
 
             <TabsContent value="logs">
