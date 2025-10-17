@@ -39,8 +39,8 @@ export const ClientShiftCard: React.FC<ClientShiftCardProps> = ({
   onCancel,
   onViewStaff,
 }) => {
-  const staffName = shift.staff_member?.profile
-    ? `${shift.staff_member.profile.first_name || ''} ${shift.staff_member.profile.last_name || ''}`.trim()
+  const staffName = shift.staff_member
+    ? `${shift.staff_member.first_name || ''} ${shift.staff_member.last_name || ''}`.trim()
     : 'Unassigned';
 
   return (

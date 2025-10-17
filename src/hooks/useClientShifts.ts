@@ -22,14 +22,17 @@ export const useClientShifts = (clientId?: string, organizationId?: string) => {
         .select(`
           *,
           staff_member:staff_members(
-            profile:profiles(
-              first_name,
-              last_name
-            )
+            first_name,
+            last_name,
+            email,
+            job_title
           ),
           client:clients!staff_shifts_client_id_fkey(
             first_name,
-            last_name
+            last_name,
+            address,
+            city,
+            state
           )
         `)
         .eq('client_id', clientId)

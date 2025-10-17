@@ -606,7 +606,7 @@ const Shifts: React.FC = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold text-lg">
-                          {shift.staff_member?.profile?.first_name} {shift.staff_member?.profile?.last_name}
+                          {shift.staff_member?.first_name} {shift.staff_member?.last_name}
                         </h3>
                         <Badge variant={getStatusColor(shift.status)}>
                           {shift.status}
@@ -1227,7 +1227,7 @@ const Shifts: React.FC = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold text-lg">
-                          {shift.staff_member?.profile?.first_name} {shift.staff_member?.profile?.last_name}
+                          {shift.staff_member?.first_name} {shift.staff_member?.last_name}
                         </h3>
                         <Badge variant="outline">Completed</Badge>
                       </div>

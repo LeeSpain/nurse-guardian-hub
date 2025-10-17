@@ -22,10 +22,10 @@ export interface StaffShift {
   confirmed_by?: string;
   decline_reason?: string;
   staff_member?: {
-    profile?: {
-      first_name: string | null;
-      last_name: string | null;
-    };
+    first_name: string | null;
+    last_name: string | null;
+    email?: string | null;
+    job_title?: string | null;
   };
   client?: {
     first_name: string | null;
@@ -49,14 +49,17 @@ export const useStaffShifts = (organizationId?: string) => {
         .select(`
           *,
           staff_member:staff_members(
-            profile:profiles(
-              first_name,
-              last_name
-            )
+            first_name,
+            last_name,
+            email,
+            job_title
           ),
           client:clients!staff_shifts_client_id_fkey(
             first_name,
-            last_name
+            last_name,
+            address,
+            city,
+            state
           )
         `)
         .order('shift_date', { ascending: true })
@@ -248,14 +251,17 @@ export const useStaffShifts = (organizationId?: string) => {
         .select(`
           *,
           staff_member:staff_members(
-            profile:profiles(
-              first_name,
-              last_name
-            )
+            first_name,
+            last_name,
+            email,
+            job_title
           ),
           client:clients!staff_shifts_client_id_fkey(
             first_name,
-            last_name
+            last_name,
+            address,
+            city,
+            state
           )
         `)
         .eq('staff_member_id', staffMember.id)
