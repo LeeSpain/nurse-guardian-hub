@@ -23,21 +23,21 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button as UiButton } from '@/components/ui/button';
-import { useClients } from '@/hooks/useClients';
+import { useClients, ClientStatus } from '@/hooks/useClients';
 import { useOrganization } from '@/hooks/useOrganization';
-import { useNavigate } from 'react-router-dom';
 import { AddClientModal } from '@/components/clients/AddClientModal';
 import { InviteClientModal } from '@/components/clients/InviteClientModal';
 
 const Clients: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
+  const navigate = useNavigate();
+  const { organization } = useOrganization();
   const { clients, loading: clientsLoading, createClient, updateClient, refetch } = useClients();
   const [searchTerm, setSearchTerm] = useState('');
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<ClientStatus | 'all'>('all');
   const [editingClient, setEditingClient] = useState<any>(null);
-  const navigate = useNavigate();
   
   if (isLoading) {
     return (

@@ -27,6 +27,7 @@ const NurseStaff = lazy(() => import('./pages/dashboard/nurse/Staff'));
 const NurseClients = lazy(() => import('./pages/dashboard/nurse/Clients'));
 const NurseShifts = lazy(() => import('./pages/dashboard/nurse/Shifts'));
 const NurseCarePlans = lazy(() => import('./pages/dashboard/nurse/CarePlans'));
+const CarePlanDetail = lazy(() => import('./pages/dashboard/nurse/CarePlanDetail'));
 const NurseCareLogs = lazy(() => import('./pages/dashboard/nurse/CareLogs'));
 const NurseAnalytics = lazy(() => import('./pages/dashboard/nurse/Analytics'));
 const NurseReports = lazy(() => import('./pages/dashboard/nurse/Reports'));
@@ -34,6 +35,12 @@ const NurseBilling = lazy(() => import('./pages/dashboard/nurse/Billing'));
 const NurseMessages = lazy(() => import('./pages/dashboard/nurse/Messages'));
 const NurseSubscription = lazy(() => import('./pages/dashboard/nurse/Subscription'));
 const NurseSettings = lazy(() => import('./pages/dashboard/nurse/Settings'));
+
+// Detail pages
+const ClientDetail = lazy(() => import('./pages/dashboard/nurse/ClientDetail'));
+const StaffDetail = lazy(() => import('./pages/dashboard/nurse/StaffDetail'));
+const InvoiceDetail = lazy(() => import('./pages/dashboard/nurse/InvoiceDetail'));
+const AppointmentDetail = lazy(() => import('./pages/dashboard/nurse/AppointmentDetail'));
 
 // Client dashboard pages
 const ClientSavedProfessionals = lazy(() => import('./pages/dashboard/client/SavedProfessionals'));
@@ -125,7 +132,27 @@ function App() {
             } />
             <Route path="care-plans/:id" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
-                {React.createElement(React.lazy(() => import('./pages/dashboard/nurse/CarePlanDetail')))}
+                <CarePlanDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="clients/:id" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <ClientDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="staff/:id" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <StaffDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="invoices/:id" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <InvoiceDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="appointments/:id" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <AppointmentDetail />
               </ProtectedRoute>
             } />
             <Route path="care-logs" element={

@@ -122,7 +122,7 @@ const AppointmentDetail: React.FC = () => {
           end_time: editForm.end_time,
           service_type: editForm.service_type,
           address: editForm.address,
-          status: editForm.status,
+          status: editForm.status as any,
           special_instructions: editForm.special_instructions,
           notes: editForm.notes,
           updated_at: new Date().toISOString(),
