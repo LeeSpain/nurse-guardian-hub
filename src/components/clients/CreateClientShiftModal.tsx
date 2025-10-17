@@ -75,14 +75,24 @@ export const CreateClientShiftModal: React.FC<CreateClientShiftModalProps> = ({
             <Label htmlFor="staff_member">Assign Staff Member *</Label>
             <Select value={selectedStaff} onValueChange={setSelectedStaff} required>
               <SelectTrigger>
-                <SelectValue placeholder="Select staff member" />
+                <SelectValue placeholder="Select staff member by name" />
               </SelectTrigger>
-              <SelectContent>
-                {staff.filter(s => s.is_active).map((member) => (
-                  <SelectItem key={member.id} value={member.id}>
-                    {member.profile?.first_name} {member.profile?.last_name} - {member.job_title}
-                  </SelectItem>
-                ))}
+              <SelectContent className="bg-popover">
+                {staff.filter(s => s.is_active).map((member) => {
+                  const fullName = `${member.first_name || ''} ${member.last_name || ''}`.trim() || 
+                                   `${member.profile?.first_name || ''} ${member.profile?.last_name || ''}`.trim();
+                  const jobTitle = member.job_title || 'Staff Member';
+                  const displayName = fullName || member.email || 'Unknown';
+                  
+                  return (
+                    <SelectItem key={member.id} value={member.id}>
+                      <div className="flex flex-col py-1">
+                        <span className="font-semibold">{displayName}</span>
+                        <span className="text-xs text-muted-foreground">{jobTitle}</span>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
