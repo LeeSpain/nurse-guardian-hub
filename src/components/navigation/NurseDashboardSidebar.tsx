@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Calendar, Users, Clock, FileText, 
@@ -6,6 +6,8 @@ import {
   FileBarChart, LogOut, Bell, DollarSign, UserCircle, Pill, RefreshCw
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@/components/ui/badge';
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +30,34 @@ const NurseDashboardSidebar: React.FC = () => {
   const { user, logout, subscription } = useUser();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
+  const [pendingRemindersCount, setPendingRemindersCount] = useState(0);
+
+  // Fetch pending reminders count
+  useEffect(() => {
+    const fetchPendingCount = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('client_reminders')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'pending')
+          .lte('reminder_date', new Date().toISOString().split('T')[0]);
+        
+        if (!error && data) {
+          setPendingRemindersCount(data.length || 0);
+        }
+      } catch (error) {
+        console.error('Error fetching reminders count:', error);
+      }
+    };
+    
+    fetchPendingCount();
+    
+    // Refresh count every minute
+    const interval = setInterval(fetchPendingCount, 60000);
+    return () => clearInterval(interval);
+  }, [user?.id]);
 
   const navItems = [
     { path: '/nurse/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -35,6 +65,7 @@ const NurseDashboardSidebar: React.FC = () => {
     { path: '/nurse/dashboard/staff', label: 'Staff', icon: Users },
     { path: '/nurse/dashboard/clients', label: 'Clients', icon: UserCircle },
     { path: '/nurse/dashboard/shifts', label: 'Shifts', icon: Clock },
+    { path: '/nurse/dashboard/reminders', label: 'Reminders', icon: Bell, badge: pendingRemindersCount },
     { path: '/nurse/dashboard/care-plans', label: 'Care Plans', icon: FileText },
     { path: '/nurse/dashboard/care-logs', label: 'Care Logs', icon: ClipboardList },
     { path: '/nurse/dashboard/medications', label: 'Medications', icon: Pill },
@@ -70,7 +101,21 @@ const NurseDashboardSidebar: React.FC = () => {
                   <SidebarMenuButton asChild isActive={isActive(item.path)}>
                     <NavLink to={item.path}>
                       <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.label}</span>}
+                      {!collapsed && (
+                        <span className="flex items-center gap-2">
+                          {item.label}
+                          {item.badge && item.badge > 0 && (
+                            <Badge variant="destructive" className="h-5 px-1.5 text-xs">
+                              {item.badge > 9 ? '9+' : item.badge}
+                            </Badge>
+                          )}
+                        </span>
+                      )}
+                      {collapsed && item.badge && item.badge > 0 && (
+                        <Badge variant="destructive" className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-xs">
+                          {item.badge > 9 ? '9' : item.badge}
+                        </Badge>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

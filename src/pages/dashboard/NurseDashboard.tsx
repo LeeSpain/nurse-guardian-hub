@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { toast } from 'sonner';
-import { Shield, Calendar, Users, Settings, CreditCard, Star, FileText, Activity, AlertCircle, Clock, Bell, CheckCircle2 } from 'lucide-react';
+import { Shield, Calendar as CalendarIcon, Users, Settings, CreditCard, Star, FileText, Activity, AlertCircle, Clock, Bell, CheckCircle2, Plus } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { useNurseStats } from '@/hooks/useNurseStats';
 import { useProfile } from '@/hooks/useProfile';
 import { useOrganization } from '@/hooks/useOrganization';
 import { useTodayShifts } from '@/hooks/useTodayShifts';
-import { format, isPast, isToday } from 'date-fns';
+import { format, isPast, isToday, addDays } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -188,7 +188,7 @@ const NurseDashboard: React.FC = () => {
           <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-foreground">Upcoming Sessions</h3>
-              <Calendar className="w-5 h-5 text-purple-600" />
+              <CalendarIcon className="w-5 h-5 text-purple-600" />
             </div>
             <p className="text-3xl font-bold text-purple-700">{stats.upcomingAppointments}</p>
             <p className="text-sm text-muted-foreground mt-1">This week</p>
@@ -227,6 +227,164 @@ const NurseDashboard: React.FC = () => {
             </>
           )}
         </div>
+        
+        {/* Overdue Items Alert */}
+        {(() => {
+          const [overdueItems, setOverdueItems] = useState<any[]>([]);
+          const [overdueLoading, setOverdueLoading] = useState(true);
+          
+          useEffect(() => {
+            const fetchOverdueItems = async () => {
+              if (!organization?.id) return;
+              
+              try {
+                const today = format(new Date(), 'yyyy-MM-dd');
+                
+                // Fetch overdue reminders
+                const { data: remindersData } = await supabase
+                  .from('client_reminders')
+                  .select('*, client:clients(first_name, last_name)')
+                  .eq('organization_id', organization.id)
+                  .lt('reminder_date', today)
+                  .eq('status', 'pending')
+                  .limit(5);
+                
+                setOverdueItems(remindersData || []);
+              } catch (error) {
+                console.error('Error fetching overdue items:', error);
+              } finally {
+                setOverdueLoading(false);
+              }
+            };
+            
+            fetchOverdueItems();
+          }, [organization?.id]);
+          
+          if (overdueLoading || overdueItems.length === 0) return null;
+          
+          return (
+            <div className="mb-8">
+              <Card className="p-6 border-red-300 bg-red-50/50 dark:bg-red-950/20">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold flex items-center gap-2 text-red-700 dark:text-red-300">
+                    <AlertCircle className="h-5 w-5" />
+                    Overdue Items ({overdueItems.length})
+                  </h2>
+                  <Link to="/nurse/dashboard/reminders?status=pending">
+                    <Button variant="outline" size="sm">
+                      View All Overdue
+                    </Button>
+                  </Link>
+                </div>
+                
+                <div className="space-y-3">
+                  {overdueItems.map((item) => (
+                    <Link 
+                      key={item.id} 
+                      to={`/nurse/dashboard/clients/${item.client_id}?tab=reminders`}
+                      className="block"
+                    >
+                      <Card className="p-3 hover:shadow-md transition-all cursor-pointer border-red-200">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold text-sm">{item.title}</h4>
+                            <p className="text-xs text-muted-foreground">
+                              {item.client?.first_name} {item.client?.last_name} - 
+                              {format(new Date(item.reminder_date), 'MMM d, yyyy')}
+                            </p>
+                          </div>
+                          <Badge variant="destructive" className="text-xs">Overdue</Badge>
+                        </div>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          );
+        })()}
+
+        {/* Upcoming This Week */}
+        {(() => {
+          const [upcomingItems, setUpcomingItems] = useState<any[]>([]);
+          const [upcomingLoading, setUpcomingLoading] = useState(true);
+          
+          useEffect(() => {
+            const fetchUpcomingItems = async () => {
+              if (!organization?.id) return;
+              
+              try {
+                const today = new Date();
+                const nextWeek = addDays(today, 7);
+                
+                // Fetch upcoming reminders, appointments, and shifts
+                const { data: remindersData } = await supabase
+                  .from('client_reminders')
+                  .select('*, client:clients(first_name, last_name)')
+                  .eq('organization_id', organization.id)
+                  .gte('reminder_date', format(today, 'yyyy-MM-dd'))
+                  .lte('reminder_date', format(nextWeek, 'yyyy-MM-dd'))
+                  .eq('status', 'pending')
+                  .order('reminder_date', { ascending: true })
+                  .limit(5);
+                
+                setUpcomingItems(remindersData || []);
+              } catch (error) {
+                console.error('Error fetching upcoming items:', error);
+              } finally {
+                setUpcomingLoading(false);
+              }
+            };
+            
+            fetchUpcomingItems();
+          }, [organization?.id]);
+          
+          if (upcomingLoading || upcomingItems.length === 0) return null;
+          
+          return (
+            <div className="mb-8">
+              <Card className="p-6 border-blue-200 bg-blue-50/50 dark:bg-blue-950/20">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold flex items-center gap-2">
+                    <CalendarIcon className="h-5 w-5 text-blue-600" />
+                    Upcoming This Week
+                  </h2>
+                  <Link to="/nurse/dashboard/reminders">
+                    <Button variant="outline" size="sm">
+                      View Calendar
+                    </Button>
+                  </Link>
+                </div>
+                
+                <div className="space-y-3">
+                  {upcomingItems.map((item) => (
+                    <Link 
+                      key={item.id} 
+                      to={`/nurse/dashboard/clients/${item.client_id}?tab=reminders`}
+                      className="block"
+                    >
+                      <Card className="p-3 hover:shadow-md transition-all cursor-pointer">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold text-sm">{item.title}</h4>
+                            <p className="text-xs text-muted-foreground">
+                              {item.client?.first_name} {item.client?.last_name} - 
+                              {format(new Date(item.reminder_date), 'EEE, MMM d')}
+                              {item.reminder_time && ` at ${item.reminder_time}`}
+                            </p>
+                          </div>
+                          <Badge className="text-xs">
+                            {item.priority}
+                          </Badge>
+                        </div>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          );
+        })()}
         
         {/* Today's Reminders */}
         <div className="mb-8">
@@ -319,6 +477,14 @@ const NurseDashboard: React.FC = () => {
                     );
                   })}
                 </div>
+                
+                <div className="mt-4">
+                  <Link to="/nurse/dashboard/reminders">
+                    <Button variant="outline" className="w-full">
+                      View All Reminders
+                    </Button>
+                  </Link>
+                </div>
               </>
             )}
           </Card>
@@ -399,7 +565,7 @@ const NurseDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <CalendarIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">No shifts scheduled for today</p>
                 <Link to="/nurse/dashboard/shifts" className="text-sm text-purple-600 hover:text-purple-700 mt-2 inline-block">
                   Create a shift
