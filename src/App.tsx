@@ -26,7 +26,6 @@ const NurseCalendar = lazy(() => import('./pages/dashboard/nurse/Calendar'));
 const NurseStaff = lazy(() => import('./pages/dashboard/nurse/Staff'));
 const NurseClients = lazy(() => import('./pages/dashboard/nurse/Clients'));
 const NurseShifts = lazy(() => import('./pages/dashboard/nurse/Shifts'));
-const MyShifts = lazy(() => import('./pages/dashboard/nurse/MyShifts'));
 const NurseCarePlans = lazy(() => import('./pages/dashboard/nurse/CarePlans'));
 const CarePlanDetail = lazy(() => import('./pages/dashboard/nurse/CarePlanDetail'));
 const NurseCareLogs = lazy(() => import('./pages/dashboard/nurse/CareLogs'));
@@ -44,7 +43,6 @@ const InvoiceDetail = lazy(() => import('./pages/dashboard/nurse/InvoiceDetail')
 const AppointmentDetail = lazy(() => import('./pages/dashboard/nurse/AppointmentDetail'));
 
 // Advanced features
-const ShiftSwapRequests = lazy(() => import('./pages/dashboard/nurse/ShiftSwapRequests'));
 const Medications = lazy(() => import('./pages/dashboard/nurse/Medications'));
 const Reminders = lazy(() => import('./pages/dashboard/nurse/Reminders'));
 const Notifications = lazy(() => import('./pages/dashboard/nurse/Notifications'));
@@ -132,11 +130,6 @@ function App() {
                 <NurseShifts />
               </ProtectedRoute>
             } />
-            <Route path="my-shifts" element={
-              <ProtectedRoute requiredRole={UserRole.NURSE}>
-                <MyShifts />
-              </ProtectedRoute>
-            } />
             <Route path="care-plans" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseCarePlans />
@@ -200,11 +193,6 @@ function App() {
             <Route path="settings" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseSettings />
-              </ProtectedRoute>
-            } />
-            <Route path="shift-swaps" element={
-              <ProtectedRoute requiredRole={UserRole.NURSE}>
-                <ShiftSwapRequests />
               </ProtectedRoute>
             } />
             <Route path="medications" element={
