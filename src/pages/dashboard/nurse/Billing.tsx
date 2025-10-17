@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { Calendar, DollarSign, FileText, Send, CheckCircle, Clock, AlertCircle, Eye, CreditCard } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,6 +16,7 @@ import { toast as sonnerToast } from 'sonner';
 const Billing: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
   const { invoices, stats, loading: invoicesLoading, error, refetch } = useInvoices();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('pending');
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
   const [sendingInvoice, setSendingInvoice] = useState<string | null>(null);

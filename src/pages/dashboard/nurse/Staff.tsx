@@ -25,6 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button as UiButton } from '@/components/ui/button';
 import { useStaff } from '@/hooks/useStaff';
 import { useOrganization } from '@/hooks/useOrganization';
+import { useNavigate } from 'react-router-dom';
 import { AddStaffModal } from '@/components/staff/AddStaffModal';
 import { InviteStaffModal } from '@/components/staff/InviteStaffModal';
 import {

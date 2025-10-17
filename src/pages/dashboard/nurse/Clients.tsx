@@ -23,7 +23,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button as UiButton } from '@/components/ui/button';
-import { useClients, ClientStatus } from '@/hooks/useClients';
+import { useClients } from '@/hooks/useClients';
+import { useOrganization } from '@/hooks/useOrganization';
+import { useNavigate } from 'react-router-dom';
 import { AddClientModal } from '@/components/clients/AddClientModal';
 import { InviteClientModal } from '@/components/clients/InviteClientModal';
 
