@@ -64,6 +64,7 @@ const Calendar: React.FC = () => {
       date: addDays(appointmentDate, i),
       startTime: '09:00',
       endTime: '10:00',
+      staffId: 'unassigned',
     }))
   );
 
@@ -80,6 +81,18 @@ const Calendar: React.FC = () => {
       }))
     );
   }, [appointmentDate]);
+
+  // Update weekly schedule when main staff selection changes
+  useEffect(() => {
+    if (appointmentForm.appointmentMode === 'weekly' && appointmentForm.staffId !== 'unassigned') {
+      setWeeklySchedule(prev => 
+        prev.map(day => ({
+          ...day,
+          staffId: day.staffId === 'unassigned' ? appointmentForm.staffId : day.staffId,
+        }))
+      );
+    }
+  }, [appointmentForm.staffId, appointmentForm.appointmentMode]);
 
   // Update live-in end date when days change
   useEffect(() => {
@@ -278,7 +291,7 @@ const Calendar: React.FC = () => {
           total_cost: totalCost,
         }];
       } else if (appointmentForm.appointmentMode === 'weekly') {
-        // Weekly care plan with individual daily schedules
+        // Weekly care plan with individual daily schedules and staff assignments
         appointmentsToCreate = weeklySchedule
           .filter(day => day.enabled)
           .map(day => {
@@ -292,6 +305,7 @@ const Calendar: React.FC = () => {
               end_time: day.endTime,
               duration_minutes: Math.round(dayDurationHours * 60),
               total_cost: dayDurationHours * parseFloat(appointmentForm.hourlyRate),
+              staff_member_id: (day.staffId && day.staffId !== 'unassigned') ? day.staffId : null,
             };
           });
       } else if (appointmentForm.appointmentMode === 'live-in') {
@@ -358,6 +372,7 @@ const Calendar: React.FC = () => {
           date: addDays(new Date(), i),
           startTime: '09:00',
           endTime: '10:00',
+          staffId: 'unassigned',
         }))
       );
       setLiveInDays(3);
@@ -942,8 +957,9 @@ const Calendar: React.FC = () => {
                           ...day,
                           startTime: firstDay.startTime,
                           endTime: firstDay.endTime,
+                          staffId: firstDay.staffId,
                         })));
-                        toast.success('Copied times to all days');
+                        toast.success('Copied times and staff to all days');
                       }}
                     >
                       Copy to all
@@ -960,7 +976,7 @@ const Calendar: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   {weeklySchedule.map((day, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-background rounded border">
+                    <div key={index} className="flex items-start gap-3 p-3 bg-background rounded border">
                       <input
                         type="checkbox"
                         checked={day.enabled}
@@ -969,37 +985,60 @@ const Calendar: React.FC = () => {
                           newSchedule[index].enabled = e.target.checked;
                           setWeeklySchedule(newSchedule);
                         }}
-                        className="w-4 h-4"
+                        className="w-4 h-4 mt-2"
                       />
-                      <div className="flex-1 grid grid-cols-3 gap-3 items-center">
-                        <span className={cn(
-                          "text-sm font-medium",
-                          !day.enabled && "text-muted-foreground"
-                        )}>
-                          Day {index + 1} - {format(day.date, 'MMM d')}
-                        </span>
-                        <Input
-                          type="time"
-                          value={day.startTime}
-                          onChange={(e) => {
+                      <div className="flex-1 space-y-2">
+                        <div className="grid grid-cols-3 gap-3 items-center">
+                          <span className={cn(
+                            "text-sm font-medium",
+                            !day.enabled && "text-muted-foreground"
+                          )}>
+                            Day {index + 1} - {format(day.date, 'MMM d')}
+                          </span>
+                          <Input
+                            type="time"
+                            value={day.startTime}
+                            onChange={(e) => {
+                              const newSchedule = [...weeklySchedule];
+                              newSchedule[index].startTime = e.target.value;
+                              setWeeklySchedule(newSchedule);
+                            }}
+                            disabled={!day.enabled}
+                            className="h-9"
+                          />
+                          <Input
+                            type="time"
+                            value={day.endTime}
+                            onChange={(e) => {
+                              const newSchedule = [...weeklySchedule];
+                              newSchedule[index].endTime = e.target.value;
+                              setWeeklySchedule(newSchedule);
+                            }}
+                            disabled={!day.enabled}
+                            className="h-9"
+                          />
+                        </div>
+                        <Select 
+                          value={day.staffId} 
+                          onValueChange={(v) => {
                             const newSchedule = [...weeklySchedule];
-                            newSchedule[index].startTime = e.target.value;
+                            newSchedule[index].staffId = v;
                             setWeeklySchedule(newSchedule);
                           }}
                           disabled={!day.enabled}
-                          className="h-9"
-                        />
-                        <Input
-                          type="time"
-                          value={day.endTime}
-                          onChange={(e) => {
-                            const newSchedule = [...weeklySchedule];
-                            newSchedule[index].endTime = e.target.value;
-                            setWeeklySchedule(newSchedule);
-                          }}
-                          disabled={!day.enabled}
-                          className="h-9"
-                        />
+                        >
+                          <SelectTrigger className="h-9">
+                            <SelectValue placeholder="Select staff for this day" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="unassigned">No staff assigned</SelectItem>
+                            {staff.map((member) => (
+                              <SelectItem key={member.id} value={member.id}>
+                                {member.first_name} {member.last_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   ))}
