@@ -59,41 +59,6 @@ const Shifts: React.FC = () => {
       setActiveTab('upcoming');
     }
   }, [searchParams]);
-  
-  if (userLoading || orgLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-16 h-16 border-4 border-t-primary border-r-transparent border-b-primary border-l-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-  
-  if (!isAuthenticated || user?.role !== UserRole.NURSE) {
-    return <Navigate to="/login" />;
-  }
-
-  if (!organization) {
-    return (
-      <div className="container mx-auto p-6">
-        <Card className="p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">No Organization Found</h2>
-          <p className="text-muted-foreground mb-6">
-            You need to create or join an organization to manage shifts.
-          </p>
-        </Card>
-      </div>
-    );
-  }
-
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      scheduled: 'secondary',
-      confirmed: 'default',
-      completed: 'outline',
-      cancelled: 'destructive',
-    };
-    return colors[status] || 'outline';
-  };
 
   // Filter shifts by client if param is present
   const filteredShifts = clientIdParam 
@@ -121,35 +86,6 @@ const Shifts: React.FC = () => {
     const shiftDate = new Date(shift.shift_date);
     return shiftDate >= today && shiftDate <= weekFromNow;
   });
-
-  const clearFilter = () => {
-    setSearchParams({});
-  };
-
-  const confirmCancel = (id: string) => {
-    setShiftToCancel(id);
-    setCancelDialogOpen(true);
-  };
-
-  const handleCancel = async () => {
-    if (shiftToCancel) {
-      await deleteShift(shiftToCancel);
-      setCancelDialogOpen(false);
-      setShiftToCancel(null);
-    }
-  };
-
-  const toggleStaffExpanded = (staffId: string) => {
-    setExpandedStaff(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(staffId)) {
-        newSet.delete(staffId);
-      } else {
-        newSet.add(staffId);
-      }
-      return newSet;
-    });
-  };
 
   // Group shifts by staff member
   const shiftsByStaff = useMemo(() => {
@@ -206,6 +142,70 @@ const Shifts: React.FC = () => {
       b.shifts.length - a.shifts.length
     );
   }, [upcomingShifts]);
+  
+  if (userLoading || orgLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-16 h-16 border-4 border-t-primary border-r-transparent border-b-primary border-l-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+  
+  if (!isAuthenticated || user?.role !== UserRole.NURSE) {
+    return <Navigate to="/login" />;
+  }
+
+  if (!organization) {
+    return (
+      <div className="container mx-auto p-6">
+        <Card className="p-8 text-center">
+          <h2 className="text-2xl font-bold mb-4">No Organization Found</h2>
+          <p className="text-muted-foreground mb-6">
+            You need to create or join an organization to manage shifts.
+          </p>
+        </Card>
+      </div>
+    );
+  }
+
+  const getStatusColor = (status: string) => {
+    const colors: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+      scheduled: 'secondary',
+      confirmed: 'default',
+      completed: 'outline',
+      cancelled: 'destructive',
+    };
+    return colors[status] || 'outline';
+  };
+
+  const clearFilter = () => {
+    setSearchParams({});
+  };
+
+  const confirmCancel = (id: string) => {
+    setShiftToCancel(id);
+    setCancelDialogOpen(true);
+  };
+
+  const handleCancel = async () => {
+    if (shiftToCancel) {
+      await deleteShift(shiftToCancel);
+      setCancelDialogOpen(false);
+      setShiftToCancel(null);
+    }
+  };
+
+  const toggleStaffExpanded = (staffId: string) => {
+    setExpandedStaff(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(staffId)) {
+        newSet.delete(staffId);
+      } else {
+        newSet.add(staffId);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <div className="container mx-auto p-6 space-y-6">
