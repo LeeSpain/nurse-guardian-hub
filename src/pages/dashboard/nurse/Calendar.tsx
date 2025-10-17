@@ -117,12 +117,27 @@ const Calendar: React.FC = () => {
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   // Fetch shifts for current view - MUST be before any conditional returns
-  const { shifts, loading: shiftsLoading } = useCalendarShifts({
+  const { shifts, loading: shiftsLoading, refetch: refetchShifts } = useCalendarShifts({
     startDate: view === 'month' ? monthStart : view === 'week' ? weekStart : currentDate,
     endDate: view === 'month' ? monthEnd : view === 'week' ? addDays(weekStart, 6) : currentDate,
     organizationId: organization?.id,
     clientId: clientIdParam || undefined,
   });
+
+  // Refetch shifts when component mounts or when returning to page
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && refetchShifts) {
+        refetchShifts();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refetchShifts]);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -427,7 +442,11 @@ const Calendar: React.FC = () => {
       );
       setLiveInDays(3);
       
-      // Refresh appointments - trigger a re-fetch
+      // Refetch shifts instead of full page reload
+      if (refetchShifts) {
+        refetchShifts();
+      }
+      // Still reload to get appointments (keep existing behavior)
       window.location.reload();
     } catch (error: any) {
       console.error('Error creating appointment:', error);
@@ -460,6 +479,11 @@ const Calendar: React.FC = () => {
       toast.success('Appointment deleted successfully');
       setDeleteDialogOpen(false);
       setAppointmentToDelete(null);
+      
+      // Refetch shifts
+      if (refetchShifts) {
+        refetchShifts();
+      }
       window.location.reload();
     } catch (error) {
       console.error('Error deleting appointment:', error);
@@ -712,7 +736,7 @@ const Calendar: React.FC = () => {
                             <div className="w-1 h-full rounded-full bg-green-500" />
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-sm truncate">
-                                {shift.staff_member?.profiles?.first_name} {shift.staff_member?.profiles?.last_name}
+                                {shift.staff_member?.first_name} {shift.staff_member?.last_name}
                               </p>
                               <p className="text-xs text-muted-foreground">{shift.start_time} - {shift.end_time}</p>
                               <Badge variant="outline" className="text-xs mt-1">Shift</Badge>
@@ -835,7 +859,7 @@ const Calendar: React.FC = () => {
                             <div>
                               <Badge variant="outline" className="mb-2 bg-white">Shift</Badge>
                               <h3 className="font-semibold text-lg">
-                                {shift.staff_member?.profiles?.first_name} {shift.staff_member?.profiles?.last_name}
+                                {shift.staff_member?.first_name} {shift.staff_member?.last_name}
                               </h3>
                               <Badge variant="secondary" className="mt-1">
                                 {shift.status}
@@ -1512,7 +1536,7 @@ const Calendar: React.FC = () => {
                                 <span className="text-sm font-medium">{shift.start_time} - {shift.end_time}</span>
                               </div>
                               <h4 className="font-semibold">
-                                {shift.staff_member?.profiles?.first_name} {shift.staff_member?.profiles?.last_name}
+                                {shift.staff_member?.first_name} {shift.staff_member?.last_name}
                               </h4>
                               {shift.client && (
                                 <p className="text-sm text-muted-foreground mt-1">

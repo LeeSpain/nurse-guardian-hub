@@ -14,10 +14,10 @@ interface CalendarShift {
   break_minutes: number;
   notes: string;
   staff_member?: {
-    profiles?: {
-      first_name: string;
-      last_name: string;
-    };
+    first_name: string;
+    last_name: string;
+    email?: string;
+    job_title?: string;
   };
   client?: {
     first_name: string;
@@ -60,10 +60,10 @@ export const useCalendarShifts = ({
         .select(`
           *,
           staff_member:staff_members(
-            profiles(
-              first_name,
-              last_name
-            )
+            first_name,
+            last_name,
+            email,
+            job_title
           ),
           client:clients!staff_shifts_client_id_fkey(
             first_name,
@@ -107,6 +107,32 @@ export const useCalendarShifts = ({
   useEffect(() => {
     fetchShifts();
   }, [startDate, endDate, organizationId, clientId, staffId, status]);
+
+  // Add realtime subscription for shifts
+  useEffect(() => {
+    if (!organizationId) return;
+
+    const channel = supabase
+      .channel('calendar-shifts-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'staff_shifts',
+          filter: `organization_id=eq.${organizationId}`,
+        },
+        (payload) => {
+          console.log('Shift change detected:', payload);
+          fetchShifts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [organizationId, startDate, endDate, clientId, staffId, status]);
 
   return {
     shifts,
