@@ -12,6 +12,7 @@ import { useStaff } from '@/hooks/useStaff';
 import { useClients } from '@/hooks/useClients';
 import { useOrganization } from '@/hooks/useOrganization';
 import { CreateShiftModal } from '@/components/shifts/CreateShiftModal';
+import { ShiftSwapRequestModal } from '@/components/shifts/ShiftSwapRequestModal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +39,8 @@ const Shifts: React.FC = () => {
   const { clients, loading: clientsLoading } = useClients();
   const [activeTab, setActiveTab] = useState('upcoming');
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
+  const [selectedShiftForSwap, setSelectedShiftForSwap] = useState<string | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [shiftToCancel, setShiftToCancel] = useState<string | null>(null);
   

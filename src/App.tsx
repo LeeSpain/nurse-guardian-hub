@@ -42,6 +42,10 @@ const StaffDetail = lazy(() => import('./pages/dashboard/nurse/StaffDetail'));
 const InvoiceDetail = lazy(() => import('./pages/dashboard/nurse/InvoiceDetail'));
 const AppointmentDetail = lazy(() => import('./pages/dashboard/nurse/AppointmentDetail'));
 
+// Advanced features
+const ShiftSwapRequests = lazy(() => import('./pages/dashboard/nurse/ShiftSwapRequests'));
+const Medications = lazy(() => import('./pages/dashboard/nurse/Medications'));
+
 // Client dashboard pages
 const ClientSavedProfessionals = lazy(() => import('./pages/dashboard/client/SavedProfessionals'));
 const ClientAppointments = lazy(() => import('./pages/dashboard/client/Appointments'));
@@ -188,6 +192,16 @@ function App() {
             <Route path="settings" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="shift-swaps" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <ShiftSwapRequests />
+              </ProtectedRoute>
+            } />
+            <Route path="medications" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <Medications />
               </ProtectedRoute>
             } />
           </Route>

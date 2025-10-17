@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Calendar, Users, Clock, FileText, 
   ClipboardList, MessageSquare, Settings, BarChart3, 
-  FileBarChart, LogOut, Bell, DollarSign, UserCircle
+  FileBarChart, LogOut, Bell, DollarSign, UserCircle, Pill, RefreshCw
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import {
@@ -37,6 +37,8 @@ const NurseDashboardSidebar: React.FC = () => {
     { path: '/nurse/dashboard/shifts', label: 'Shifts', icon: Clock },
     { path: '/nurse/dashboard/care-plans', label: 'Care Plans', icon: FileText },
     { path: '/nurse/dashboard/care-logs', label: 'Care Logs', icon: ClipboardList },
+    { path: '/nurse/dashboard/medications', label: 'Medications', icon: Pill },
+    { path: '/nurse/dashboard/shift-swaps', label: 'Shift Swaps', icon: RefreshCw },
     { path: '/nurse/dashboard/messages', label: 'Messages', icon: MessageSquare },
   ];
 

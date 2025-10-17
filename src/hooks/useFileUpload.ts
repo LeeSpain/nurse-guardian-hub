@@ -4,7 +4,7 @@ import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
 export interface FileUploadOptions {
-  bucket: 'profile-images' | 'care-logs' | 'documents' | 'appointment-files';
+  bucket: 'profile-images' | 'care-logs' | 'documents' | 'appointment-files' | 'messages';
   folder?: string;
   maxSizeBytes?: number;
   allowedTypes?: string[];
