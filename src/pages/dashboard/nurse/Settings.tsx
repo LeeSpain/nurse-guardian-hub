@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useTheme } from 'next-themes';
 
 const Settings: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useUser();
+  const { user, isAuthenticated, isLoading, updateUser } = useUser();
   const { profile, loading: profileLoading, updateProfile, updateProfileImage } = useProfile();
   const { organization, loading: orgLoading, createOrganization, updateOrganization, refetch } = useOrganization();
   const { toast } = useToast();
@@ -78,8 +78,15 @@ const Settings: React.FC = () => {
   }
 
   const handleSave = async () => {
-    await updateProfile(formData);
-    setIsEditing(false);
+    const result = await updateProfile(formData);
+    if (!result.error) {
+      // Also update UserContext so sidebar/header display updated name immediately
+      await updateUser({
+        firstName: formData.first_name,
+        lastName: formData.last_name
+      });
+      setIsEditing(false);
+    }
   };
 
   const handleImageUpload = (url: string) => {
