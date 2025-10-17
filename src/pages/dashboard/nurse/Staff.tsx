@@ -49,6 +49,8 @@ const Staff: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [staffToDelete, setStaffToDelete] = useState<string | null>(null);
   const [editingStaff, setEditingStaff] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   if (userLoading || orgLoading) {
     return (
@@ -107,6 +109,12 @@ const Staff: React.FC = () => {
     const search = searchTerm.toLowerCase();
     return fullName.includes(search) || jobTitle.includes(search) || email.includes(search);
   });
+
+  const totalPages = Math.ceil(filteredStaff.length / itemsPerPage);
+  const paginatedStaff = filteredStaff.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const confirmDelete = (id: string) => {
     setStaffToDelete(id);
@@ -263,7 +271,7 @@ const Staff: React.FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredStaff.map((member) => {
+                {paginatedStaff.map((member) => {
                   const badgeConfig = getBackgroundCheckBadge(member.background_check_status);
                   const BadgeIcon = badgeConfig?.icon;
                   
@@ -355,6 +363,46 @@ const Staff: React.FC = () => {
                 })}
               </TableBody>
             </Table>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                <div className="text-sm text-muted-foreground">
+                  Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredStaff.length)} of {filteredStaff.length} staff
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? 'nurse' : 'outline'}
+                        size="sm"
+                        onClick={() => setCurrentPage(page)}
+                        className="min-w-[2.5rem]"
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </Card>

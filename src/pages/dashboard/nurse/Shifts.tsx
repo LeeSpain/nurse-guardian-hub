@@ -13,6 +13,7 @@ import { useClients } from '@/hooks/useClients';
 import { useOrganization } from '@/hooks/useOrganization';
 import { CreateShiftModal } from '@/components/shifts/CreateShiftModal';
 import { ShiftSwapRequestModal } from '@/components/shifts/ShiftSwapRequestModal';
+import { RefreshCw } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -256,6 +257,13 @@ const Shifts: React.FC = () => {
                           <CheckCircle className="mr-2" size={16} />
                           Mark Completed
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          setSelectedShiftForSwap(shift.id);
+                          setIsSwapModalOpen(true);
+                        }}>
+                          <RefreshCw className="mr-2" size={16} />
+                          Request Swap
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           className="text-destructive"
@@ -330,6 +338,21 @@ const Shifts: React.FC = () => {
         staff={staff}
         clients={clients}
       />
+
+{selectedShiftForSwap && (
+        <ShiftSwapRequestModal
+          isOpen={isSwapModalOpen}
+          onClose={() => {
+            setIsSwapModalOpen(false);
+            setSelectedShiftForSwap(null);
+          }}
+          shiftId={selectedShiftForSwap}
+          onSuccess={() => {
+            setIsSwapModalOpen(false);
+            setSelectedShiftForSwap(null);
+          }}
+        />
+      )}
 
       <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <AlertDialogContent>

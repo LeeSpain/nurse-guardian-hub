@@ -19,46 +19,49 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
 }) => {
   const [message, setMessage] = useState('');
   const [showFileUpload, setShowFileUpload] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<Array<{ name: string; path: string }>>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage } = useMessages();
-
-  const handleSendMessage = async () => {
-    if (!message.trim()) return;
-
-    try {
-      await sendMessage(recipientId, message.trim(), appointmentId);
-      setMessage('');
-      onMessageSent?.();
-      
-      // Reset textarea height
-      if (textareaRef.current) {
-        textareaRef.current.style.height = 'auto';
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
-  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      handleSendWithAttachments();
     }
   };
 
   const handleFileUploaded = async (result: { url?: string; path?: string }) => {
     if (result.path) {
-      // Send a message with file attachment info
-      const fileName = result.path.split('/').pop();
-      const fileMessage = `📎 Shared a file: ${fileName}`;
-      
-      try {
-        await sendMessage(recipientId, fileMessage, appointmentId);
-        setShowFileUpload(false);
-        onMessageSent?.();
-      } catch (error) {
-        console.error('Error sending file message:', error);
+      const fileName = result.path.split('/').pop() || 'file';
+      setSelectedFiles(prev => [...prev, { name: fileName, path: result.path! }]);
+      setShowFileUpload(false);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSendWithAttachments = async () => {
+    if (!message.trim() && selectedFiles.length === 0) return;
+
+    try {
+      let messageContent = message.trim();
+      if (selectedFiles.length > 0) {
+        const fileList = selectedFiles.map(f => `📎 ${f.name}`).join('\n');
+        messageContent = messageContent ? `${messageContent}\n\n${fileList}` : fileList;
       }
+      
+      await sendMessage(recipientId, messageContent, appointmentId);
+      setMessage('');
+      setSelectedFiles([]);
+      onMessageSent?.();
+      
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
     }
   };
 
@@ -72,6 +75,24 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
+      {/* Selected Files Display */}
+      {selectedFiles.length > 0 && (
+        <div className="flex flex-wrap gap-2 pb-2 border-b border-gray-200">
+          {selectedFiles.map((file, index) => (
+            <div key={index} className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-lg text-sm">
+              <Paperclip className="w-4 h-4 text-gray-500" />
+              <span className="text-gray-700">{file.name}</span>
+              <button
+                onClick={() => removeFile(index)}
+                className="text-gray-400 hover:text-gray-600 ml-1"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="flex space-x-2">
         <div className="flex-grow relative">
           <textarea
@@ -98,8 +119,8 @@ const MessageComposer: React.FC<MessageComposerProps> = ({
           <Button
             variant="client"
             size="sm"
-            onClick={handleSendMessage}
-            disabled={!message.trim()}
+            onClick={handleSendWithAttachments}
+            disabled={!message.trim() && selectedFiles.length === 0}
             icon={<Send className="w-4 h-4" />}
           >
             Send
