@@ -124,6 +124,17 @@ const Calendar: React.FC = () => {
     clientId: clientIdParam || undefined,
   });
 
+  // Debug: Log shifts data
+  useEffect(() => {
+    console.log('Calendar shifts loaded:', shifts.length, 'shifts');
+    console.log('Date range:', format(view === 'month' ? monthStart : view === 'week' ? weekStart : currentDate, 'yyyy-MM-dd'), 
+                'to', format(view === 'month' ? monthEnd : view === 'week' ? addDays(weekStart, 6) : currentDate, 'yyyy-MM-dd'));
+    console.log('Calendar data view:', calendarDataView);
+    if (shifts.length > 0) {
+      console.log('Sample shift:', shifts[0]);
+    }
+  }, [shifts, calendarDataView, view]);
+
   // Refetch shifts when component mounts or when returning to page
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -224,7 +235,9 @@ const Calendar: React.FC = () => {
 
   const getShiftsForDate = (date: Date) => {
     if (calendarDataView === 'appointments') return [];
-    return shifts.filter(shift => isSameDay(new Date(shift.shift_date), date));
+    const dateShifts = shifts.filter(shift => isSameDay(new Date(shift.shift_date), date));
+    console.log('getShiftsForDate:', format(date, 'yyyy-MM-dd'), 'Found:', dateShifts.length, 'shifts');
+    return dateShifts;
   };
 
   const selectedDayAppointments = getAppointmentsForDate(selectedDate);
@@ -736,7 +749,14 @@ const Calendar: React.FC = () => {
                             <div className="w-1 h-full rounded-full bg-green-500" />
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-sm truncate">
-                                {shift.staff_member?.first_name} {shift.staff_member?.last_name}
+                                {shift.staff_member?.first_name && shift.staff_member?.last_name 
+                                  ? `${shift.staff_member.first_name} ${shift.staff_member.last_name}`
+                                  : 'Staff Member'}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {shift.client?.first_name && shift.client?.last_name 
+                                  ? `Client: ${shift.client.first_name} ${shift.client.last_name}`
+                                  : 'Client'}
                               </p>
                               <p className="text-xs text-muted-foreground">{shift.start_time} - {shift.end_time}</p>
                               <Badge variant="outline" className="text-xs mt-1">Shift</Badge>
