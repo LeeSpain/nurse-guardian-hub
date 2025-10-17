@@ -22,6 +22,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button as UiButton } from '@/components/ui/button';
 import { useClients, ClientStatus } from '@/hooks/useClients';
 import { AddClientModal } from '@/components/clients/AddClientModal';
 import { InviteClientModal } from '@/components/clients/InviteClientModal';
@@ -264,9 +265,9 @@ const Clients: React.FC = () => {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <UiButton variant="ghost" size="sm">
                             <MoreVertical size={16} />
-                          </Button>
+                          </UiButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-background">
                           <DropdownMenuItem onClick={() => setEditingClient(client)}>
@@ -328,7 +329,7 @@ const Clients: React.FC = () => {
           setAddModalOpen(open);
           if (!open) setEditingClient(null);
         }}
-        onSuccess={createClient}
+        onSuccess={(data) => editingClient ? updateClient(editingClient.id, data) : createClient(data)}
         editingClient={editingClient}
       />
 

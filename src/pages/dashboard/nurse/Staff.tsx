@@ -22,6 +22,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button as UiButton } from '@/components/ui/button';
 import { useStaff } from '@/hooks/useStaff';
 import { useOrganization } from '@/hooks/useOrganization';
 import { AddStaffModal } from '@/components/staff/AddStaffModal';
@@ -40,7 +41,7 @@ import {
 const Staff: React.FC = () => {
   const { user, isAuthenticated, isLoading: userLoading } = useUser();
   const { organization, loading: orgLoading, createOrganization } = useOrganization();
-  const { staff, loading: staffLoading, createStaff, deleteStaff } = useStaff(organization?.id);
+  const { staff, loading: staffLoading, createStaff, updateStaff, deleteStaff } = useStaff(organization?.id);
   const [searchTerm, setSearchTerm] = useState('');
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -320,9 +321,9 @@ const Staff: React.FC = () => {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <UiButton variant="ghost" size="sm">
                             <MoreVertical size={16} />
-                          </Button>
+                          </UiButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-background">
                           <DropdownMenuItem onClick={() => setEditingStaff(member)}>
@@ -363,7 +364,7 @@ const Staff: React.FC = () => {
           setAddModalOpen(open);
           if (!open) setEditingStaff(null);
         }}
-        onSuccess={createStaff}
+        onSuccess={(data) => editingStaff ? updateStaff(editingStaff.id, data) : createStaff(data)}
         organizationId={organization.id}
         editingStaff={editingStaff}
       />
