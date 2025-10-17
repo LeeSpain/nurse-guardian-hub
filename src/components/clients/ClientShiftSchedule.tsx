@@ -130,7 +130,7 @@ export const ClientShiftSchedule: React.FC<ClientShiftScheduleProps> = ({
           
           <Button
             variant="outline"
-            onClick={() => navigate(`/nurse/dashboard/calendar?client=${clientId}`)}
+            onClick={() => navigate(`/nurse/dashboard/calendar?clientId=${clientId}&view=week`)}
           >
             <Calendar className="h-4 w-4 mr-2" />
             Full Calendar

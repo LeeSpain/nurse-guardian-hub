@@ -85,15 +85,42 @@ const StaffDetail: React.FC = () => {
       setStaff(formattedStaff);
       setEditForm(formattedStaff);
 
-      // Fetch shifts
+      // Fetch shifts with client names
       const { data: shiftsData } = await supabase
         .from('staff_shifts')
-        .select('*, client_id')
+        .select(`
+          *,
+          client:clients!staff_shifts_client_id_fkey(
+            first_name,
+            last_name
+          )
+        `)
         .eq('staff_member_id', id)
         .eq('organization_id', organization!.id)
         .order('shift_date', { ascending: false })
         .limit(20);
       setShifts(shiftsData || []);
+
+      // Set up realtime subscription for shifts
+      const channel = supabase
+        .channel('staff-shifts-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'staff_shifts',
+            filter: `staff_member_id=eq.${id}`
+          },
+          () => {
+            fetchStaffData();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
 
     } catch (error: any) {
       console.error('Error fetching staff data:', error);
@@ -437,27 +464,74 @@ const StaffDetail: React.FC = () => {
 
             <TabsContent value="shifts">
               <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Recent Shifts</h3>
                 <div className="space-y-4">
                   {shifts.length === 0 ? (
                     <p className="text-center text-muted-foreground py-8">No shifts scheduled</p>
                   ) : (
-                    shifts.map((shift) => (
-                      <div key={shift.id} className="p-4 border rounded-lg">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="font-semibold">
-                              {format(new Date(shift.shift_date), 'EEEE, MMM d, yyyy')}
-                            </p>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {shift.start_time} - {shift.end_time}
-                            </p>
-                          </div>
-                          <Badge className={getStatusColor(shift.status === 'completed')}>
-                            {shift.status}
-                          </Badge>
+                    <>
+                      {/* Upcoming Shifts */}
+                      {shifts.filter(s => new Date(s.shift_date) >= new Date() && s.status !== 'completed').length > 0 && (
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-sm text-muted-foreground">Upcoming</h4>
+                          {shifts
+                            .filter(s => new Date(s.shift_date) >= new Date() && s.status !== 'completed')
+                            .slice(0, 5)
+                            .map((shift) => (
+                              <div key={shift.id} className="p-4 border rounded-lg">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <p className="font-semibold">
+                                      {format(new Date(shift.shift_date), 'EEEE, MMM d, yyyy')}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      {shift.start_time} - {shift.end_time}
+                                    </p>
+                                    {shift.client && (
+                                      <p className="text-sm text-foreground mt-2">
+                                        Client: {shift.client.first_name} {shift.client.last_name}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <Badge className={getStatusColor(shift.status === 'completed')}>
+                                    {shift.status}
+                                  </Badge>
+                                </div>
+                              </div>
+                            ))}
                         </div>
-                      </div>
-                    ))
+                      )}
+
+                      {/* Past Shifts */}
+                      {shifts.filter(s => new Date(s.shift_date) < new Date() || s.status === 'completed').length > 0 && (
+                        <div className="space-y-2 mt-6">
+                          <h4 className="font-medium text-sm text-muted-foreground">Past</h4>
+                          {shifts
+                            .filter(s => new Date(s.shift_date) < new Date() || s.status === 'completed')
+                            .slice(0, 5)
+                            .map((shift) => (
+                              <div key={shift.id} className="p-4 border rounded-lg opacity-60">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <p className="font-semibold">
+                                      {format(new Date(shift.shift_date), 'EEEE, MMM d, yyyy')}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      {shift.start_time} - {shift.end_time}
+                                    </p>
+                                    {shift.client && (
+                                      <p className="text-sm text-foreground mt-2">
+                                        Client: {shift.client.first_name} {shift.client.last_name}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <Badge variant="outline">Completed</Badge>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </Card>

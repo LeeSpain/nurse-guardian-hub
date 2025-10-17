@@ -44,7 +44,7 @@ export const useTodayShifts = () => {
               last_name
             )
           ),
-          profiles!staff_shifts_client_id_fkey (
+          clients!staff_shifts_client_id_fkey (
             first_name,
             last_name
           )
@@ -59,7 +59,7 @@ export const useTodayShifts = () => {
       const formattedShifts: TodayShift[] = (shiftsData || []).map((shift: any) => ({
         id: shift.id,
         staff_name: `${shift.staff_members?.profiles?.first_name || ''} ${shift.staff_members?.profiles?.last_name || ''}`.trim() || 'Unknown Staff',
-        client_name: `${shift.profiles?.first_name || ''} ${shift.profiles?.last_name || ''}`.trim() || 'Unassigned',
+        client_name: `${shift.clients?.first_name || ''} ${shift.clients?.last_name || ''}`.trim() || 'Unassigned',
         start_time: shift.start_time,
         end_time: shift.end_time,
         status: shift.status || 'scheduled'

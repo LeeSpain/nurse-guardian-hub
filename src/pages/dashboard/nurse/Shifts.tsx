@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { Calendar, Clock, Users, Plus, Filter, AlertCircle, CheckCircle, MoreVertical } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
@@ -13,7 +13,7 @@ import { useClients } from '@/hooks/useClients';
 import { useOrganization } from '@/hooks/useOrganization';
 import { CreateShiftModal } from '@/components/shifts/CreateShiftModal';
 import { ShiftSwapRequestModal } from '@/components/shifts/ShiftSwapRequestModal';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,12 +38,24 @@ const Shifts: React.FC = () => {
   const { shifts, loading: shiftsLoading, createShift, updateShift, deleteShift } = useStaffShifts(organization?.id);
   const { staff, loading: staffLoading } = useStaff(organization?.id);
   const { clients, loading: clientsLoading } = useClients();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('upcoming');
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [selectedShiftForSwap, setSelectedShiftForSwap] = useState<string | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [shiftToCancel, setShiftToCancel] = useState<string | null>(null);
+  
+  // Get client filter from URL
+  const clientIdParam = searchParams.get('clientId');
+  
+  useEffect(() => {
+    // If view param is set, switch to that tab
+    const view = searchParams.get('view');
+    if (view === 'week') {
+      setActiveTab('upcoming');
+    }
+  }, [searchParams]);
   
   if (userLoading || orgLoading) {
     return (
@@ -80,11 +92,16 @@ const Shifts: React.FC = () => {
     return colors[status] || 'outline';
   };
 
-  const upcomingShifts = shifts.filter(shift => 
+  // Filter shifts by client if param is present
+  const filteredShifts = clientIdParam 
+    ? shifts.filter(shift => shift.client_id === clientIdParam)
+    : shifts;
+
+  const upcomingShifts = filteredShifts.filter(shift => 
     new Date(shift.shift_date) >= new Date() && shift.status !== 'cancelled' && shift.status !== 'completed'
   );
 
-  const completedShifts = shifts.filter(shift => 
+  const completedShifts = filteredShifts.filter(shift => 
     shift.status === 'completed' || new Date(shift.shift_date) < new Date()
   );
 
@@ -101,6 +118,10 @@ const Shifts: React.FC = () => {
     const shiftDate = new Date(shift.shift_date);
     return shiftDate >= today && shiftDate <= weekFromNow;
   });
+
+  const clearFilter = () => {
+    setSearchParams({});
+  };
 
   const confirmCancel = (id: string) => {
     setShiftToCancel(id);
@@ -121,6 +142,21 @@ const Shifts: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Shift Management</h1>
           <p className="text-muted-foreground">Manage staff schedules and shifts</p>
+          {clientIdParam && (
+            <div className="flex items-center gap-2 mt-2">
+              <Badge variant="secondary" className="flex items-center gap-1">
+                Filtered by Client
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilter}
+                  className="h-4 w-4 p-0 hover:bg-transparent"
+                >
+                  <X size={14} />
+                </Button>
+              </Badge>
+            </div>
+          )}
         </div>
         
         <Button 

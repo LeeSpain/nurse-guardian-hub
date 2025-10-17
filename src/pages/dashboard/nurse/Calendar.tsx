@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { useAppointments } from '@/hooks/useAppointments';
+import { useCalendarShifts } from '@/hooks/useCalendarShifts';
 import { useStaff } from '@/hooks/useStaff';
 import { useOrganization } from '@/hooks/useOrganization';
 import { format, startOfWeek, addDays, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, isToday, isBefore, startOfDay } from 'date-fns';
@@ -30,12 +31,16 @@ const Calendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
+  const [calendarDataView, setCalendarDataView] = useState<'both' | 'appointments' | 'shifts'>('both');
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
   const [appointmentDate, setAppointmentDate] = useState<Date>(new Date());
   const [isNewClient, setIsNewClient] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState<string | null>(null);
+  
+  // Get filter params
+  const clientIdParam = searchParams.get('clientId');
   
   // Form state
   const [appointmentForm, setAppointmentForm] = useState({
@@ -166,10 +171,16 @@ const Calendar: React.FC = () => {
   };
 
   const getAppointmentsForDate = (date: Date) => {
+    if (calendarDataView === 'shifts') return [];
     return appointments.filter(apt => 
       isSameDay(new Date(apt.appointment_date), date) && 
       apt.nurse_id === user.id
     );
+  };
+
+  const getShiftsForDate = (date: Date) => {
+    if (calendarDataView === 'appointments') return [];
+    return shifts.filter(shift => isSameDay(new Date(shift.shift_date), date));
   };
 
   const monthStart = startOfMonth(currentDate);
@@ -179,7 +190,17 @@ const Calendar: React.FC = () => {
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
+  // Fetch shifts for current view
+  const { shifts, loading: shiftsLoading } = useCalendarShifts({
+    startDate: view === 'month' ? monthStart : view === 'week' ? weekStart : currentDate,
+    endDate: view === 'month' ? monthEnd : view === 'week' ? addDays(weekStart, 6) : currentDate,
+    organizationId: organization?.id,
+    clientId: clientIdParam || undefined,
+  });
+
   const selectedDayAppointments = getAppointmentsForDate(selectedDate);
+  const selectedDayShifts = shifts.filter(shift => isSameDay(new Date(shift.shift_date), selectedDate));
+  
   const upcomingAppointments = appointments
     .filter(apt => !isBefore(new Date(apt.appointment_date), startOfDay(new Date())) && apt.nurse_id === user.id)
     .sort((a, b) => new Date(a.appointment_date).getTime() - new Date(b.appointment_date).getTime())
@@ -429,6 +450,11 @@ const Calendar: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Calendar</h1>
           <p className="text-muted-foreground">Manage your appointments and schedule</p>
+          {clientIdParam && (
+            <Badge variant="secondary" className="mt-2">
+              Filtered by Client
+            </Badge>
+          )}
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={goToToday}>
@@ -440,6 +466,33 @@ const Calendar: React.FC = () => {
           }}>
             <Plus size={16} />
             New Appointment
+          </Button>
+        </div>
+      </div>
+
+      {/* Data View Selector */}
+      <div className="flex justify-center">
+        <div className="inline-flex items-center gap-1 bg-muted rounded-lg p-1">
+          <Button
+            variant={calendarDataView === 'both' ? 'nurse' : 'ghost'}
+            size="sm"
+            onClick={() => setCalendarDataView('both')}
+          >
+            Both
+          </Button>
+          <Button
+            variant={calendarDataView === 'appointments' ? 'nurse' : 'ghost'}
+            size="sm"
+            onClick={() => setCalendarDataView('appointments')}
+          >
+            Appointments
+          </Button>
+          <Button
+            variant={calendarDataView === 'shifts' ? 'nurse' : 'ghost'}
+            size="sm"
+            onClick={() => setCalendarDataView('shifts')}
+          >
+            Shifts
           </Button>
         </div>
       </div>
@@ -491,6 +544,7 @@ const Calendar: React.FC = () => {
               {/* Calendar Days */}
               {monthDays.map((day, index) => {
                 const dayAppointments = getAppointmentsForDate(day);
+                const dayShifts = getShiftsForDate(day);
                 const isSelected = isSameDay(day, selectedDate);
                 const isCurrentDay = isToday(day);
 
@@ -518,15 +572,26 @@ const Calendar: React.FC = () => {
                           key={apt.id}
                           className={cn(
                             "text-xs px-1.5 py-0.5 rounded truncate",
-                            "bg-primary/10 text-primary border-l-2 border-primary"
+                            "bg-blue-100 text-blue-800 border-l-2 border-blue-500"
                           )}
                         >
-                          {apt.start_time}
+                          {apt.start_time} Apt
                         </div>
                       ))}
-                      {dayAppointments.length > 2 && (
+                      {dayShifts.slice(0, calendarDataView === 'both' ? 1 : 2).map((shift) => (
+                        <div
+                          key={shift.id}
+                          className={cn(
+                            "text-xs px-1.5 py-0.5 rounded truncate",
+                            "bg-green-100 text-green-800 border-l-2 border-green-500"
+                          )}
+                        >
+                          {shift.start_time} Shift
+                        </div>
+                      ))}
+                      {(dayAppointments.length + dayShifts.length) > 2 && (
                         <div className="text-xs text-muted-foreground">
-                          +{dayAppointments.length - 2} more
+                          +{(dayAppointments.length + dayShifts.length) - 2} more
                         </div>
                       )}
                     </div>
