@@ -9,11 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useInvoices } from '@/hooks/useInvoices';
 import { format } from 'date-fns';
+import { GenerateInvoiceModal } from '@/components/billing/GenerateInvoiceModal';
 
 const Billing: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
-  const { invoices, stats, loading: invoicesLoading, error } = useInvoices();
+  const { invoices, stats, loading: invoicesLoading, error, refetch } = useInvoices();
   const [activeTab, setActiveTab] = useState('pending');
+  const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -69,11 +71,17 @@ const Billing: React.FC = () => {
           <h1 className="text-3xl font-bold text-foreground">Billing & Invoices</h1>
           <p className="text-muted-foreground mt-1">Manage client billing and payment tracking</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setIsGenerateModalOpen(true)}>
           <FileText className="w-4 h-4" />
           Generate Invoice
         </Button>
       </div>
+
+      <GenerateInvoiceModal 
+        open={isGenerateModalOpen} 
+        onOpenChange={setIsGenerateModalOpen}
+        onSuccess={() => refetch()}
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

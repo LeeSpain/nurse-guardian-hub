@@ -10,7 +10,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 const Messages: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
-  const { conversations, loading: messagesLoading, refetch } = useMessages();
+  const { conversations, messages, loading: messagesLoading, refetch } = useMessages();
   const { isConnected } = useRealtimeMessages();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -147,12 +147,46 @@ const Messages: React.FC = () => {
                   </div>
                   
                   {/* Messages */}
-                  <div className="h-96 border border-border rounded-lg p-4 mb-4 overflow-y-auto bg-muted">
-                    <div className="text-center text-muted-foreground py-8">
-                      <MessageSquare className="text-muted-foreground mx-auto mb-3" size={40} />
-                      <p>Messages will appear here</p>
-                      <p className="text-sm text-muted-foreground mt-2">All messages are encrypted and HIPAA-compliant</p>
-                    </div>
+                  <div className="h-96 border border-border rounded-lg p-4 mb-4 overflow-y-auto bg-muted space-y-4">
+                    {(() => {
+                      const conversation = conversations.find(c => c.id === selectedConversation);
+                      const conversationMessages = messages.filter(
+                        msg => msg.conversation_id === selectedConversation
+                      ).sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+                      if (conversationMessages.length === 0) {
+                        return (
+                          <div className="text-center text-muted-foreground py-8">
+                            <MessageSquare className="text-muted-foreground mx-auto mb-3" size={40} />
+                            <p>No messages yet</p>
+                            <p className="text-sm text-muted-foreground mt-2">Start the conversation</p>
+                          </div>
+                        );
+                      }
+
+                      return conversationMessages.map((message) => {
+                        const isFromUser = message.sender_id === user?.id;
+                        return (
+                          <div
+                            key={message.id}
+                            className={`flex ${isFromUser ? 'justify-end' : 'justify-start'}`}
+                          >
+                            <div
+                              className={`max-w-[70%] rounded-lg p-3 ${
+                                isFromUser
+                                  ? 'bg-primary text-primary-foreground'
+                                  : 'bg-card border border-border'
+                              }`}
+                            >
+                              <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                              <p className={`text-xs mt-1 ${isFromUser ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                                {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
 
                   {/* Message Composer */}

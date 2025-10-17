@@ -6,11 +6,16 @@ import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
+import { useOrganization } from '@/hooks/useOrganization';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const Reports: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
+  const { organization } = useOrganization();
   const [startDate, setStartDate] = useState(format(new Date(), 'yyyy-MM-01'));
   const [endDate, setEndDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [generatingReport, setGeneratingReport] = useState<string | null>(null);
   
   if (isLoading) {
     return (
@@ -83,9 +88,43 @@ const Reports: React.FC = () => {
     },
   ];
 
-  const handleGenerateReport = (reportId: string) => {
-    console.log(`Generating report: ${reportId} from ${startDate} to ${endDate}`);
-    // In production, this would trigger actual report generation
+  const handleGenerateReport = async (reportId: string) => {
+    if (!organization?.id) {
+      toast.error('Organization not found');
+      return;
+    }
+
+    setGeneratingReport(reportId);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-report', {
+        body: {
+          reportType: reportId,
+          startDate,
+          endDate,
+          organizationId: organization.id,
+        },
+      });
+
+      if (error) throw error;
+
+      // Create a blob from the CSV data and download
+      const blob = new Blob([data], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${reportId}-report-${startDate}-to-${endDate}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast.success('Report generated successfully');
+    } catch (error: any) {
+      console.error('Error generating report:', error);
+      toast.error('Failed to generate report: ' + error.message);
+    } finally {
+      setGeneratingReport(null);
+    }
   };
 
   return (
@@ -166,8 +205,9 @@ const Reports: React.FC = () => {
                   className="w-full"
                   icon={<Download size={16} />}
                   onClick={() => handleGenerateReport(report.id)}
+                  disabled={generatingReport === report.id}
                 >
-                  Generate Report
+                  {generatingReport === report.id ? 'Generating...' : 'Generate Report'}
                 </Button>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" className="flex-1 text-xs">

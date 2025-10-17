@@ -10,12 +10,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
 import { useCarePlans } from '@/hooks/useCarePlans';
+import { CreateCarePlanModal } from '@/components/care-plans/CreateCarePlanModal';
 
 const CarePlans: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
   const { carePlans, templates, stats, loading: plansLoading } = useCarePlans();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('active');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   
   if (isLoading) {
     return (
@@ -51,10 +53,15 @@ const CarePlans: React.FC = () => {
             <p className="text-muted-foreground">Manage client care plans and documentation</p>
           </div>
           
-          <Button variant="nurse" icon={<Plus size={16} />}>
+          <Button variant="nurse" icon={<Plus size={16} />} onClick={() => setIsCreateModalOpen(true)}>
             Create Care Plan
           </Button>
         </div>
+
+        <CreateCarePlanModal 
+          open={isCreateModalOpen} 
+          onOpenChange={setIsCreateModalOpen}
+        />
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">

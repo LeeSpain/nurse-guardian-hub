@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -17,12 +18,26 @@ import {
 } from '@/components/ui/dialog';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useCareLogs } from '@/hooks/useCareLogs';
+import { useClients } from '@/hooks/useClients';
+import { useStaff } from '@/hooks/useStaff';
+import { toast } from 'sonner';
 
 const CareLogs: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useUser();
-  const { careLogs, stats, loading: logsLoading, error } = useCareLogs();
+  const { careLogs, stats, loading: logsLoading, error, createCareLog } = useCareLogs();
+  const { clients } = useClients();
+  const { staff } = useStaff();
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddLogOpen, setIsAddLogOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  
+  const [logForm, setLogForm] = useState({
+    client_id: '',
+    category: 'general',
+    log_date: format(new Date(), 'yyyy-MM-dd'),
+    log_time: format(new Date(), 'HH:mm'),
+    content: '',
+  });
   
   if (isLoading) {
     return (
@@ -75,46 +90,107 @@ const CareLogs: React.FC = () => {
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Client</label>
-                  <select className="w-full rounded-md border border-input px-3 py-2">
-                    <option value="">Select client...</option>
-                    <option value="1">Mrs. Thompson</option>
-                    <option value="2">Mr. Davis</option>
-                  </select>
+                  <label className="text-sm font-medium">Client *</label>
+                  <Select value={logForm.client_id} onValueChange={(v) => setLogForm({ ...logForm, client_id: v })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select client..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {clients.map((client) => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.first_name} {client.last_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Category</label>
-                  <select className="w-full rounded-md border border-input px-3 py-2">
-                    <option value="observation">Observation</option>
-                    <option value="medication">Medication</option>
-                    <option value="activity">Activity</option>
-                    <option value="personal_care">Personal Care</option>
-                    <option value="nutrition">Nutrition</option>
-                    <option value="mobility">Mobility</option>
-                    <option value="incident">Incident</option>
-                    <option value="general">General</option>
-                  </select>
+                  <label className="text-sm font-medium">Category *</label>
+                  <Select value={logForm.category} onValueChange={(v) => setLogForm({ ...logForm, category: v })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="observation">Observation</SelectItem>
+                      <SelectItem value="medication">Medication</SelectItem>
+                      <SelectItem value="activity">Activity</SelectItem>
+                      <SelectItem value="personal_care">Personal Care</SelectItem>
+                      <SelectItem value="nutrition">Nutrition</SelectItem>
+                      <SelectItem value="mobility">Mobility</SelectItem>
+                      <SelectItem value="incident">Incident</SelectItem>
+                      <SelectItem value="general">General</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Date</label>
-                    <Input type="date" defaultValue={format(new Date(), 'yyyy-MM-dd')} />
+                    <label className="text-sm font-medium">Date *</label>
+                    <Input 
+                      type="date" 
+                      value={logForm.log_date} 
+                      onChange={(e) => setLogForm({ ...logForm, log_date: e.target.value })}
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Time</label>
-                    <Input type="time" defaultValue={format(new Date(), 'HH:mm')} />
+                    <label className="text-sm font-medium">Time *</label>
+                    <Input 
+                      type="time" 
+                      value={logForm.log_time} 
+                      onChange={(e) => setLogForm({ ...logForm, log_time: e.target.value })}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Care Log Entry</label>
+                  <label className="text-sm font-medium">Care Log Entry *</label>
                   <Textarea
+                    value={logForm.content}
+                    onChange={(e) => setLogForm({ ...logForm, content: e.target.value })}
                     placeholder="Describe the care provided, observations, or any notable events..."
                     rows={5}
                   />
                 </div>
                 <div className="flex gap-2 pt-4">
-                  <Button variant="nurse" className="flex-1">
-                    Save Log Entry
+                  <Button 
+                    variant="nurse" 
+                    className="flex-1"
+                    disabled={saving}
+                    onClick={async () => {
+                      if (!logForm.client_id || !logForm.content) {
+                        toast.error('Please fill in all required fields');
+                        return;
+                      }
+                      
+                      // Find current staff member
+                      const currentStaff = staff.find(s => s.profile_id === user?.id);
+                      if (!currentStaff) {
+                        toast.error('Staff member not found');
+                        return;
+                      }
+
+                      setSaving(true);
+                      try {
+                        await createCareLog({
+                          ...logForm,
+                          staff_member_id: currentStaff.id,
+                        });
+                        toast.success('Care log entry saved successfully');
+                        setIsAddLogOpen(false);
+                        setLogForm({
+                          client_id: '',
+                          category: 'general',
+                          log_date: format(new Date(), 'yyyy-MM-dd'),
+                          log_time: format(new Date(), 'HH:mm'),
+                          content: '',
+                        });
+                      } catch (error) {
+                        console.error('Error saving care log:', error);
+                        toast.error('Failed to save care log');
+                      } finally {
+                        setSaving(false);
+                      }
+                    }}
+                  >
+                    {saving ? 'Saving...' : 'Save Log Entry'}
                   </Button>
                   <Button variant="outline" onClick={() => setIsAddLogOpen(false)}>
                     Cancel
