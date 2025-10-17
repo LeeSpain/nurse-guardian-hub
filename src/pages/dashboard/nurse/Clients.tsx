@@ -37,7 +37,6 @@ const Clients: React.FC = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<ClientStatus | 'all'>('all');
-  const [editingClient, setEditingClient] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
@@ -231,7 +230,11 @@ const Clients: React.FC = () => {
               </TableHeader>
               <TableBody>
                 {paginatedClients.map((client) => (
-                  <TableRow key={client.id}>
+                  <TableRow 
+                    key={client.id}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => navigate(`/nurse/dashboard/clients/${client.id}`)}
+                  >
                     <TableCell>
                       <div className="flex items-center gap-3">
                          <Avatar>
@@ -275,24 +278,34 @@ const Clients: React.FC = () => {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <UiButton variant="ghost" size="sm">
+                          <UiButton 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <MoreVertical size={16} />
                           </UiButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-background">
-                          <DropdownMenuItem onClick={() => setEditingClient(client)}>
+                          <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/nurse/dashboard/clients/${client.id}`);
+                          }}>
                             <Edit className="mr-2" size={16} />
-                            Edit Details
+                            View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/nurse/dashboard/calendar?clientId=${client.id}&action=book`)}>
+                          <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/nurse/dashboard/calendar?clientId=${client.id}&action=book`);
+                          }}>
                             <Calendar className="mr-2" size={16} />
                             Book Appointment
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                             <Mail className="mr-2" size={16} />
                             Send Message
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                             <Phone className="mr-2" size={16} />
                             Call
                           </DropdownMenuItem>
@@ -305,19 +318,34 @@ const Clients: React.FC = () => {
                               </DropdownMenuItem>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent side="right" className="bg-background">
-                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'active')}>
+                              <DropdownMenuItem onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusChange(client.id, 'active');
+                              }}>
                                 Active
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'potential')}>
+                              <DropdownMenuItem onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusChange(client.id, 'potential');
+                              }}>
                                 Potential
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'on-hold')}>
+                              <DropdownMenuItem onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusChange(client.id, 'on-hold');
+                              }}>
                                 On Hold
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'discharged')}>
+                              <DropdownMenuItem onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusChange(client.id, 'discharged');
+                              }}>
                                 Discharged
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleStatusChange(client.id, 'archived')}>
+                              <DropdownMenuItem onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusChange(client.id, 'archived');
+                              }}>
                                 Archived
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -374,13 +402,9 @@ const Clients: React.FC = () => {
       </Card>
 
       <AddClientModal
-        open={addModalOpen || !!editingClient}
-        onOpenChange={(open) => {
-          setAddModalOpen(open);
-          if (!open) setEditingClient(null);
-        }}
-        onSuccess={(data) => editingClient ? updateClient(editingClient.id, data) : createClient(data)}
-        editingClient={editingClient}
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        onSuccess={createClient}
       />
 
       <InviteClientModal
