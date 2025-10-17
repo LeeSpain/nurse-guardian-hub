@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { useTheme } from 'next-themes';
+import { supabase } from '@/integrations/supabase/client';
 
 const Settings: React.FC = () => {
   const { user, isAuthenticated, isLoading, updateUser } = useUser();
@@ -85,6 +86,10 @@ const Settings: React.FC = () => {
         firstName: formData.first_name,
         lastName: formData.last_name
       });
+      
+      // Force refresh the auth session to update metadata
+      await supabase.auth.refreshSession();
+      
       setIsEditing(false);
     }
   };

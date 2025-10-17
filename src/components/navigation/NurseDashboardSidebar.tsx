@@ -6,6 +6,7 @@ import {
   FileBarChart, LogOut, Bell, DollarSign, UserCircle, Pill
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { useProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -28,6 +29,7 @@ import NotificationPanel from '@/components/notifications/NotificationPanel';
 const NurseDashboardSidebar: React.FC = () => {
   const location = useLocation();
   const { user, logout, subscription } = useUser();
+  const { profile } = useProfile();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const [pendingRemindersCount, setPendingRemindersCount] = useState(0);
@@ -147,7 +149,7 @@ const NurseDashboardSidebar: React.FC = () => {
         {!collapsed && (
           <div className="mb-3 px-2">
             <p className="text-sm font-medium text-foreground truncate">
-              {user?.firstName || 'Healthcare Professional'}
+              {profile?.first_name || user?.firstName || 'Healthcare Professional'}
             </p>
             <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
             {subscription && (
