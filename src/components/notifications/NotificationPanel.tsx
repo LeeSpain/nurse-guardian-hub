@@ -27,7 +27,7 @@ const NotificationPanel: React.FC = () => {
   const [filter, setFilter] = useState<string>('all');
 
   const getIcon = (type: string) => {
-    const icons: Record<string, React.ComponentType<{ size?: number }>> = {
+    const icons: Record<string, any> = {
       appointment: Calendar,
       shift: Users,
       system: AlertCircle,

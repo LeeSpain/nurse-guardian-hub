@@ -651,7 +651,7 @@ const NurseDashboard: React.FC = () => {
             size="lg"
             fullWidth
             className="p-6 h-auto flex-col items-center justify-center text-center"
-            icon={<Calendar size={24} className="mb-2 text-purple-600" />}
+            icon={<CalendarIcon size={24} className="mb-2 text-purple-600" />}
             iconPosition="left"
             as={Link}
             to="/nurse/dashboard/calendar"
