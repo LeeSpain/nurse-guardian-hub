@@ -29,7 +29,10 @@ export const ClientShiftSchedule: React.FC<ClientShiftScheduleProps> = ({
   
   const { getNext7DaysShifts, getTodayShifts, loading } = useClientShifts(clientId, organizationId);
   const { createShift, updateShift, refetch } = useStaffShifts(organizationId);
-  const { staff } = useStaff(organizationId);
+  const { staff, loading: staffLoading } = useStaff(organizationId);
+
+  console.log('ClientShiftSchedule - Modal state:', showCreateModal);
+  console.log('ClientShiftSchedule - Staff count:', staff.length);
 
   const next7DaysShifts = getNext7DaysShifts();
   const todayShifts = getTodayShifts();
@@ -46,8 +49,18 @@ export const ClientShiftSchedule: React.FC<ClientShiftScheduleProps> = ({
   };
 
   const handleCreateShift = async (data: any) => {
-    await createShift(data);
-    refetch();
+    try {
+      await createShift(data);
+      await refetch();
+      setShowCreateModal(false);
+    } catch (error) {
+      console.error('Error creating shift:', error);
+    }
+  };
+
+  const handleOpenModal = () => {
+    console.log('Opening shift modal...');
+    setShowCreateModal(true);
   };
 
   const handleEditShift = (shift: StaffShift) => {
@@ -108,10 +121,11 @@ export const ClientShiftSchedule: React.FC<ClientShiftScheduleProps> = ({
           
           <Button
             variant="nurse"
-            onClick={() => setShowCreateModal(true)}
+            onClick={handleOpenModal}
+            disabled={staffLoading || staff.length === 0}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Schedule Shift
+            {staffLoading ? 'Loading...' : staff.length === 0 ? 'No Staff Available' : 'Schedule Shift'}
           </Button>
           
           <Button
@@ -185,7 +199,8 @@ export const ClientShiftSchedule: React.FC<ClientShiftScheduleProps> = ({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setShowCreateModal(true)}
+                        onClick={handleOpenModal}
+                        disabled={staffLoading || staff.length === 0}
                       >
                         <Plus className="h-3 w-3 mr-1" />
                         Add
@@ -238,25 +253,28 @@ export const ClientShiftSchedule: React.FC<ClientShiftScheduleProps> = ({
               </p>
               <Button
                 variant="nurse"
-                onClick={() => setShowCreateModal(true)}
+                onClick={handleOpenModal}
+                disabled={staffLoading || staff.length === 0}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Schedule First Shift
+                {staffLoading ? 'Loading Staff...' : staff.length === 0 ? 'No Staff Available' : 'Schedule First Shift'}
               </Button>
             </Card>
           )}
         </div>
       )}
 
-      <CreateClientShiftModal
-        open={showCreateModal}
-        onOpenChange={setShowCreateModal}
-        onSuccess={handleCreateShift}
-        organizationId={organizationId}
-        clientId={clientId}
-        clientName={clientName}
-        staff={staff}
-      />
+      {!staffLoading && (
+        <CreateClientShiftModal
+          open={showCreateModal}
+          onOpenChange={setShowCreateModal}
+          onSuccess={handleCreateShift}
+          organizationId={organizationId}
+          clientId={clientId}
+          clientName={clientName}
+          staff={staff}
+        />
+      )}
     </div>
   );
 };
