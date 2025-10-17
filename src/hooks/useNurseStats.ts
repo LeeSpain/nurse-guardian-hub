@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useUser } from '@/contexts/UserContext';
+import { useOrganization } from '@/hooks/useOrganization';
 
 export interface NurseStats {
   activeClients: number;
@@ -22,6 +23,7 @@ export const useNurseStats = () => {
   });
   const [loading, setLoading] = useState(false);
   const { user } = useUser();
+  const { organization } = useOrganization();
 
   const calculateProfileCompletion = async (userId: string) => {
     try {
@@ -65,7 +67,7 @@ export const useNurseStats = () => {
   };
 
   const fetchStats = async () => {
-    if (!user?.id) {
+    if (!user?.id || !organization?.id) {
       setLoading(false);
       return;
     }
@@ -73,18 +75,20 @@ export const useNurseStats = () => {
     try {
       setLoading(true);
 
+      // Get real clients from the clients table
+      const { data: clients } = await supabase
+        .from('clients')
+        .select('*')
+        .eq('organization_id', organization.id);
+
+      // Count active clients
+      const activeClientsCount = clients?.filter(c => c.status === 'active').length || 0;
+
       // Get appointments
       const { data: appointments } = await supabase
         .from('appointments')
         .select('*')
         .eq('nurse_id', user.id);
-
-      // Get unique active clients (clients with confirmed or pending appointments)
-      const activeClientIds = new Set(
-        appointments
-          ?.filter(apt => apt.status === 'confirmed' || apt.status === 'pending')
-          .map(apt => apt.client_id) || []
-      );
 
       // Get upcoming appointments
       const now = new Date();
@@ -120,7 +124,7 @@ export const useNurseStats = () => {
         : 0;
 
       setStats({
-        activeClients: activeClientIds.size,
+        activeClients: activeClientsCount,
         upcomingAppointments,
         profileCompletion,
         monthlyEarnings,
@@ -135,12 +139,12 @@ export const useNurseStats = () => {
   };
 
   useEffect(() => {
-    if (user?.id) {
+    if (user?.id && organization?.id) {
       fetchStats();
     } else {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [user?.id, organization?.id]);
 
   return {
     stats,
