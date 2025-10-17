@@ -161,13 +161,13 @@ const ClientDetail: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={() => navigate('/nurse/dashboard/clients')}>
-            <ArrowLeft size={16} className="mr-2" />
-            Back to Clients
-          </Button>
-        </div>
+      {/* Header with Back Button and Actions */}
+      <div className="flex items-center justify-between">
+        <Button variant="outline" size="sm" onClick={() => navigate('/nurse/dashboard/clients')}>
+          <ArrowLeft size={16} className="mr-2" />
+          Back to Clients
+        </Button>
+        
         <div className="flex gap-2">
           {editing ? (
             <>
@@ -183,7 +183,7 @@ const ClientDetail: React.FC = () => {
           ) : (
             <Button variant="nurse" onClick={() => setEditing(true)}>
               <Edit size={16} className="mr-2" />
-              Edit Client
+              Edit Details
             </Button>
           )}
         </div>
@@ -202,58 +202,89 @@ const ClientDetail: React.FC = () => {
         </Card>
       ) : (
         <>
-          {/* Header Card */}
+          {/* Client Profile Header */}
           <Card className="p-6">
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Profile Picture and Basic Info */}
               <div className="flex items-start gap-4">
-                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-                  <User size={32} className="text-primary" />
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0">
+                  <User size={40} className="text-primary" />
                 </div>
                 <div>
-                  {editing ? (
-                    <div className="flex gap-2 mb-2">
-                      <Input
-                        value={editForm.first_name || ''}
-                        onChange={(e) => setEditForm({ ...editForm, first_name: e.target.value })}
-                        placeholder="First Name"
-                        className="text-2xl font-bold"
-                      />
-                      <Input
-                        value={editForm.last_name || ''}
-                        onChange={(e) => setEditForm({ ...editForm, last_name: e.target.value })}
-                        placeholder="Last Name"
-                        className="text-2xl font-bold"
-                      />
-                    </div>
-                  ) : (
-                    <h1 className="text-2xl font-bold text-foreground mb-2">
-                      {client.first_name} {client.last_name}
-                    </h1>
-                  )}
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={14} />
-                      Age: {new Date().getFullYear() - new Date(client.date_of_birth).getFullYear()}
+                  <div className="flex items-center gap-3 mb-2">
+                    {editing ? (
+                      <div className="flex gap-2">
+                        <Input
+                          value={editForm.first_name || ''}
+                          onChange={(e) => setEditForm({ ...editForm, first_name: e.target.value })}
+                          placeholder="First Name"
+                        />
+                        <Input
+                          value={editForm.last_name || ''}
+                          onChange={(e) => setEditForm({ ...editForm, last_name: e.target.value })}
+                          placeholder="Last Name"
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <h1 className="text-3xl font-bold">
+                          {client.first_name} {client.last_name}
+                        </h1>
+                        <Badge variant={client.status === 'active' ? 'default' : client.status === 'potential' ? 'secondary' : 'outline'} className="text-sm">
+                          {client.status}
+                        </Badge>
+                      </>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={16} />
+                      Age {new Date().getFullYear() - new Date(client.date_of_birth).getFullYear()} • DOB: {format(new Date(client.date_of_birth), 'MMM d, yyyy')}
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Heart size={14} />
-                      Care Level: {client.care_level || 'Not specified'}
+                    <span className="flex items-center gap-1.5">
+                      <Heart size={16} />
+                      {client.care_level || 'Care Level Not Set'}
                     </span>
+                    {pendingReminders.length > 0 && (
+                      <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
+                        <Bell size={16} />
+                        {pendingReminders.length} Pending Reminder{pendingReminders.length > 1 ? 's' : ''}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
-              <Badge className={getStatusColor(client.status)}>
-                {client.status}
-              </Badge>
+
+              {/* Quick Stats */}
+              <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 ml-auto">
+                <Card className="p-3 bg-muted/50">
+                  <div className="text-2xl font-bold text-primary">{appointments.length}</div>
+                  <div className="text-xs text-muted-foreground">Appointments</div>
+                </Card>
+                <Card className="p-3 bg-muted/50">
+                  <div className="text-2xl font-bold text-primary">{carePlans.length}</div>
+                  <div className="text-xs text-muted-foreground">Care Plans</div>
+                </Card>
+                <Card className="p-3 bg-muted/50">
+                  <div className="text-2xl font-bold text-primary">{careLogs.length}</div>
+                  <div className="text-xs text-muted-foreground">Care Logs</div>
+                </Card>
+                <Card className="p-3 bg-muted/50">
+                  <div className="text-2xl font-bold text-amber-600">{pendingReminders.length}</div>
+                  <div className="text-xs text-muted-foreground">Reminders</div>
+                </Card>
+              </div>
             </div>
 
+            {/* Contact Information - Always Visible */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Email</p>
+                <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Email</p>
                 {editing ? (
                   <Input
                     value={editForm.email || ''}
                     onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    placeholder="email@example.com"
                   />
                 ) : (
                   <p className="font-medium flex items-center gap-2">
@@ -263,11 +294,12 @@ const ClientDetail: React.FC = () => {
                 )}
               </div>
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Phone</p>
+                <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Phone</p>
                 {editing ? (
                   <Input
                     value={editForm.phone || ''}
                     onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                    placeholder="Phone number"
                   />
                 ) : (
                   <p className="font-medium flex items-center gap-2">
@@ -277,16 +309,17 @@ const ClientDetail: React.FC = () => {
                 )}
               </div>
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Address</p>
+                <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Address</p>
                 {editing ? (
                   <Input
                     value={editForm.address || ''}
                     onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
+                    placeholder="Address"
                   />
                 ) : (
                   <p className="font-medium flex items-center gap-2">
                     <MapPin size={16} className="text-primary" />
-                    {client.address || 'Not provided'}
+                    {client.address ? `${client.address}, ${client.city || ''} ${client.state || ''} ${client.postal_code || ''}`.trim() : 'Not provided'}
                   </p>
                 )}
               </div>
