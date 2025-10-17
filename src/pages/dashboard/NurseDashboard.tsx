@@ -38,13 +38,15 @@ const NurseDashboard: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
   
-  // Fetch today's reminders
+  // Fetch reminders for next 3 days
   useEffect(() => {
-    const fetchTodayReminders = async () => {
+    const fetchUpcomingReminders = async () => {
       if (!organization?.id) return;
       
       try {
         const today = format(new Date(), 'yyyy-MM-dd');
+        const threeDaysFromNow = format(addDays(new Date(), 3), 'yyyy-MM-dd');
+        
         const { data, error } = await supabase
           .from('client_reminders')
           .select(`
@@ -53,11 +55,11 @@ const NurseDashboard: React.FC = () => {
             assigned_staff:staff_members!client_reminders_assigned_to_fkey(id, first_name, last_name)
           `)
           .eq('organization_id', organization.id)
-          .lte('reminder_date', today)
+          .gte('reminder_date', today)
+          .lte('reminder_date', threeDaysFromNow)
           .eq('status', 'pending')
           .order('reminder_date', { ascending: true })
-          .order('reminder_time', { ascending: true })
-          .limit(5);
+          .order('reminder_time', { ascending: true });
         
         if (error) {
           console.error('Error fetching reminders:', error);
@@ -71,7 +73,7 @@ const NurseDashboard: React.FC = () => {
       }
     };
     
-    fetchTodayReminders();
+    fetchUpcomingReminders();
   }, [organization?.id]);
   
   // If auth is loading, show spinner
@@ -386,14 +388,22 @@ const NurseDashboard: React.FC = () => {
           );
         })()}
         
-        {/* Today's Reminders */}
+        {/* Upcoming Reminders (Next 3 Days) */}
         <div className="mb-8">
           <Card className="p-6 border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold flex items-center gap-2">
                 <Bell className="h-5 w-5 text-amber-600" />
-                Today's Reminders
+                Upcoming Reminders (Next 3 Days)
               </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                as={Link}
+                to="/nurse/dashboard/reminders"
+              >
+                View All
+              </Button>
             </div>
             
             {remindersLoading ? (
@@ -405,78 +415,96 @@ const NurseDashboard: React.FC = () => {
             ) : todayReminders.length === 0 ? (
               <div className="text-center py-6">
                 <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-green-500" />
-                <p className="text-sm text-muted-foreground">All caught up! No pending reminders</p>
+                <p className="text-sm text-muted-foreground">All caught up! No pending reminders for the next 3 days</p>
               </div>
             ) : (
               <>
                 {(() => {
-                  const overdueCount = todayReminders.filter(r => 
-                    isPast(new Date(r.reminder_date)) && !isToday(new Date(r.reminder_date))
-                  ).length;
-                  
-                  return overdueCount > 0 ? (
-                    <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
-                      <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                        ⚠️ {overdueCount} overdue {overdueCount === 1 ? 'reminder' : 'reminders'}
-                      </p>
-                    </div>
-                  ) : null;
-                })()}
-                
-                <div className="space-y-3">
-                  {todayReminders.map((reminder) => {
-                    const isOverdue = isPast(new Date(reminder.reminder_date)) && !isToday(new Date(reminder.reminder_date));
-                    const isDueToday = isToday(new Date(reminder.reminder_date));
-                    
-                    return (
-                      <Link 
-                        key={reminder.id} 
-                        to={`/nurse/dashboard/clients/${reminder.client_id}?tab=reminders`}
-                        className="block"
-                      >
-                        <Card className={`p-4 hover:shadow-md transition-all cursor-pointer ${
-                          isOverdue ? 'border-red-300 bg-red-50/50 dark:bg-red-950/20' : 
-                          isDueToday ? 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20' : ''
-                        }`}>
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <h4 className="font-semibold text-sm">{reminder.title}</h4>
-                                <Badge className={
-                                  reminder.priority === 'urgent' ? 'bg-red-500' :
-                                  reminder.priority === 'high' ? 'bg-orange-500' :
-                                  reminder.priority === 'medium' ? 'bg-yellow-500' :
-                                  'bg-blue-500'
-                                }>
-                                  {reminder.priority}
-                                </Badge>
-                                {isOverdue && (
-                                  <Badge variant="destructive" className="text-xs">Overdue</Badge>
-                                )}
-                                {isDueToday && (
-                                  <Badge className="bg-amber-500 text-xs">Due Today</Badge>
-                                )}
-                              </div>
-                              <p className="text-xs text-muted-foreground mb-1">
-                                {reminder.client?.first_name} {reminder.client?.last_name}
-                              </p>
-                              <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-                                <span className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
-                                  {format(new Date(reminder.reminder_date), 'MMM d')}
-                                  {reminder.reminder_time && ` at ${reminder.reminder_time}`}
-                                </span>
-                                <Badge variant="secondary" className="text-xs">
-                                  {reminder.reminder_type.replace('_', ' ')}
-                                </Badge>
-                              </div>
+                  // Group reminders by date
+                  const groupedByDate: Record<string, typeof todayReminders> = {};
+                  todayReminders.forEach(reminder => {
+                    const dateKey = format(new Date(reminder.reminder_date), 'yyyy-MM-dd');
+                    if (!groupedByDate[dateKey]) {
+                      groupedByDate[dateKey] = [];
+                    }
+                    groupedByDate[dateKey].push(reminder);
+                  });
+
+                  return (
+                    <div className="space-y-6">
+                      {Object.entries(groupedByDate).map(([dateKey, reminders]) => {
+                        const date = new Date(dateKey);
+                        const isDueToday = isToday(date);
+                        const dayLabel = isDueToday ? 'Today' : format(date, 'EEEE, MMM d');
+
+                        return (
+                          <div key={dateKey}>
+                            <div className="flex items-center gap-2 mb-3">
+                              <h3 className={`text-sm font-semibold ${isDueToday ? 'text-amber-700 dark:text-amber-400' : 'text-foreground'}`}>
+                                {dayLabel}
+                              </h3>
+                              <div className="flex-1 h-px bg-border"></div>
+                              <span className="text-xs text-muted-foreground">
+                                {reminders.length} {reminders.length === 1 ? 'reminder' : 'reminders'}
+                              </span>
+                            </div>
+                            
+                            <div className="space-y-3">
+                              {reminders.map((reminder) => (
+                                <Link 
+                                  key={reminder.id} 
+                                  to={`/nurse/dashboard/clients/${reminder.client_id}?tab=reminders`}
+                                  className="block"
+                                >
+                                  <Card className={`p-4 hover:shadow-md transition-all cursor-pointer ${
+                                    isDueToday ? 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20' : ''
+                                  }`}>
+                                    <div className="flex items-start justify-between gap-3">
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                          <h4 className="font-semibold text-sm">{reminder.title}</h4>
+                                          <Badge className={
+                                            reminder.priority === 'urgent' ? 'bg-red-500' :
+                                            reminder.priority === 'high' ? 'bg-orange-500' :
+                                            reminder.priority === 'medium' ? 'bg-yellow-500' :
+                                            'bg-blue-500'
+                                          }>
+                                            {reminder.priority}
+                                          </Badge>
+                                          {isDueToday && (
+                                            <Badge className="bg-amber-500 text-xs">Due Today</Badge>
+                                          )}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground mb-1">
+                                          {reminder.client?.first_name} {reminder.client?.last_name}
+                                          {reminder.assigned_staff && (
+                                            <span className="ml-2">
+                                              • Assigned to: {reminder.assigned_staff.first_name} {reminder.assigned_staff.last_name}
+                                            </span>
+                                          )}
+                                        </p>
+                                        <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+                                          <span className="flex items-center gap-1">
+                                            <Clock className="h-3 w-3" />
+                                            {reminder.reminder_time ? reminder.reminder_time : 'No time set'}
+                                          </span>
+                                          <Badge variant="secondary" className="text-xs">
+                                            {reminder.reminder_type.replace('_', ' ')}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </Card>
+                                </Link>
+                              ))}
                             </div>
                           </div>
-                        </Card>
-                      </Link>
-                    );
-                  })}
-                </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+                
                 
                 <div className="mt-4">
                   <Link to="/nurse/dashboard/reminders">
