@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -29,6 +29,14 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const { toast } = useToast();
   const { organization } = useOrganization();
+
+  useEffect(() => {
+    if (editingClient) {
+      setProfileImageUrl(editingClient.profile_image_url || null);
+    } else {
+      setProfileImageUrl(null);
+    }
+  }, [editingClient]);
 
   const handleProfileImageUpload = async (url: string) => {
     setProfileImageUrl(url);
@@ -146,7 +154,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add New Client</DialogTitle>
+          <DialogTitle>{editingClient ? 'Edit Client' : 'Add New Client'}</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -191,22 +199,22 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="first_name">First Name *</Label>
-                  <Input id="first_name" name="first_name" required maxLength={100} />
+                  <Input id="first_name" name="first_name" required maxLength={100} defaultValue={editingClient?.first_name || ''} />
                 </div>
                 <div>
                   <Label htmlFor="last_name">Last Name *</Label>
-                  <Input id="last_name" name="last_name" required maxLength={100} />
+                  <Input id="last_name" name="last_name" required maxLength={100} defaultValue={editingClient?.last_name || ''} />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="date_of_birth">Date of Birth *</Label>
-                  <Input id="date_of_birth" name="date_of_birth" type="date" required />
+                  <Input id="date_of_birth" name="date_of_birth" type="date" required defaultValue={editingClient?.date_of_birth || ''} />
                 </div>
                 <div>
                   <Label htmlFor="gender">Gender</Label>
-                  <Select name="gender">
+                  <Select name="gender" defaultValue={editingClient?.gender || undefined}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
@@ -220,38 +228,38 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 </div>
                 <div>
                   <Label htmlFor="preferred_language">Preferred Language</Label>
-                  <Input id="preferred_language" name="preferred_language" defaultValue="English" maxLength={50} />
+                  <Input id="preferred_language" name="preferred_language" defaultValue={editingClient?.preferred_language || 'English'} maxLength={50} />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" maxLength={255} />
+                  <Input id="email" name="email" type="email" maxLength={255} defaultValue={editingClient?.email || ''} />
                 </div>
                 <div>
                   <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" name="phone" type="tel" maxLength={20} />
+                  <Input id="phone" name="phone" type="tel" maxLength={20} defaultValue={editingClient?.phone || ''} />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="address">Address</Label>
-                <Input id="address" name="address" maxLength={255} />
+                <Input id="address" name="address" maxLength={255} defaultValue={editingClient?.address || ''} />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="city">City</Label>
-                  <Input id="city" name="city" maxLength={100} />
+                  <Input id="city" name="city" maxLength={100} defaultValue={editingClient?.city || ''} />
                 </div>
                 <div>
                   <Label htmlFor="state">State/County</Label>
-                  <Input id="state" name="state" maxLength={100} />
+                  <Input id="state" name="state" maxLength={100} defaultValue={editingClient?.state || ''} />
                 </div>
                 <div>
                   <Label htmlFor="postal_code">Postal Code</Label>
-                  <Input id="postal_code" name="postal_code" maxLength={20} />
+                  <Input id="postal_code" name="postal_code" maxLength={20} defaultValue={editingClient?.postal_code || ''} />
                 </div>
               </div>
             </TabsContent>
@@ -261,11 +269,11 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="nhs_number">NHS Number</Label>
-                  <Input id="nhs_number" name="nhs_number" placeholder="000 000 0000" maxLength={20} />
+                  <Input id="nhs_number" name="nhs_number" placeholder="000 000 0000" maxLength={20} defaultValue={editingClient?.nhs_number || ''} />
                 </div>
                 <div>
                   <Label htmlFor="hospital_number">Hospital Number</Label>
-                  <Input id="hospital_number" name="hospital_number" maxLength={50} />
+                  <Input id="hospital_number" name="hospital_number" maxLength={50} defaultValue={editingClient?.hospital_number || ''} />
                 </div>
               </div>
 
@@ -276,6 +284,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   name="medical_history"
                   placeholder="List chronic conditions, diagnoses, medical history..."
                   rows={4}
+                  defaultValue={editingClient?.medical_history || ''}
                 />
               </div>
 
@@ -286,13 +295,14 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   name="allergies"
                   placeholder="List all known allergies and intolerances..."
                   rows={3}
+                  defaultValue={editingClient?.allergies || ''}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="mobility_status">Mobility Status</Label>
-                  <Select name="mobility_status">
+                  <Select name="mobility_status" defaultValue={editingClient?.mobility_status || undefined}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select mobility level" />
                     </SelectTrigger>
@@ -307,7 +317,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 </div>
                 <div>
                   <Label htmlFor="dietary_requirements">Dietary Requirements</Label>
-                  <Input id="dietary_requirements" name="dietary_requirements" placeholder="e.g., Diabetic, Vegetarian..." maxLength={255} />
+                  <Input id="dietary_requirements" name="dietary_requirements" placeholder="e.g., Diabetic, Vegetarian..." maxLength={255} defaultValue={editingClient?.dietary_requirements || ''} />
                 </div>
               </div>
 
@@ -318,6 +328,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   name="communication_needs"
                   placeholder="e.g., Hearing impaired, uses sign language, visual aids required..."
                   rows={2}
+                  defaultValue={editingClient?.communication_needs || ''}
                 />
               </div>
 
@@ -326,19 +337,19 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="gp_name">GP Name</Label>
-                    <Input id="gp_name" name="gp_name" maxLength={100} />
+                    <Input id="gp_name" name="gp_name" maxLength={100} defaultValue={editingClient?.gp_name || ''} />
                   </div>
                   <div>
                     <Label htmlFor="gp_practice">GP Practice</Label>
-                    <Input id="gp_practice" name="gp_practice" maxLength={150} />
+                    <Input id="gp_practice" name="gp_practice" maxLength={150} defaultValue={editingClient?.gp_practice || ''} />
                   </div>
                   <div>
                     <Label htmlFor="gp_phone">GP Phone</Label>
-                    <Input id="gp_phone" name="gp_phone" type="tel" maxLength={20} />
+                    <Input id="gp_phone" name="gp_phone" type="tel" maxLength={20} defaultValue={editingClient?.gp_phone || ''} />
                   </div>
                   <div>
                     <Label htmlFor="gp_address">GP Address</Label>
-                    <Input id="gp_address" name="gp_address" maxLength={255} />
+                    <Input id="gp_address" name="gp_address" maxLength={255} defaultValue={editingClient?.gp_address || ''} />
                   </div>
                 </div>
               </div>
@@ -349,7 +360,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="care_level">Care Level Required</Label>
-                  <Select name="care_level">
+                  <Select name="care_level" defaultValue={editingClient?.care_level || undefined}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select care level" />
                     </SelectTrigger>
@@ -363,7 +374,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 </div>
                 <div>
                   <Label htmlFor="funding_source">Funding Source</Label>
-                  <Select name="funding_source">
+                  <Select name="funding_source" defaultValue={editingClient?.funding_source || undefined}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select funding" />
                     </SelectTrigger>
@@ -385,6 +396,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   name="cultural_requirements"
                   placeholder="Any cultural preferences or requirements..."
                   rows={2}
+                  defaultValue={editingClient?.cultural_requirements || ''}
                 />
               </div>
 
@@ -395,6 +407,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   name="religious_requirements"
                   placeholder="Any religious observances or requirements..."
                   rows={2}
+                  defaultValue={editingClient?.religious_requirements || ''}
                 />
               </div>
 
@@ -403,7 +416,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="mental_capacity_status">Mental Capacity Status</Label>
-                    <Select name="mental_capacity_status">
+                    <Select name="mental_capacity_status" defaultValue={editingClient?.mental_capacity_status || undefined}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
@@ -416,29 +429,29 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   </div>
                   <div>
                     <Label htmlFor="mental_capacity_assessment_date">Assessment Date</Label>
-                    <Input id="mental_capacity_assessment_date" name="mental_capacity_assessment_date" type="date" />
+                    <Input id="mental_capacity_assessment_date" name="mental_capacity_assessment_date" type="date" defaultValue={editingClient?.mental_capacity_assessment_date || ''} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="consent_for_care" name="consent_for_care" />
+                    <Checkbox id="consent_for_care" name="consent_for_care" defaultChecked={editingClient?.consent_for_care || false} />
                     <Label htmlFor="consent_for_care" className="font-normal">Consent for Care Obtained</Label>
                   </div>
                   <div>
                     <Label htmlFor="consent_date">Consent Date</Label>
-                    <Input id="consent_date" name="consent_date" type="date" />
+                    <Input id="consent_date" name="consent_date" type="date" defaultValue={editingClient?.consent_date || ''} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div>
                     <Label htmlFor="lasting_power_of_attorney">Lasting Power of Attorney</Label>
-                    <Input id="lasting_power_of_attorney" name="lasting_power_of_attorney" placeholder="Name of attorney" maxLength={150} />
+                    <Input id="lasting_power_of_attorney" name="lasting_power_of_attorney" placeholder="Name of attorney" maxLength={150} defaultValue={editingClient?.lasting_power_of_attorney || ''} />
                   </div>
                   <div>
                     <Label htmlFor="lpa_contact_details">LPA Contact Details</Label>
-                    <Input id="lpa_contact_details" name="lpa_contact_details" placeholder="Phone/email" maxLength={255} />
+                    <Input id="lpa_contact_details" name="lpa_contact_details" placeholder="Phone/email" maxLength={255} defaultValue={editingClient?.lpa_contact_details || ''} />
                   </div>
                 </div>
               </div>
@@ -448,7 +461,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
             <TabsContent value="risk" className="space-y-4 mt-4">
               <div>
                 <Label htmlFor="risk_level">Overall Risk Level</Label>
-                <Select name="risk_level" defaultValue="low">
+                <Select name="risk_level" defaultValue={editingClient?.risk_level || 'low'}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -467,6 +480,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   name="risk_factors"
                   placeholder="Falls risk, pressure sores, malnutrition, infection, safeguarding concerns..."
                   rows={4}
+                  defaultValue={editingClient?.risk_factors || ''}
                 />
               </div>
 
@@ -477,6 +491,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   name="safeguarding_concerns"
                   placeholder="Any safeguarding issues or concerns..."
                   rows={3}
+                  defaultValue={editingClient?.safeguarding_concerns || ''}
                 />
               </div>
             </TabsContent>
@@ -487,19 +502,19 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="emergency_contact_1_name">Name</Label>
-                  <Input id="emergency_contact_1_name" name="emergency_contact_1_name" maxLength={100} />
+                  <Input id="emergency_contact_1_name" name="emergency_contact_1_name" maxLength={100} defaultValue={editingClient?.emergency_contact_1_name || ''} />
                 </div>
                 <div>
                   <Label htmlFor="emergency_contact_1_relationship">Relationship</Label>
-                  <Input id="emergency_contact_1_relationship" name="emergency_contact_1_relationship" maxLength={50} />
+                  <Input id="emergency_contact_1_relationship" name="emergency_contact_1_relationship" maxLength={50} defaultValue={editingClient?.emergency_contact_1_relationship || ''} />
                 </div>
                 <div>
                   <Label htmlFor="emergency_contact_1_phone">Phone *</Label>
-                  <Input id="emergency_contact_1_phone" name="emergency_contact_1_phone" type="tel" maxLength={20} />
+                  <Input id="emergency_contact_1_phone" name="emergency_contact_1_phone" type="tel" maxLength={20} defaultValue={editingClient?.emergency_contact_1_phone || ''} />
                 </div>
                 <div>
                   <Label htmlFor="emergency_contact_1_email">Email</Label>
-                  <Input id="emergency_contact_1_email" name="emergency_contact_1_email" type="email" maxLength={255} />
+                  <Input id="emergency_contact_1_email" name="emergency_contact_1_email" type="email" maxLength={255} defaultValue={editingClient?.emergency_contact_1_email || ''} />
                 </div>
               </div>
 
@@ -508,19 +523,19 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="emergency_contact_2_name">Name</Label>
-                    <Input id="emergency_contact_2_name" name="emergency_contact_2_name" maxLength={100} />
+                    <Input id="emergency_contact_2_name" name="emergency_contact_2_name" maxLength={100} defaultValue={editingClient?.emergency_contact_2_name || ''} />
                   </div>
                   <div>
                     <Label htmlFor="emergency_contact_2_relationship">Relationship</Label>
-                    <Input id="emergency_contact_2_relationship" name="emergency_contact_2_relationship" maxLength={50} />
+                    <Input id="emergency_contact_2_relationship" name="emergency_contact_2_relationship" maxLength={50} defaultValue={editingClient?.emergency_contact_2_relationship || ''} />
                   </div>
                   <div>
                     <Label htmlFor="emergency_contact_2_phone">Phone</Label>
-                    <Input id="emergency_contact_2_phone" name="emergency_contact_2_phone" type="tel" maxLength={20} />
+                    <Input id="emergency_contact_2_phone" name="emergency_contact_2_phone" type="tel" maxLength={20} defaultValue={editingClient?.emergency_contact_2_phone || ''} />
                   </div>
                   <div>
                     <Label htmlFor="emergency_contact_2_email">Email</Label>
-                    <Input id="emergency_contact_2_email" name="emergency_contact_2_email" type="email" maxLength={255} />
+                    <Input id="emergency_contact_2_email" name="emergency_contact_2_email" type="email" maxLength={255} defaultValue={editingClient?.emergency_contact_2_email || ''} />
                   </div>
                 </div>
               </div>
@@ -530,23 +545,23 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="next_of_kin_name">Name</Label>
-                    <Input id="next_of_kin_name" name="next_of_kin_name" maxLength={100} />
+                    <Input id="next_of_kin_name" name="next_of_kin_name" maxLength={100} defaultValue={editingClient?.next_of_kin_name || ''} />
                   </div>
                   <div>
                     <Label htmlFor="next_of_kin_relationship">Relationship</Label>
-                    <Input id="next_of_kin_relationship" name="next_of_kin_relationship" maxLength={50} />
+                    <Input id="next_of_kin_relationship" name="next_of_kin_relationship" maxLength={50} defaultValue={editingClient?.next_of_kin_relationship || ''} />
                   </div>
                   <div>
                     <Label htmlFor="next_of_kin_phone">Phone</Label>
-                    <Input id="next_of_kin_phone" name="next_of_kin_phone" type="tel" maxLength={20} />
+                    <Input id="next_of_kin_phone" name="next_of_kin_phone" type="tel" maxLength={20} defaultValue={editingClient?.next_of_kin_phone || ''} />
                   </div>
                   <div>
                     <Label htmlFor="next_of_kin_email">Email</Label>
-                    <Input id="next_of_kin_email" name="next_of_kin_email" type="email" maxLength={255} />
+                    <Input id="next_of_kin_email" name="next_of_kin_email" type="email" maxLength={255} defaultValue={editingClient?.next_of_kin_email || ''} />
                   </div>
                   <div className="col-span-2">
                     <Label htmlFor="next_of_kin_address">Address</Label>
-                    <Input id="next_of_kin_address" name="next_of_kin_address" maxLength={255} />
+                    <Input id="next_of_kin_address" name="next_of_kin_address" maxLength={255} defaultValue={editingClient?.next_of_kin_address || ''} />
                   </div>
                 </div>
               </div>
@@ -557,11 +572,11 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="start_date">Start Date of Care *</Label>
-                  <Input id="start_date" name="start_date" type="date" required />
+                  <Input id="start_date" name="start_date" type="date" required defaultValue={editingClient?.start_date || ''} />
                 </div>
                 <div>
                   <Label htmlFor="status">Client Status</Label>
-                  <Select name="status" defaultValue="potential">
+                  <Select name="status" defaultValue={editingClient?.status || 'potential'}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
@@ -578,7 +593,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
 
               <div>
                 <Label htmlFor="social_services_reference">Social Services Reference</Label>
-                <Input id="social_services_reference" name="social_services_reference" maxLength={100} />
+                <Input id="social_services_reference" name="social_services_reference" maxLength={100} defaultValue={editingClient?.social_services_reference || ''} />
               </div>
 
               <div className="border-t pt-4 mt-4">
@@ -586,15 +601,15 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="insurance_provider">Insurance Provider</Label>
-                    <Input id="insurance_provider" name="insurance_provider" maxLength={150} />
+                    <Input id="insurance_provider" name="insurance_provider" maxLength={150} defaultValue={editingClient?.insurance_provider || ''} />
                   </div>
                   <div>
                     <Label htmlFor="insurance_policy_number">Policy Number</Label>
-                    <Input id="insurance_policy_number" name="insurance_policy_number" maxLength={100} />
+                    <Input id="insurance_policy_number" name="insurance_policy_number" maxLength={100} defaultValue={editingClient?.insurance_policy_number || ''} />
                   </div>
                   <div>
                     <Label htmlFor="insurance_expiry">Policy Expiry</Label>
-                    <Input id="insurance_expiry" name="insurance_expiry" type="date" />
+                    <Input id="insurance_expiry" name="insurance_expiry" type="date" defaultValue={editingClient?.insurance_expiry || ''} />
                   </div>
                 </div>
               </div>
@@ -606,6 +621,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
                   name="notes"
                   placeholder="Additional notes about the client..."
                   rows={4}
+                  defaultValue={editingClient?.notes || ''}
                 />
               </div>
             </TabsContent>
@@ -621,7 +637,7 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
               Cancel
             </Button>
             <Button type="submit" variant="nurse" disabled={loading}>
-              {loading ? 'Adding...' : 'Add Client'}
+              {loading ? (editingClient ? 'Updating...' : 'Adding...') : (editingClient ? 'Update Client' : 'Add Client')}
             </Button>
           </div>
         </form>
