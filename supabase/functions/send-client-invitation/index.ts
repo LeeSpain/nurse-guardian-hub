@@ -41,7 +41,7 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    const { email, first_name, last_name, organization_id, redirect_base_url } = await req.json();
+    const { email, first_name, last_name, organization_id, redirect_base_url, client_id } = await req.json();
 
     console.log('Sending client invitation to:', email);
 
@@ -68,13 +68,16 @@ serve(async (req) => {
       ? `${profileData.first_name} ${profileData.last_name}`
       : 'Your care team';
 
+    // Check if this is a verification email (client_id exists) or new invitation
+    const isVerification = !!client_id;
+
     // Generate unique token
     const token = crypto.randomUUID();
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiry
 
     // Create invitation record
-    const { error: inviteError } = await supabase
+    const { data: invitationData, error: inviteError } = await supabase
       .from('client_invitations')
       .insert({
         organization_id,
@@ -86,11 +89,21 @@ serve(async (req) => {
         expires_at: expiresAt.toISOString(),
         invited_by: user.id,
         status: 'pending',
-      });
+      })
+      .select()
+      .single();
 
     if (inviteError) {
       console.error('Error creating invitation:', inviteError);
       throw inviteError;
+    }
+
+    // If this is a verification email, link the invitation to the existing client
+    if (isVerification && client_id) {
+      await supabase
+        .from('clients')
+        .update({ invitation_id: invitationData.id })
+        .eq('id', client_id);
     }
 
     // Build invite link with priority: redirect_base_url > header fallback
@@ -105,6 +118,22 @@ serve(async (req) => {
 
     // Send email via Resend
     const resend = new Resend(resendKey);
+
+    const emailSubject = isVerification 
+      ? `Please Verify Your Profile – ${orgData.name}`
+      : `Complete Your Profile – ${orgData.name}`;
+
+    const emailHeaderText = isVerification
+      ? `Verify Your Profile`
+      : `Welcome to ${orgData.name}`;
+
+    const emailBodyIntro = isVerification
+      ? `<p>We have your information on file at <strong>${orgData.name}</strong>. Please take a moment to review, confirm, and update any details as needed.</p>`
+      : `<p>You've been invited by <strong>${orgData.name}</strong> to complete your client profile.</p>`;
+
+    const buttonText = isVerification
+      ? 'Verify & Update Profile'
+      : 'Complete Your Profile';
 
     const emailHtml = `
       <!DOCTYPE html>
@@ -125,15 +154,15 @@ serve(async (req) => {
         <body>
           <div class="container">
             <div class="header">
-              <h1 style="color: #333; margin: 0;">Welcome to ${orgData.name}</h1>
+              <h1 style="color: #333; margin: 0;">${emailHeaderText}</h1>
             </div>
             <div class="content">
               <p>Hi ${first_name || 'there'},</p>
               
-              <p>You've been invited by <strong>${orgData.name}</strong> to complete your client profile.</p>
+              ${emailBodyIntro}
               
               <div style="text-align: center;">
-                <a href="${inviteLink}" class="button">Complete Your Profile</a>
+                <a href="${inviteLink}" class="button">${buttonText}</a>
               </div>
               
               <div class="info-box">
@@ -176,7 +205,7 @@ serve(async (req) => {
     const { error: emailError } = await resend.emails.send({
       from: 'Angels Nursing Care <care@angelsnursingcare.com>',
       to: [email],
-      subject: `Complete Your Profile – ${orgData.name}`,
+      subject: emailSubject,
       html: emailHtml,
     });
 

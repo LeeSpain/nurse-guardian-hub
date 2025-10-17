@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate, useParams, useNavigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { ArrowLeft, Edit, Save, X, Calendar, FileText, Clock, AlertTriangle, User, Phone, Mail, MapPin, Heart, Bell, Activity } from 'lucide-react';
+import { ArrowLeft, Edit, Save, X, Calendar, FileText, Clock, AlertTriangle, User, Phone, Mail, MapPin, Heart, Bell, Activity, Send } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useOrganization } from '@/hooks/useOrganization';
 import { useClients, Client } from '@/hooks/useClients';
 import { ClientNotesSection } from '@/components/clients/ClientNotesSection';
@@ -64,6 +65,8 @@ const ClientDetail: React.FC = () => {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState<Partial<ClientData>>({});
+  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
+  const [sendingVerification, setSendingVerification] = useState(false);
 
   const pendingReminders = reminders.filter(r => r.status === 'pending');
   const shiftStats = getThisWeekStats();
@@ -142,6 +145,35 @@ const ClientDetail: React.FC = () => {
     }
   };
 
+  const handleSendVerificationEmail = async () => {
+    if (!client || !organization) return;
+
+    try {
+      setSendingVerification(true);
+      
+      const { data, error } = await supabase.functions.invoke('send-client-invitation', {
+        body: {
+          email: client.email,
+          first_name: client.first_name,
+          last_name: client.last_name,
+          organization_id: organization.id,
+          client_id: client.id,
+          redirect_base_url: window.location.origin,
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success('Verification email sent successfully');
+      setShowVerificationDialog(false);
+    } catch (error: any) {
+      console.error('Error sending verification email:', error);
+      toast.error('Failed to send verification email');
+    } finally {
+      setSendingVerification(false);
+    }
+  };
+
   if (userLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -185,10 +217,21 @@ const ClientDetail: React.FC = () => {
               </Button>
             </>
           ) : (
-            <Button variant="nurse" onClick={() => setEditing(true)}>
-              <Edit size={16} className="mr-2" />
-              Edit Details
-            </Button>
+            <>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowVerificationDialog(true)}
+                disabled={!client?.email}
+                title={!client?.email ? 'Client email is required' : 'Send verification email'}
+              >
+                <Send size={16} className="mr-2" />
+                Send Verification Email
+              </Button>
+              <Button variant="nurse" onClick={() => setEditing(true)}>
+                <Edit size={16} className="mr-2" />
+                Edit Details
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -616,6 +659,31 @@ const ClientDetail: React.FC = () => {
           </Tabs>
         </>
       )}
+
+      {/* Verification Email Confirmation Dialog */}
+      <AlertDialog open={showVerificationDialog} onOpenChange={setShowVerificationDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Send Verification Email</AlertDialogTitle>
+            <AlertDialogDescription>
+              Send {client?.first_name} {client?.last_name} a secure link to verify and complete their profile information?
+              <div className="mt-4 p-3 bg-muted rounded-md text-sm">
+                <p className="font-medium text-foreground mb-1">Email will be sent to:</p>
+                <p className="text-foreground">{client?.email}</p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={sendingVerification}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleSendVerificationEmail}
+              disabled={sendingVerification}
+            >
+              {sendingVerification ? 'Sending...' : 'Send Email'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

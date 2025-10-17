@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import ProfileImageUploader from '@/components/ui-components/ProfileImageUploader';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,6 +21,8 @@ const ClientOnboarding: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [invitation, setInvitation] = useState<any>(null);
+  const [existingClient, setExistingClient] = useState<any>(null);
+  const [isVerificationMode, setIsVerificationMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const { toast } = useToast();
@@ -47,6 +51,24 @@ const ClientOnboarding: React.FC = () => {
       }
 
       setInvitation(data.invitation);
+
+      // Check if client already exists for this invitation
+      if (data.invitation.id) {
+        const { data: clientData } = await supabase
+          .from('clients')
+          .select('*')
+          .eq('invitation_id', data.invitation.id)
+          .single();
+
+        if (clientData) {
+          setExistingClient(clientData);
+          setIsVerificationMode(true);
+          setProfileImageUrl(clientData.profile_image_url);
+          console.log('[CLIENT-ONBOARDING] Verification mode - existing client found');
+        } else {
+          console.log('[CLIENT-ONBOARDING] Onboarding mode - new client');
+        }
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to validate invitation');
     } finally {
@@ -106,35 +128,39 @@ const ClientOnboarding: React.FC = () => {
       gp_phone: formData.get('gp_phone') as string || null,
       gp_address: formData.get('gp_address') as string || null,
       
-      care_level: formData.get('care_level') as string || null,
-      funding_source: formData.get('funding_source') as string || null,
       preferred_language: formData.get('preferred_language') as string || 'English',
       cultural_requirements: formData.get('cultural_requirements') as string || null,
       religious_requirements: formData.get('religious_requirements') as string || null,
       
-      mental_capacity_status: formData.get('mental_capacity_status') as string || null,
-      mental_capacity_assessment_date: formData.get('mental_capacity_assessment_date') as string || null,
       consent_for_care: formData.get('consent_for_care') === 'on',
       consent_date: formData.get('consent_date') as string || null,
-      lasting_power_of_attorney: formData.get('lasting_power_of_attorney') as string || null,
-      lpa_contact_details: formData.get('lpa_contact_details') as string || null,
       
-      risk_level: formData.get('risk_level') as string || 'low',
-      risk_factors: formData.get('risk_factors') as string || null,
       safeguarding_concerns: formData.get('safeguarding_concerns') as string || null,
       
-      start_date: formData.get('start_date') as string,
-      social_services_reference: formData.get('social_services_reference') as string || null,
-      insurance_provider: formData.get('insurance_provider') as string || null,
-      insurance_policy_number: formData.get('insurance_policy_number') as string || null,
-      insurance_expiry: formData.get('insurance_expiry') as string || null,
-      
-      notes: formData.get('notes') as string || null,
-      status: 'active',
+      ...(isVerificationMode ? {} : {
+        // Only include these fields for new clients (onboarding mode)
+        care_level: formData.get('care_level') as string || null,
+        funding_source: formData.get('funding_source') as string || null,
+        mental_capacity_status: formData.get('mental_capacity_status') as string || null,
+        mental_capacity_assessment_date: formData.get('mental_capacity_assessment_date') as string || null,
+        lasting_power_of_attorney: formData.get('lasting_power_of_attorney') as string || null,
+        lpa_contact_details: formData.get('lpa_contact_details') as string || null,
+        risk_level: formData.get('risk_level') as string || 'low',
+        risk_factors: formData.get('risk_factors') as string || null,
+        start_date: formData.get('start_date') as string,
+        social_services_reference: formData.get('social_services_reference') as string || null,
+        insurance_provider: formData.get('insurance_provider') as string || null,
+        insurance_policy_number: formData.get('insurance_policy_number') as string || null,
+        insurance_expiry: formData.get('insurance_expiry') as string || null,
+        notes: formData.get('notes') as string || null,
+        status: 'active',
+      }),
     };
 
     try {
-      const { error } = await supabase.functions.invoke('complete-client-onboarding', {
+      const functionName = isVerificationMode ? 'update-client-profile' : 'complete-client-onboarding';
+      
+      const { error } = await supabase.functions.invoke(functionName, {
         body: {
           token,
           client_data: clientData,
@@ -145,8 +171,10 @@ const ClientOnboarding: React.FC = () => {
 
       setCompleted(true);
       toast({
-        title: "Profile Completed!",
-        description: "Your information has been successfully submitted.",
+        title: isVerificationMode ? "Profile Verified!" : "Profile Completed!",
+        description: isVerificationMode 
+          ? "Your information has been successfully verified and updated."
+          : "Your information has been successfully submitted.",
       });
 
       setTimeout(() => {
@@ -163,6 +191,26 @@ const ClientOnboarding: React.FC = () => {
       setSubmitting(false);
     }
   };
+
+  const getFieldValue = (fieldName: string) => {
+    return existingClient?.[fieldName] || '';
+  };
+
+  const hasValue = (fieldName: string) => {
+    const value = existingClient?.[fieldName];
+    return value !== null && value !== undefined && value !== '';
+  };
+
+  const FieldLabel = ({ htmlFor, children, fieldName }: { htmlFor: string; children: React.ReactNode; fieldName?: string }) => (
+    <Label htmlFor={htmlFor} className="flex items-center gap-2">
+      {children}
+      {isVerificationMode && fieldName && (
+        <Badge variant={hasValue(fieldName) ? "default" : "secondary"} className="text-xs">
+          {hasValue(fieldName) ? '✓ Saved' : '⚠ Please Complete'}
+        </Badge>
+      )}
+    </Label>
+  );
 
   if (loading) {
     return (
@@ -226,9 +274,14 @@ const ClientOnboarding: React.FC = () => {
           <div className="text-green-500 mb-4">
             <CheckCircle2 className="w-16 h-16 mx-auto" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">All Set!</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">
+            {isVerificationMode ? 'Information Verified!' : 'All Set!'}
+          </h2>
           <p className="text-muted-foreground mb-4">
-            Your profile has been successfully completed and submitted to {invitation.organization_name}.
+            {isVerificationMode 
+              ? `Your profile has been successfully verified and any updates have been saved with ${invitation.organization_name}.`
+              : `Your profile has been successfully completed and submitted to ${invitation.organization_name}.`
+            }
           </p>
           <p className="text-sm text-muted-foreground">
             Redirecting you to the homepage...
@@ -244,42 +297,37 @@ const ClientOnboarding: React.FC = () => {
         <Card className="p-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">
-              Welcome, {invitation.first_name}!
+              {isVerificationMode ? `Welcome back, ${invitation.first_name}!` : `Welcome, ${invitation.first_name}!`}
             </h1>
             <p className="text-muted-foreground">
-              Complete your profile for <span className="font-semibold">{invitation.organization_name}</span>
+              {isVerificationMode 
+                ? `Please review and verify your information for `
+                : `Complete your profile for `}
+              <span className="font-semibold">{invitation.organization_name}</span>
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              Invited by: {invitation.invited_by_name}
+              {isVerificationMode ? 'Update any information as needed' : `Invited by: ${invitation.invited_by_name}`}
             </p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <Tabs defaultValue="personal" className="w-full">
-              <TabsList className="grid w-full grid-cols-6">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="personal" className="text-xs">
                   <User className="w-4 h-4 mr-1" />
                   Personal
-                </TabsTrigger>
-                <TabsTrigger value="medical" className="text-xs">
-                  <Stethoscope className="w-4 h-4 mr-1" />
-                  Medical
-                </TabsTrigger>
-                <TabsTrigger value="care" className="text-xs">
-                  <Heart className="w-4 h-4 mr-1" />
-                  Care
-                </TabsTrigger>
-                <TabsTrigger value="risk" className="text-xs">
-                  <Shield className="w-4 h-4 mr-1" />
-                  Risk
                 </TabsTrigger>
                 <TabsTrigger value="contacts" className="text-xs">
                   <Phone className="w-4 h-4 mr-1" />
                   Contacts
                 </TabsTrigger>
-                <TabsTrigger value="admin" className="text-xs">
-                  <FileText className="w-4 h-4 mr-1" />
-                  Admin
+                <TabsTrigger value="medical" className="text-xs">
+                  <Stethoscope className="w-4 h-4 mr-1" />
+                  Medical & GP
+                </TabsTrigger>
+                <TabsTrigger value="care" className="text-xs">
+                  <Heart className="w-4 h-4 mr-1" />
+                  Care & Consent
                 </TabsTrigger>
               </TabsList>
 
@@ -295,21 +343,21 @@ const ClientOnboarding: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="first_name">First Name *</Label>
+                    <FieldLabel htmlFor="first_name" fieldName="first_name">First Name *</FieldLabel>
                     <Input 
                       id="first_name" 
                       name="first_name" 
-                      defaultValue={invitation.first_name}
+                      defaultValue={getFieldValue('first_name') || invitation.first_name}
                       required 
                       maxLength={100} 
                     />
                   </div>
                   <div>
-                    <Label htmlFor="last_name">Last Name *</Label>
+                    <FieldLabel htmlFor="last_name" fieldName="last_name">Last Name *</FieldLabel>
                     <Input 
                       id="last_name" 
                       name="last_name" 
-                      defaultValue={invitation.last_name}
+                      defaultValue={getFieldValue('last_name') || invitation.last_name}
                       required 
                       maxLength={100} 
                     />
@@ -318,12 +366,18 @@ const ClientOnboarding: React.FC = () => {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="date_of_birth">Date of Birth *</Label>
-                    <Input id="date_of_birth" name="date_of_birth" type="date" required />
+                    <FieldLabel htmlFor="date_of_birth" fieldName="date_of_birth">Date of Birth *</FieldLabel>
+                    <Input 
+                      id="date_of_birth" 
+                      name="date_of_birth" 
+                      type="date" 
+                      defaultValue={getFieldValue('date_of_birth')}
+                      required 
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="gender">Gender</Label>
-                    <Select name="gender">
+                    <FieldLabel htmlFor="gender" fieldName="gender">Gender</FieldLabel>
+                    <Select name="gender" defaultValue={getFieldValue('gender')}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
@@ -336,45 +390,99 @@ const ClientOnboarding: React.FC = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="preferred_language">Preferred Language</Label>
-                    <Input id="preferred_language" name="preferred_language" defaultValue="English" maxLength={50} />
+                    <FieldLabel htmlFor="preferred_language" fieldName="preferred_language">Preferred Language</FieldLabel>
+                    <Input 
+                      id="preferred_language" 
+                      name="preferred_language" 
+                      defaultValue={getFieldValue('preferred_language') || 'English'} 
+                      maxLength={50} 
+                    />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="email">Email</Label>
+                    <FieldLabel htmlFor="email" fieldName="email">Email</FieldLabel>
                     <Input 
                       id="email" 
                       name="email" 
                       type="email" 
-                      defaultValue={invitation.email}
+                      defaultValue={getFieldValue('email') || invitation.email}
                       maxLength={255} 
                     />
                   </div>
                   <div>
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input id="phone" name="phone" type="tel" maxLength={20} />
+                    <FieldLabel htmlFor="phone" fieldName="phone">Phone</FieldLabel>
+                    <Input 
+                      id="phone" 
+                      name="phone" 
+                      type="tel" 
+                      defaultValue={getFieldValue('phone')}
+                      maxLength={20} 
+                    />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="address">Address</Label>
-                  <Input id="address" name="address" maxLength={255} />
+                  <FieldLabel htmlFor="address" fieldName="address">Address</FieldLabel>
+                  <Input 
+                    id="address" 
+                    name="address" 
+                    defaultValue={getFieldValue('address')}
+                    maxLength={255} 
+                  />
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="city">City</Label>
-                    <Input id="city" name="city" maxLength={100} />
+                    <FieldLabel htmlFor="city" fieldName="city">City</FieldLabel>
+                    <Input 
+                      id="city" 
+                      name="city" 
+                      defaultValue={getFieldValue('city')}
+                      maxLength={100} 
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="state">State/Province/Region</Label>
-                    <Input id="state" name="state" maxLength={100} />
+                    <FieldLabel htmlFor="state" fieldName="state">State/Province/Region</FieldLabel>
+                    <Input 
+                      id="state" 
+                      name="state" 
+                      defaultValue={getFieldValue('state')}
+                      maxLength={100} 
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="postal_code">Postal Code</Label>
-                    <Input id="postal_code" name="postal_code" maxLength={20} />
+                    <FieldLabel htmlFor="postal_code" fieldName="postal_code">Postal Code</FieldLabel>
+                    <Input 
+                      id="postal_code" 
+                      name="postal_code" 
+                      defaultValue={getFieldValue('postal_code')}
+                      maxLength={20} 
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <FieldLabel htmlFor="cultural_requirements" fieldName="cultural_requirements">Cultural Requirements</FieldLabel>
+                    <Textarea 
+                      id="cultural_requirements" 
+                      name="cultural_requirements"
+                      defaultValue={getFieldValue('cultural_requirements')}
+                      placeholder="Any cultural preferences or requirements"
+                      maxLength={500}
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="religious_requirements" fieldName="religious_requirements">Religious Requirements</FieldLabel>
+                    <Textarea 
+                      id="religious_requirements" 
+                      name="religious_requirements"
+                      defaultValue={getFieldValue('religious_requirements')}
+                      placeholder="Any religious preferences or requirements"
+                      maxLength={500}
+                    />
                   </div>
                 </div>
               </TabsContent>
@@ -393,10 +501,11 @@ const ClientOnboarding: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="nhs_number">NHS Number (UK) / NIE Number (Spain)</Label>
+                    <FieldLabel htmlFor="nhs_number" fieldName="nhs_number">NHS Number (UK) / NIE Number (Spain)</FieldLabel>
                     <Input 
                       id="nhs_number" 
                       name="nhs_number" 
+                      defaultValue={getFieldValue('nhs_number')}
                       placeholder="000 000 0000 or X-1234567-A" 
                       maxLength={20} 
                     />
@@ -405,26 +514,33 @@ const ClientOnboarding: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <Label htmlFor="hospital_number">Hospital Number (if applicable)</Label>
-                    <Input id="hospital_number" name="hospital_number" maxLength={50} />
+                    <FieldLabel htmlFor="hospital_number" fieldName="hospital_number">Hospital Number (if applicable)</FieldLabel>
+                    <Input 
+                      id="hospital_number" 
+                      name="hospital_number" 
+                      defaultValue={getFieldValue('hospital_number')}
+                      maxLength={50} 
+                    />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="medical_history">Medical History / Conditions</Label>
+                  <FieldLabel htmlFor="medical_history" fieldName="medical_history">Medical History / Conditions</FieldLabel>
                   <Textarea 
                     id="medical_history" 
                     name="medical_history"
+                    defaultValue={getFieldValue('medical_history')}
                     placeholder="List chronic conditions, diagnoses, medical history..."
                     rows={4}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="allergies">Allergies & Intolerances</Label>
+                  <FieldLabel htmlFor="allergies" fieldName="allergies">Allergies & Intolerances</FieldLabel>
                   <Textarea 
                     id="allergies" 
                     name="allergies"
+                    defaultValue={getFieldValue('allergies')}
                     placeholder="List all known allergies and intolerances..."
                     rows={3}
                   />
@@ -432,8 +548,8 @@ const ClientOnboarding: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="mobility_status">Mobility Status</Label>
-                    <Select name="mobility_status">
+                    <FieldLabel htmlFor="mobility_status" fieldName="mobility_status">Mobility Status</FieldLabel>
+                    <Select name="mobility_status" defaultValue={getFieldValue('mobility_status')}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select mobility level" />
                       </SelectTrigger>
@@ -447,16 +563,23 @@ const ClientOnboarding: React.FC = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="dietary_requirements">Dietary Requirements</Label>
-                    <Input id="dietary_requirements" name="dietary_requirements" placeholder="e.g., Diabetic, Vegetarian..." maxLength={255} />
+                    <FieldLabel htmlFor="dietary_requirements" fieldName="dietary_requirements">Dietary Requirements</FieldLabel>
+                    <Input 
+                      id="dietary_requirements" 
+                      name="dietary_requirements" 
+                      defaultValue={getFieldValue('dietary_requirements')}
+                      placeholder="e.g., Diabetic, Vegetarian..." 
+                      maxLength={255} 
+                    />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="communication_needs">Communication Needs</Label>
+                  <FieldLabel htmlFor="communication_needs" fieldName="communication_needs">Communication Needs</FieldLabel>
                   <Textarea 
                     id="communication_needs" 
                     name="communication_needs"
+                    defaultValue={getFieldValue('communication_needs')}
                     placeholder="e.g., Hearing impaired, uses sign language, visual aids required..."
                     rows={2}
                   />
@@ -466,20 +589,41 @@ const ClientOnboarding: React.FC = () => {
                   <h4 className="font-semibold mb-4">GP/Doctor Details</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="gp_name">Doctor Name</Label>
-                      <Input id="gp_name" name="gp_name" maxLength={100} />
+                      <FieldLabel htmlFor="gp_name" fieldName="gp_name">Doctor Name</FieldLabel>
+                      <Input 
+                        id="gp_name" 
+                        name="gp_name" 
+                        defaultValue={getFieldValue('gp_name')}
+                        maxLength={100} 
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="gp_practice">Practice/Clinic Name</Label>
-                      <Input id="gp_practice" name="gp_practice" maxLength={150} />
+                      <FieldLabel htmlFor="gp_practice" fieldName="gp_practice">Practice/Clinic Name</FieldLabel>
+                      <Input 
+                        id="gp_practice" 
+                        name="gp_practice" 
+                        defaultValue={getFieldValue('gp_practice')}
+                        maxLength={150} 
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="gp_phone">Doctor Phone</Label>
-                      <Input id="gp_phone" name="gp_phone" type="tel" maxLength={20} />
+                      <FieldLabel htmlFor="gp_phone" fieldName="gp_phone">Doctor Phone</FieldLabel>
+                      <Input 
+                        id="gp_phone" 
+                        name="gp_phone" 
+                        type="tel" 
+                        defaultValue={getFieldValue('gp_phone')}
+                        maxLength={20} 
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="gp_address">Practice Address</Label>
-                      <Input id="gp_address" name="gp_address" maxLength={255} />
+                      <FieldLabel htmlFor="gp_address" fieldName="gp_address">Practice Address</FieldLabel>
+                      <Input 
+                        id="gp_address" 
+                        name="gp_address" 
+                        defaultValue={getFieldValue('gp_address')}
+                        maxLength={255} 
+                      />
                     </div>
                   </div>
                 </div>
@@ -487,6 +631,110 @@ const ClientOnboarding: React.FC = () => {
 
               {/* Care & Support Tab */}
               <TabsContent value="care" className="space-y-4 mt-6">
+                <div className="border-t pt-4 mt-4">
+                  <h4 className="font-semibold mb-4">Consent for Care</h4>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="consent_for_care" 
+                        name="consent_for_care" 
+                        defaultChecked={getFieldValue('consent_for_care')}
+                      />
+                      <FieldLabel htmlFor="consent_for_care" fieldName="consent_for_care">
+                        I consent to receive care and support services
+                      </FieldLabel>
+                    </div>
+                    <div>
+                      <FieldLabel htmlFor="consent_date" fieldName="consent_date">Date of Consent</FieldLabel>
+                      <Input 
+                        id="consent_date" 
+                        name="consent_date" 
+                        type="date" 
+                        defaultValue={getFieldValue('consent_date')}
+                      />
+                    </div>
+                    <div>
+                      <FieldLabel htmlFor="safeguarding_concerns" fieldName="safeguarding_concerns">
+                        Any Safeguarding Concerns (Self-Reported)
+                      </FieldLabel>
+                      <Textarea 
+                        id="safeguarding_concerns" 
+                        name="safeguarding_concerns"
+                        defaultValue={getFieldValue('safeguarding_concerns')}
+                        placeholder="Please share any concerns you may have..."
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Emergency Contacts Tab */}
+              <TabsContent value="contacts" className="space-y-6 mt-6">
+                <h4 className="font-semibold text-lg">Emergency Contact 1</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <FieldLabel htmlFor="emergency_contact_1_name" fieldName="emergency_contact_1_name">Name</FieldLabel>
+                    <Input id="emergency_contact_1_name" name="emergency_contact_1_name" defaultValue={getFieldValue('emergency_contact_1_name')} maxLength={100} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="emergency_contact_1_relationship" fieldName="emergency_contact_1_relationship">Relationship</FieldLabel>
+                    <Input id="emergency_contact_1_relationship" name="emergency_contact_1_relationship" defaultValue={getFieldValue('emergency_contact_1_relationship')} maxLength={50} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="emergency_contact_1_phone" fieldName="emergency_contact_1_phone">Phone</FieldLabel>
+                    <Input id="emergency_contact_1_phone" name="emergency_contact_1_phone" type="tel" defaultValue={getFieldValue('emergency_contact_1_phone')} maxLength={20} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="emergency_contact_1_email" fieldName="emergency_contact_1_email">Email</FieldLabel>
+                    <Input id="emergency_contact_1_email" name="emergency_contact_1_email" type="email" defaultValue={getFieldValue('emergency_contact_1_email')} maxLength={255} />
+                  </div>
+                </div>
+
+                <h4 className="font-semibold text-lg pt-4 border-t">Emergency Contact 2</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <FieldLabel htmlFor="emergency_contact_2_name" fieldName="emergency_contact_2_name">Name</FieldLabel>
+                    <Input id="emergency_contact_2_name" name="emergency_contact_2_name" defaultValue={getFieldValue('emergency_contact_2_name')} maxLength={100} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="emergency_contact_2_relationship" fieldName="emergency_contact_2_relationship">Relationship</FieldLabel>
+                    <Input id="emergency_contact_2_relationship" name="emergency_contact_2_relationship" defaultValue={getFieldValue('emergency_contact_2_relationship')} maxLength={50} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="emergency_contact_2_phone" fieldName="emergency_contact_2_phone">Phone</FieldLabel>
+                    <Input id="emergency_contact_2_phone" name="emergency_contact_2_phone" type="tel" defaultValue={getFieldValue('emergency_contact_2_phone')} maxLength={20} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="emergency_contact_2_email" fieldName="emergency_contact_2_email">Email</FieldLabel>
+                    <Input id="emergency_contact_2_email" name="emergency_contact_2_email" type="email" defaultValue={getFieldValue('emergency_contact_2_email')} maxLength={255} />
+                  </div>
+                </div>
+
+                <h4 className="font-semibold text-lg pt-4 border-t">Next of Kin</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <FieldLabel htmlFor="next_of_kin_name" fieldName="next_of_kin_name">Name</FieldLabel>
+                    <Input id="next_of_kin_name" name="next_of_kin_name" defaultValue={getFieldValue('next_of_kin_name')} maxLength={100} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="next_of_kin_relationship" fieldName="next_of_kin_relationship">Relationship</FieldLabel>
+                    <Input id="next_of_kin_relationship" name="next_of_kin_relationship" defaultValue={getFieldValue('next_of_kin_relationship')} maxLength={50} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="next_of_kin_phone" fieldName="next_of_kin_phone">Phone</FieldLabel>
+                    <Input id="next_of_kin_phone" name="next_of_kin_phone" type="tel" defaultValue={getFieldValue('next_of_kin_phone')} maxLength={20} />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="next_of_kin_email" fieldName="next_of_kin_email">Email</FieldLabel>
+                    <Input id="next_of_kin_email" name="next_of_kin_email" type="email" defaultValue={getFieldValue('next_of_kin_email')} maxLength={255} />
+                  </div>
+                  <div className="col-span-2">
+                    <FieldLabel htmlFor="next_of_kin_address" fieldName="next_of_kin_address">Address</FieldLabel>
+                    <Input id="next_of_kin_address" name="next_of_kin_address" defaultValue={getFieldValue('next_of_kin_address')} maxLength={255} />
+                  </div>
+                </div>
+              </TabsContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="care_level">Care Level Required</Label>
@@ -601,155 +849,6 @@ const ClientOnboarding: React.FC = () => {
                   </div>
                 </div>
               </TabsContent>
-
-              {/* Risk Assessment Tab */}
-              <TabsContent value="risk" className="space-y-4 mt-6">
-                <div>
-                  <Label htmlFor="risk_level">Overall Risk Level</Label>
-                  <Select name="risk_level" defaultValue="low">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Low Risk</SelectItem>
-                      <SelectItem value="medium">Medium Risk</SelectItem>
-                      <SelectItem value="high">High Risk</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="risk_factors">Risk Factors</Label>
-                  <Textarea 
-                    id="risk_factors" 
-                    name="risk_factors"
-                    placeholder="e.g., Falls risk, wandering, challenging behavior..."
-                    rows={4}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="safeguarding_concerns">Safeguarding Concerns</Label>
-                  <Textarea 
-                    id="safeguarding_concerns" 
-                    name="safeguarding_concerns"
-                    placeholder="Any safeguarding concerns or vulnerabilities..."
-                    rows={3}
-                  />
-                </div>
-              </TabsContent>
-
-              {/* Emergency Contacts Tab */}
-              <TabsContent value="contacts" className="space-y-4 mt-6">
-                <h4 className="font-semibold">Emergency Contact 1 *</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="emergency_contact_1_name">Name *</Label>
-                    <Input id="emergency_contact_1_name" name="emergency_contact_1_name" required maxLength={100} />
-                  </div>
-                  <div>
-                    <Label htmlFor="emergency_contact_1_relationship">Relationship *</Label>
-                    <Input id="emergency_contact_1_relationship" name="emergency_contact_1_relationship" required maxLength={50} />
-                  </div>
-                  <div>
-                    <Label htmlFor="emergency_contact_1_phone">Phone *</Label>
-                    <Input id="emergency_contact_1_phone" name="emergency_contact_1_phone" type="tel" required maxLength={20} />
-                  </div>
-                  <div>
-                    <Label htmlFor="emergency_contact_1_email">Email</Label>
-                    <Input id="emergency_contact_1_email" name="emergency_contact_1_email" type="email" maxLength={255} />
-                  </div>
-                </div>
-
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="font-semibold mb-4">Emergency Contact 2</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="emergency_contact_2_name">Name</Label>
-                      <Input id="emergency_contact_2_name" name="emergency_contact_2_name" maxLength={100} />
-                    </div>
-                    <div>
-                      <Label htmlFor="emergency_contact_2_relationship">Relationship</Label>
-                      <Input id="emergency_contact_2_relationship" name="emergency_contact_2_relationship" maxLength={50} />
-                    </div>
-                    <div>
-                      <Label htmlFor="emergency_contact_2_phone">Phone</Label>
-                      <Input id="emergency_contact_2_phone" name="emergency_contact_2_phone" type="tel" maxLength={20} />
-                    </div>
-                    <div>
-                      <Label htmlFor="emergency_contact_2_email">Email</Label>
-                      <Input id="emergency_contact_2_email" name="emergency_contact_2_email" type="email" maxLength={255} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="font-semibold mb-4">Next of Kin</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="next_of_kin_name">Name</Label>
-                      <Input id="next_of_kin_name" name="next_of_kin_name" maxLength={100} />
-                    </div>
-                    <div>
-                      <Label htmlFor="next_of_kin_relationship">Relationship</Label>
-                      <Input id="next_of_kin_relationship" name="next_of_kin_relationship" maxLength={50} />
-                    </div>
-                    <div>
-                      <Label htmlFor="next_of_kin_phone">Phone</Label>
-                      <Input id="next_of_kin_phone" name="next_of_kin_phone" type="tel" maxLength={20} />
-                    </div>
-                    <div>
-                      <Label htmlFor="next_of_kin_email">Email</Label>
-                      <Input id="next_of_kin_email" name="next_of_kin_email" type="email" maxLength={255} />
-                    </div>
-                    <div className="col-span-2">
-                      <Label htmlFor="next_of_kin_address">Address</Label>
-                      <Input id="next_of_kin_address" name="next_of_kin_address" maxLength={255} />
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              {/* Administrative Tab */}
-              <TabsContent value="admin" className="space-y-4 mt-6">
-                <div>
-                  <Label htmlFor="start_date">Start Date of Care *</Label>
-                  <Input id="start_date" name="start_date" type="date" required />
-                </div>
-
-                <div>
-                  <Label htmlFor="social_services_reference">Social Services Reference</Label>
-                  <Input id="social_services_reference" name="social_services_reference" maxLength={100} />
-                </div>
-
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="font-semibold mb-4">Insurance Details</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="insurance_provider">Insurance Provider</Label>
-                      <Input id="insurance_provider" name="insurance_provider" maxLength={150} />
-                    </div>
-                    <div>
-                      <Label htmlFor="insurance_policy_number">Policy Number</Label>
-                      <Input id="insurance_policy_number" name="insurance_policy_number" maxLength={100} />
-                    </div>
-                    <div>
-                      <Label htmlFor="insurance_expiry">Policy Expiry Date</Label>
-                      <Input id="insurance_expiry" name="insurance_expiry" type="date" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t pt-4 mt-4">
-                  <Label htmlFor="notes">Additional Notes</Label>
-                  <Textarea 
-                    id="notes" 
-                    name="notes"
-                    placeholder="Any additional information that would be helpful for your care team..."
-                    rows={4}
-                  />
-                </div>
-              </TabsContent>
             </Tabs>
 
             <div className="flex justify-end gap-3 mt-8 pt-6 border-t">
@@ -757,12 +856,12 @@ const ClientOnboarding: React.FC = () => {
                 {submitting ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Submitting...
+                    {isVerificationMode ? 'Verifying...' : 'Submitting...'}
                   </>
                 ) : (
                   <>
                     <CheckCircle2 className="mr-2 h-5 w-5" />
-                    Complete Profile
+                    {isVerificationMode ? 'Confirm & Save Changes' : 'Complete Profile'}
                   </>
                 )}
               </Button>
