@@ -26,6 +26,7 @@ const NurseCalendar = lazy(() => import('./pages/dashboard/nurse/Calendar'));
 const NurseStaff = lazy(() => import('./pages/dashboard/nurse/Staff'));
 const NurseClients = lazy(() => import('./pages/dashboard/nurse/Clients'));
 const NurseShifts = lazy(() => import('./pages/dashboard/nurse/Shifts'));
+const MyShifts = lazy(() => import('./pages/dashboard/nurse/MyShifts'));
 const NurseCarePlans = lazy(() => import('./pages/dashboard/nurse/CarePlans'));
 const CarePlanDetail = lazy(() => import('./pages/dashboard/nurse/CarePlanDetail'));
 const NurseCareLogs = lazy(() => import('./pages/dashboard/nurse/CareLogs'));
@@ -129,6 +130,11 @@ function App() {
             <Route path="shifts" element={
               <ProtectedRoute requiredRole={UserRole.NURSE}>
                 <NurseShifts />
+              </ProtectedRoute>
+            } />
+            <Route path="my-shifts" element={
+              <ProtectedRoute requiredRole={UserRole.NURSE}>
+                <MyShifts />
               </ProtectedRoute>
             } />
             <Route path="care-plans" element={

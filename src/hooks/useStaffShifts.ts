@@ -17,6 +17,10 @@ export interface StaffShift {
   created_by: string | null;
   created_at: string;
   updated_at: string;
+  confirmation_status?: string;
+  confirmed_at?: string;
+  confirmed_by?: string;
+  decline_reason?: string;
   staff_member?: {
     profile?: {
       first_name: string | null;
@@ -26,6 +30,9 @@ export interface StaffShift {
   client?: {
     first_name: string | null;
     last_name: string | null;
+    address?: string | null;
+    city?: string | null;
+    state?: string | null;
   };
 }
 
@@ -157,6 +164,117 @@ export const useStaffShifts = (organizationId?: string) => {
     }
   };
 
+  const confirmShift = async (shiftId: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { error } = await supabase
+        .from('staff_shifts')
+        .update({
+          confirmation_status: 'accepted',
+          confirmed_at: new Date().toISOString(),
+          confirmed_by: user.id,
+        })
+        .eq('id', shiftId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Shift confirmed successfully",
+      });
+
+      await fetchShifts();
+    } catch (error: any) {
+      toast({
+        title: "Error confirming shift",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const declineShift = async (shiftId: string, reason?: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { error } = await supabase
+        .from('staff_shifts')
+        .update({
+          confirmation_status: 'declined',
+          confirmed_at: new Date().toISOString(),
+          confirmed_by: user.id,
+          decline_reason: reason || null,
+        })
+        .eq('id', shiftId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Shift declined successfully",
+      });
+
+      await fetchShifts();
+    } catch (error: any) {
+      toast({
+        title: "Error declining shift",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const getMyPendingShifts = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      // Get staff member ID for current user
+      const { data: staffMember } = await supabase
+        .from('staff_members')
+        .select('id')
+        .eq('profile_id', user.id)
+        .single();
+
+      if (!staffMember) return [];
+
+      const { data, error } = await supabase
+        .from('staff_shifts')
+        .select(`
+          *,
+          staff_member:staff_members(
+            profile:profiles(
+              first_name,
+              last_name
+            )
+          ),
+          client:clients!staff_shifts_client_id_fkey(
+            first_name,
+            last_name
+          )
+        `)
+        .eq('staff_member_id', staffMember.id)
+        .eq('confirmation_status', 'pending')
+        .order('shift_date', { ascending: true })
+        .order('start_time', { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error: any) {
+      toast({
+        title: "Error loading pending shifts",
+        description: error.message,
+        variant: "destructive",
+      });
+      return [];
+    }
+  };
+
   useEffect(() => {
     fetchShifts();
   }, [organizationId]);
@@ -167,6 +285,9 @@ export const useStaffShifts = (organizationId?: string) => {
     createShift,
     updateShift,
     deleteShift,
+    confirmShift,
+    declineShift,
+    getMyPendingShifts,
     refetch: fetchShifts,
   };
 };

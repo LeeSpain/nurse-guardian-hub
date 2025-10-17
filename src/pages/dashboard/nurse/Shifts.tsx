@@ -48,6 +48,7 @@ const Shifts: React.FC = () => {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [shiftToCancel, setShiftToCancel] = useState<string | null>(null);
   const [expandedStaff, setExpandedStaff] = useState<Set<string>>(new Set());
+  const [confirmationFilter, setConfirmationFilter] = useState<'all' | 'pending' | 'accepted' | 'declined'>('all');
   
   // Get client filter from URL
   const clientIdParam = searchParams.get('clientId');
@@ -65,9 +66,14 @@ const Shifts: React.FC = () => {
     ? shifts.filter(shift => shift.client_id === clientIdParam)
     : shifts;
 
-  const upcomingShifts = filteredShifts.filter(shift => 
+  let upcomingShifts = filteredShifts.filter(shift => 
     new Date(shift.shift_date) >= new Date() && shift.status !== 'cancelled' && shift.status !== 'completed'
   );
+
+  // Apply confirmation status filter
+  if (confirmationFilter !== 'all') {
+    upcomingShifts = upcomingShifts.filter(shift => shift.confirmation_status === confirmationFilter);
+  }
 
   const completedShifts = filteredShifts.filter(shift => 
     shift.status === 'completed' || new Date(shift.shift_date) < new Date()
@@ -178,6 +184,19 @@ const Shifts: React.FC = () => {
     return colors[status] || 'outline';
   };
 
+  const getConfirmationBadge = (confirmationStatus?: string) => {
+    switch (confirmationStatus) {
+      case 'pending':
+        return <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20 flex items-center gap-1"><AlertCircle className="w-3 h-3" />Pending</Badge>;
+      case 'accepted':
+        return <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20 flex items-center gap-1"><CheckCircle className="w-3 h-3" />Confirmed</Badge>;
+      case 'declined':
+        return <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20 flex items-center gap-1"><X className="w-3 h-3" />Declined</Badge>;
+      default:
+        return null;
+    }
+  };
+
   const clearFilter = () => {
     setSearchParams({});
   };
@@ -210,7 +229,7 @@ const Shifts: React.FC = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
+        <div className="flex-1">
           <h1 className="text-3xl font-bold text-foreground">Shift Management</h1>
           <p className="text-muted-foreground">Manage staff schedules and shifts</p>
           {clientIdParam && (
@@ -230,14 +249,26 @@ const Shifts: React.FC = () => {
           )}
         </div>
         
-        <Button 
-          variant="nurse" 
-          icon={<Plus size={16} />}
-          onClick={() => setCreateModalOpen(true)}
-          disabled={staff.length === 0}
-        >
-          Create Shift
-        </Button>
+        <div className="flex gap-2">
+          <select
+            value={confirmationFilter}
+            onChange={(e) => setConfirmationFilter(e.target.value as any)}
+            className="px-3 py-2 border rounded-md text-sm bg-background"
+          >
+            <option value="all">All Confirmations</option>
+            <option value="pending">Pending</option>
+            <option value="accepted">Confirmed</option>
+            <option value="declined">Declined</option>
+          </select>
+          <Button 
+            variant="nurse" 
+            icon={<Plus size={16} />}
+            onClick={() => setCreateModalOpen(true)}
+            disabled={staff.length === 0}
+          >
+            Create Shift
+          </Button>
+        </div>
       </div>
 
       {/* Quick Stats */}
@@ -322,6 +353,7 @@ const Shifts: React.FC = () => {
                         <Badge variant={getStatusColor(shift.status)}>
                           {shift.status}
                         </Badge>
+                        {getConfirmationBadge(shift.confirmation_status)}
                       </div>
                       
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -436,6 +468,19 @@ const Shifts: React.FC = () => {
                                 </Badge>
                               </div>
                               <p className="text-sm text-muted-foreground">{staffGroup.staff.job_title || 'Staff Member'}</p>
+                              <div className="flex gap-2 mt-1">
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-600">
+                                  {staffGroup.shifts.filter(s => s.confirmation_status === 'pending').length} pending
+                                </span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-600">
+                                  {staffGroup.shifts.filter(s => s.confirmation_status === 'accepted').length} confirmed
+                                </span>
+                                {staffGroup.shifts.filter(s => s.confirmation_status === 'declined').length > 0 && (
+                                  <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-600">
+                                    {staffGroup.shifts.filter(s => s.confirmation_status === 'declined').length} declined
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
 
@@ -477,6 +522,7 @@ const Shifts: React.FC = () => {
                                   <Badge variant={getStatusColor(shift.status)}>
                                     {shift.status}
                                   </Badge>
+                                  {getConfirmationBadge(shift.confirmation_status)}
                                   {(() => {
                                     const shiftDate = new Date(shift.shift_date);
                                     const today = new Date();

@@ -1858,8 +1858,12 @@ export type Database = {
           appointment_id: string | null
           break_minutes: number | null
           client_id: string | null
+          confirmation_status: string | null
+          confirmed_at: string | null
+          confirmed_by: string | null
           created_at: string | null
           created_by: string | null
+          decline_reason: string | null
           end_time: string
           id: string
           notes: string | null
@@ -1874,8 +1878,12 @@ export type Database = {
           appointment_id?: string | null
           break_minutes?: number | null
           client_id?: string | null
+          confirmation_status?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
           created_at?: string | null
           created_by?: string | null
+          decline_reason?: string | null
           end_time: string
           id?: string
           notes?: string | null
@@ -1890,8 +1898,12 @@ export type Database = {
           appointment_id?: string | null
           break_minutes?: number | null
           client_id?: string | null
+          confirmation_status?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
           created_at?: string | null
           created_by?: string | null
+          decline_reason?: string | null
           end_time?: string
           id?: string
           notes?: string | null
@@ -1915,6 +1927,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_shifts_confirmed_by_fkey"
+            columns: ["confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
