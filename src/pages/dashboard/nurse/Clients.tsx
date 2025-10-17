@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
-import { Users, Search, Plus, MoreVertical, Calendar, Mail, Phone, RefreshCw } from 'lucide-react';
+import { Users, Search, Plus, MoreVertical, Calendar, Mail, Phone, RefreshCw, Edit } from 'lucide-react';
 import Button from '@/components/ui-components/Button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -33,6 +33,7 @@ const Clients: React.FC = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<ClientStatus | 'all'>('all');
+  const [editingClient, setEditingClient] = useState<any>(null);
   const navigate = useNavigate();
   
   if (isLoading) {
@@ -268,6 +269,10 @@ const Clients: React.FC = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-background">
+                          <DropdownMenuItem onClick={() => setEditingClient(client)}>
+                            <Edit className="mr-2" size={16} />
+                            Edit Details
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => navigate('/nurse/dashboard/calendar')}>
                             <Calendar className="mr-2" size={16} />
                             Book Appointment
@@ -318,9 +323,13 @@ const Clients: React.FC = () => {
       </Card>
 
       <AddClientModal
-        open={addModalOpen}
-        onOpenChange={setAddModalOpen}
+        open={addModalOpen || !!editingClient}
+        onOpenChange={(open) => {
+          setAddModalOpen(open);
+          if (!open) setEditingClient(null);
+        }}
         onSuccess={createClient}
+        editingClient={editingClient}
       />
 
       <InviteClientModal

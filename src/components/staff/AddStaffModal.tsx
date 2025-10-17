@@ -18,6 +18,7 @@ interface AddStaffModalProps {
   onOpenChange: (open: boolean) => void;
   onSuccess: (data: any) => Promise<any>;
   organizationId: string;
+  editingStaff?: any;
 }
 
 export const AddStaffModal: React.FC<AddStaffModalProps> = ({
@@ -25,6 +26,7 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
   onOpenChange,
   onSuccess,
   organizationId,
+  editingStaff,
 }) => {
   const [loading, setLoading] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);

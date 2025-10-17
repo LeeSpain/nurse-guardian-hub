@@ -46,6 +46,7 @@ const Staff: React.FC = () => {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [staffToDelete, setStaffToDelete] = useState<string | null>(null);
+  const [editingStaff, setEditingStaff] = useState<any>(null);
 
   if (userLoading || orgLoading) {
     return (
@@ -202,7 +203,7 @@ const Staff: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Avg. Hourly Rate</p>
-              <p className="text-2xl font-bold text-foreground">${avgRate}</p>
+              <p className="text-2xl font-bold text-foreground">€{avgRate}</p>
             </div>
             <DollarSign className="text-primary" size={32} />
           </div>
@@ -288,7 +289,7 @@ const Staff: React.FC = () => {
                         {getEmploymentLabel(member.employment_type)}
                       </Badge>
                     </TableCell>
-                    <TableCell>${member.hourly_rate?.toFixed(2) || '0.00'}/hr</TableCell>
+                    <TableCell>€{member.hourly_rate?.toFixed(2) || '0.00'}/hr</TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-1">
                         {member.background_check_status && badgeConfig && (
@@ -324,7 +325,7 @@ const Staff: React.FC = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-background">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setEditingStaff(member)}>
                             <Edit className="mr-2" size={16} />
                             Edit Details
                           </DropdownMenuItem>
@@ -357,10 +358,14 @@ const Staff: React.FC = () => {
       </Card>
 
       <AddStaffModal
-        open={addModalOpen}
-        onOpenChange={setAddModalOpen}
+        open={addModalOpen || !!editingStaff}
+        onOpenChange={(open) => {
+          setAddModalOpen(open);
+          if (!open) setEditingStaff(null);
+        }}
         onSuccess={createStaff}
         organizationId={organization.id}
+        editingStaff={editingStaff}
       />
 
       <InviteStaffModal

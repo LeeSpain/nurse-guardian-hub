@@ -16,12 +16,14 @@ interface AddClientModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: (data: any) => Promise<any>;
+  editingClient?: any;
 }
 
 export const AddClientModal: React.FC<AddClientModalProps> = ({
   open,
   onOpenChange,
   onSuccess,
+  editingClient,
 }) => {
   const [loading, setLoading] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
