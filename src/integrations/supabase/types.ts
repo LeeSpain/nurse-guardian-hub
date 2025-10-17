@@ -1914,7 +1914,7 @@ export type Database = {
             foreignKeyName: "staff_shifts_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "clients"
             referencedColumns: ["id"]
           },
           {

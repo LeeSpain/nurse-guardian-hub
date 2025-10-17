@@ -47,7 +47,7 @@ export const useStaffShifts = (organizationId?: string) => {
               last_name
             )
           ),
-          client:profiles!staff_shifts_client_id_fkey(
+          client:clients!staff_shifts_client_id_fkey(
             first_name,
             last_name
           )

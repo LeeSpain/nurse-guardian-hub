@@ -27,8 +27,8 @@ export const ClientShiftSchedule: React.FC<ClientShiftScheduleProps> = ({
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   
-  const { getNext7DaysShifts, getTodayShifts, loading } = useClientShifts(clientId, organizationId);
-  const { createShift, updateShift, refetch } = useStaffShifts(organizationId);
+  const { getNext7DaysShifts, getTodayShifts, loading, refetch: refetchClientShifts } = useClientShifts(clientId, organizationId);
+  const { createShift, updateShift, refetch: refetchStaffShifts } = useStaffShifts(organizationId);
   const { staff, loading: staffLoading } = useStaff(organizationId);
 
   console.log('ClientShiftSchedule - Modal state:', showCreateModal);
@@ -51,7 +51,7 @@ export const ClientShiftSchedule: React.FC<ClientShiftScheduleProps> = ({
   const handleCreateShift = async (data: any) => {
     try {
       await createShift(data);
-      await refetch();
+      await Promise.all([refetchClientShifts(), refetchStaffShifts()]);
       setShowCreateModal(false);
     } catch (error) {
       console.error('Error creating shift:', error);
@@ -71,7 +71,7 @@ export const ClientShiftSchedule: React.FC<ClientShiftScheduleProps> = ({
   const handleCancelShift = async (shift: StaffShift) => {
     if (confirm('Are you sure you want to cancel this shift?')) {
       await updateShift(shift.id, { status: 'cancelled' });
-      refetch();
+      await Promise.all([refetchClientShifts(), refetchStaffShifts()]);
     }
   };
 
