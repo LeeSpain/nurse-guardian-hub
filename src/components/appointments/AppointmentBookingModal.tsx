@@ -299,7 +299,7 @@ const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = ({
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
                     <DollarSign className="w-4 h-4" />
-                    Hourly Rate ($)
+                    Hourly Rate (€)
                   </FormLabel>
                   <FormControl>
                     <Input {...field} type="number" min="0" step="0.01" placeholder="75.00" />
@@ -404,7 +404,7 @@ const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = ({
                 <h4 className="font-medium text-teal-800">Payment Information</h4>
               </div>
               <p className="text-sm text-teal-700">
-                Total Cost: <span className="font-semibold">${(() => {
+                Total Cost: <span className="font-semibold">€{(() => {
                   const startTime = form.watch('startTime') || '00:00';
                   const endTime = form.watch('endTime') || '00:00';
                   const hourlyRate = parseFloat(form.watch('hourlyRate') || '0');

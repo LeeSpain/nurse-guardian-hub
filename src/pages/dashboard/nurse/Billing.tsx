@@ -91,7 +91,7 @@ const Billing: React.FC = () => {
               <Skeleton className="h-4 w-24" />
             ) : (
               <p className="text-sm text-muted-foreground">
-                £{stats.pendingAmount.toFixed(2)} total
+                €{stats.pendingAmount.toFixed(2)} total
               </p>
             )}
           </CardContent>
@@ -104,7 +104,7 @@ const Billing: React.FC = () => {
               <Skeleton className="h-8 w-24" />
             ) : (
               <CardTitle className="text-2xl text-green-600">
-                £{stats.paidThisMonth.toFixed(2)}
+                €{stats.paidThisMonth.toFixed(2)}
               </CardTitle>
             )}
           </CardHeader>
@@ -203,7 +203,7 @@ const Billing: React.FC = () => {
                       <div className="flex flex-col md:items-end gap-2">
                         <div className="text-right">
                           <p className="text-2xl font-bold text-foreground">
-                            £{invoice.total_amount.toFixed(2)}
+                            €{invoice.total_amount.toFixed(2)}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             {invoice.total_hours} hours • {invoice.line_items_count} items

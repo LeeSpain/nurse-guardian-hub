@@ -143,7 +143,7 @@ const NurseSubscription: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="border border-gray-200 rounded-lg p-4">
               <h4 className="font-medium text-gray-800 mb-2">Basic</h4>
-              <p className="text-2xl font-bold text-purple-600 mb-2">$9.99<span className="text-sm text-gray-500">/mo</span></p>
+              <p className="text-2xl font-bold text-purple-600 mb-2">€9.99<span className="text-sm text-gray-500">/mo</span></p>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Up to 5 clients</li>
                 <li>• Basic scheduling</li>
@@ -153,7 +153,7 @@ const NurseSubscription: React.FC = () => {
             
             <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
               <h4 className="font-medium text-gray-800 mb-2">Growth</h4>
-              <p className="text-2xl font-bold text-purple-600 mb-2">$19.99<span className="text-sm text-gray-500">/mo</span></p>
+              <p className="text-2xl font-bold text-purple-600 mb-2">€19.99<span className="text-sm text-gray-500">/mo</span></p>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Up to 20 clients</li>
                 <li>• Advanced scheduling</li>
@@ -163,7 +163,7 @@ const NurseSubscription: React.FC = () => {
             
             <div className="border border-gray-200 rounded-lg p-4">
               <h4 className="font-medium text-gray-800 mb-2">Professional</h4>
-              <p className="text-2xl font-bold text-purple-600 mb-2">$49.99<span className="text-sm text-gray-500">/mo</span></p>
+              <p className="text-2xl font-bold text-purple-600 mb-2">€49.99<span className="text-sm text-gray-500">/mo</span></p>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Unlimited clients</li>
                 <li>• All features</li>
@@ -173,7 +173,7 @@ const NurseSubscription: React.FC = () => {
             
             <div className="border border-gray-200 rounded-lg p-4">
               <h4 className="font-medium text-gray-800 mb-2">Team</h4>
-              <p className="text-2xl font-bold text-purple-600 mb-2">$99.99<span className="text-sm text-gray-500">/mo</span></p>
+              <p className="text-2xl font-bold text-purple-600 mb-2">€99.99<span className="text-sm text-gray-500">/mo</span></p>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Team management</li>
                 <li>• Analytics dashboard</li>

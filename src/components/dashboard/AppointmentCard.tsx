@@ -65,11 +65,11 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         {appointment.total_cost && (
           <div className="text-right">
             <p className="text-lg font-semibold text-gray-900">
-              ${appointment.total_cost}
+              €{appointment.total_cost}
             </p>
             {appointment.hourly_rate && (
               <p className="text-sm text-gray-600">
-                ${appointment.hourly_rate}/hr
+                €{appointment.hourly_rate}/hr
               </p>
             )}
           </div>

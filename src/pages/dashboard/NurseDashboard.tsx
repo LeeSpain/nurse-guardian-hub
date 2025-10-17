@@ -159,7 +159,7 @@ const NurseDashboard: React.FC = () => {
               <h3 className="font-semibold text-foreground">Monthly Earnings</h3>
               <CreditCard className="w-5 h-5 text-purple-600" />
             </div>
-            <p className="text-3xl font-bold text-purple-700">${stats.monthlyEarnings.toFixed(0)}</p>
+            <p className="text-3xl font-bold text-purple-700">€{stats.monthlyEarnings.toFixed(0)}</p>
             <p className="text-sm text-muted-foreground mt-1">This month</p>
           </div>
           

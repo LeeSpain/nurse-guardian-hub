@@ -28,7 +28,7 @@ const NurseSearchCard: React.FC<NurseSearchCardProps> = ({
 
   const formatRate = (rate?: number) => {
     if (!rate) return 'Rate not specified';
-    return `$${rate}/hour`;
+    return `€${rate}/hour`;
   };
 
   const formatLocation = () => {

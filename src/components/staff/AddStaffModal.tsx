@@ -316,7 +316,7 @@ export const AddStaffModal: React.FC<AddStaffModalProps> = ({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="hourly_rate">Hourly Rate ($) *</Label>
+                  <Label htmlFor="hourly_rate">Hourly Rate (€) *</Label>
                   <Input
                     id="hourly_rate"
                     name="hourly_rate"
