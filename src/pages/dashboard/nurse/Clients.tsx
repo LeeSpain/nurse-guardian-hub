@@ -274,7 +274,7 @@ const Clients: React.FC = () => {
                             <Edit className="mr-2" size={16} />
                             Edit Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate('/nurse/dashboard/calendar')}>
+                          <DropdownMenuItem onClick={() => navigate(`/nurse/dashboard/calendar?clientId=${client.id}&action=book`)}>
                             <Calendar className="mr-2" size={16} />
                             Book Appointment
                           </DropdownMenuItem>

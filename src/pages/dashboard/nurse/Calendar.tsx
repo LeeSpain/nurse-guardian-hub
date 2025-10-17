@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { useUser, UserRole } from '@/contexts/UserContext';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useStaff } from '@/hooks/useStaff';
@@ -26,6 +26,7 @@ const Calendar: React.FC = () => {
   const { appointments, loading } = useAppointments();
   const { organization, loading: orgLoading } = useOrganization();
   const { staff, loading: staffLoading } = useStaff(organization?.id);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
@@ -81,6 +82,24 @@ const Calendar: React.FC = () => {
     };
     fetchClients();
   }, [organization?.id]);
+
+  // Handle URL parameters for pre-selecting client and opening modal
+  useEffect(() => {
+    const clientId = searchParams.get('clientId');
+    const action = searchParams.get('action');
+    
+    if (clientId && action === 'book' && clients.length > 0) {
+      // Pre-select the client
+      setAppointmentForm(prev => ({
+        ...prev,
+        clientId: clientId
+      }));
+      // Open the appointment modal
+      setIsAppointmentModalOpen(true);
+      // Clear the URL parameters
+      setSearchParams({});
+    }
+  }, [searchParams, clients, setSearchParams]);
   
   if (isLoading || loading || orgLoading || staffLoading) {
     return (
